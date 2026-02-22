@@ -66,8 +66,6 @@ The OTP (One-Time Password) system provides secure email-based verification for 
 
 ### Step 1: Gmail Configuration
 
-#### For Gmail Users:
-
 1. **Enable 2-Factor Authentication:**
    - Go to [Google Account Security](https://myaccount.google.com/security)
    - Enable 2-Step Verification if not already enabled
@@ -84,23 +82,6 @@ The OTP (One-Time Password) system provides secure email-based verification for 
    GMAIL_USER=your-email@gmail.com
    GMAIL_PASSWORD=your-app-password-16-chars
    ```
-
-#### For Other Email Services:
-
-**SendGrid:**
-```env
-EMAIL_SERVICE=sendgrid
-SENDGRID_API_KEY=your-sendgrid-key
-EMAIL_FROM=noreply@yourapp.com
-```
-
-**AWS SES:**
-```env
-EMAIL_SERVICE=aws-ses
-AWS_SES_USER=your-ses-user
-AWS_SES_PASSWORD=your-ses-password
-EMAIL_FROM=your-verified-email@domain.com
-```
 
 ### Step 2: OTP Service Configuration
 
@@ -570,8 +551,6 @@ For issues or questions:
 5. Test API endpoints with Postman first
 
 ---
-
-## 📄 License
 
 This is a private project for the Wombly pregnancy care application.
 
