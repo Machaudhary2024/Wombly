@@ -14,6 +14,7 @@ import {
   Platform,
 } from "react-native"
 import { MaterialCommunityIcons } from "@expo/vector-icons"
+import { LinearGradient } from "expo-linear-gradient"
 import { API_BASE_URL } from "./apiConfig"
 import { validateField, validatePasswordMatch } from "./utils/validationSchema"
 
@@ -125,8 +126,14 @@ const SignUpScreen = ({ navigation }) => {
   }
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+    <LinearGradient
+      colors={['#E8D5FF', '#D4B3FF']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 1 }}
+      style={styles.container}
+    >
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardView}>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.headerSection}>
           <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()} disabled={loading}>
             <MaterialCommunityIcons name="arrow-left" size={24} color="#FF6B9D" />
@@ -380,13 +387,16 @@ const SignUpScreen = ({ navigation }) => {
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
+    </LinearGradient>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+  },
+  keyboardView: {
+    flex: 1,
   },
   scrollContent: {
     flexGrow: 1,
@@ -405,11 +415,19 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#FF6B9D",
+    color: "#961e46",
     marginTop: 15,
   },
   formSection: {
     marginBottom: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 5,
   },
   inputContainer: {
     marginBottom: 18,
@@ -423,12 +441,12 @@ const styles = StyleSheet.create({
   inputBox: {
     flexDirection: "row",
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#FFB8D1",
-    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: "#D4B3FF",
+    borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 11,
-    backgroundColor: "#FFF5FA",
+    backgroundColor: "#F8F0FF",
   },
   inputBoxError: {
     borderColor: "#F44336",
@@ -451,33 +469,34 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   optionalSection: {
-    backgroundColor: "#FFF5FA",
-    borderRadius: 10,
+    backgroundColor: "#F8F0FF",
+    borderRadius: 12,
     padding: 15,
     marginBottom: 18,
-    borderWidth: 1,
-    borderColor: "#FFE5F1",
+    borderWidth: 2,
+    borderColor: "#D4B3FF",
   },
   optionalTitle: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#9C27B0",
+    color: "#961e46",
     marginBottom: 12,
   },
   okButton: {
-    backgroundColor: "#FF6B9D",
+    backgroundColor: "#eb4a7a",
     paddingVertical: 13,
-    borderRadius: 10,
+    borderRadius: 12,
     alignItems: "center",
     marginTop: 20,
-    shadowColor: "#FF6B9D",
+    shadowColor: "#eb4a7a",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.35,
     shadowRadius: 8,
     elevation: 5,
   },
   okButtonDisabled: {
-    backgroundColor: "#FFCDD2",
+    backgroundColor: "#D4B3FF",
+    shadowOpacity: 0.2,
   },
   okButtonText: {
     color: "#FFFFFF",
@@ -486,7 +505,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: "#F0F0F0",
+    backgroundColor: "#E0E0E0",
     marginVertical: 20,
   },
   loginPrompt: {
@@ -500,7 +519,7 @@ const styles = StyleSheet.create({
   },
   loginLink: {
     fontSize: 13,
-    color: "#FF6B9D",
+    color: "#eb4a7a",
     fontWeight: "600",
   },
 })

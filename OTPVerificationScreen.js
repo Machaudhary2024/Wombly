@@ -14,6 +14,7 @@ import {
   Platform,
 } from "react-native"
 import { MaterialCommunityIcons } from "@expo/vector-icons"
+import { LinearGradient } from "expo-linear-gradient"
 import { API_BASE_URL } from "./apiConfig"
 import { validateField } from "./utils/validationSchema"
 
@@ -142,8 +143,14 @@ const OTPVerificationScreen = ({ navigation, route }) => {
   }
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+    <LinearGradient
+      colors={['#E8D5FF', '#D4B3FF']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 1 }}
+      style={styles.container}
+    >
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardView}>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.headerSection}>
           <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()} disabled={loading}>
             <MaterialCommunityIcons name="arrow-left" size={24} color="#FF6B9D" />
@@ -234,13 +241,16 @@ const OTPVerificationScreen = ({ navigation, route }) => {
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
+    </LinearGradient>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+  },
+  keyboardView: {
+    flex: 1,
   },
   scrollContent: {
     flexGrow: 1,
@@ -259,7 +269,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#FF6B9D",
+    color: "#961e46",
     marginTop: 15,
   },
   emailText: {
@@ -269,6 +279,14 @@ const styles = StyleSheet.create({
   },
   formSection: {
     marginBottom: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 5,
   },
   instruction: {
     fontSize: 14,
@@ -290,11 +308,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 2,
-    borderColor: "#FFB8D1",
-    borderRadius: 10,
+    borderColor: "#D4B3FF",
+    borderRadius: 12,
     paddingHorizontal: 15,
     paddingVertical: 14,
-    backgroundColor: "#FFF5FA",
+    backgroundColor: "#F8F0FF",
   },
   inputBoxError: {
     borderColor: "#F44336",
@@ -322,14 +340,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FFF5FA",
+    backgroundColor: "#F8F0FF",
     paddingVertical: 12,
-    borderRadius: 10,
+    borderRadius: 12,
     marginBottom: 20,
+    borderWidth: 1,
+    borderColor: "#D4B3FF",
   },
   timerText: {
     fontSize: 14,
-    color: "#FF6B9D",
+    color: "#eb4a7a",
     fontWeight: "600",
     marginLeft: 8,
   },
@@ -340,19 +360,20 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   okButton: {
-    backgroundColor: "#FF6B9D",
+    backgroundColor: "#eb4a7a",
     paddingVertical: 14,
-    borderRadius: 10,
+    borderRadius: 12,
     alignItems: "center",
     marginBottom: 20,
-    shadowColor: "#FF6B9D",
+    shadowColor: "#eb4a7a",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.35,
     shadowRadius: 8,
     elevation: 5,
   },
   okButtonDisabled: {
-    backgroundColor: "#FFCDD2",
+    backgroundColor: "#D4B3FF",
+    shadowOpacity: 0.2,
   },
   okButtonText: {
     color: "#FFFFFF",
@@ -361,7 +382,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: "#F0F0F0",
+    backgroundColor: "#E0E0E0",
     marginVertical: 20,
   },
   resendButton: {
@@ -369,16 +390,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 12,
-    borderRadius: 10,
+    borderRadius: 12,
     borderWidth: 2,
-    borderColor: "#FFB8D1",
+    borderColor: "#D4B3FF",
   },
   resendButtonDisabled: {
-    borderColor: "#F0F0F0",
+    borderColor: "#E0E0E0",
   },
   resendButtonText: {
     fontSize: 15,
-    color: "#FF6B9D",
+    color: "#eb4a7a",
     fontWeight: "600",
     marginLeft: 8,
   },

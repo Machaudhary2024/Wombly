@@ -113,13 +113,13 @@ const PregnancyCareScreen = ({ navigation, route }) => {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#1E5DAB', '#2E7BC4']}
+        colors={['#f0cfe3', '#de81fa']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.header}
       >
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <MaterialCommunityIcons name="arrow-left" size={24} color="#FFFFFF" />
+          <MaterialCommunityIcons name="arrow-left" size={24} color="#961e46" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Pregnancy</Text>
         <View style={styles.headerSpacer} />
@@ -129,7 +129,7 @@ const PregnancyCareScreen = ({ navigation, route }) => {
       {userName ? (
         <View style={styles.subBannerWrap}>
           <LinearGradient
-            colors={['#1E5DAB', '#2E7BC4']}
+            colors={['#f0cfe3', '#de81fa']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.subBanner}
@@ -174,7 +174,7 @@ const PregnancyCareScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F5F0FF',
   },
   header: {
     paddingTop: 50,
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: '#961e46',
     flex: 1,
     textAlign: 'center',
   },

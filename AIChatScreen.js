@@ -110,7 +110,7 @@ const AIChatScreen = ({ navigation, route }) => {
 
   return (
     <LinearGradient
-      colors={['#E0F7FA', '#B2DFDB']}
+      colors={['#f0cfe3', '#de81fa']}
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}
       style={styles.container}
@@ -120,7 +120,7 @@ const AIChatScreen = ({ navigation, route }) => {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <MaterialCommunityIcons name="arrow-left" size={24} color="#FFFFFF" />
+          <MaterialCommunityIcons name="arrow-left" size={24} color="#961e46" />
         </TouchableOpacity>
         <View style={styles.headerContent}>
           <View style={styles.botAvatarHeader}>

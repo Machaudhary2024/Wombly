@@ -240,13 +240,13 @@ const EntertainmentModule = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#E8D5FF', '#D4B3FF']}
+        colors={['#f0cfe3', '#de81fa']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.header}
       >
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <MaterialCommunityIcons name="arrow-left" size={24} color="#FFFFFF" />
+          <MaterialCommunityIcons name="arrow-left" size={24} color="#961e46" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Entertainment</Text>
         <View style={styles.headerSpacer} />

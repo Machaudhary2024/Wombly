@@ -48,13 +48,13 @@ const ToddlerCareScreen = ({ navigation, route }) => {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#1E5DAB', '#2E7BC4']}
+        colors={['#f0cfe3', '#de81fa']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.header}
       >
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <MaterialCommunityIcons name="arrow-left" size={24} color="#FFFFFF" />
+          <MaterialCommunityIcons name="arrow-left" size={24} color="#961e46" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Toddler Care</Text>
         <View style={styles.headerSpacer} />

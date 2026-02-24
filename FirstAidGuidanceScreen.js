@@ -153,7 +153,7 @@ const FirstAidGuidanceScreen = ({ navigation }) => {
           title: 'Check Responsiveness',
           description: 'Tap the child\'s shoulders and shout "Are you okay?"',
           icon: 'hand-back-left',
-          tips: ['Stay calm', 'Note the time', 'Call emergency services (911)'],
+          tips: ['Stay calm', 'Note the time', 'Call emergency services if unresponsive'],
         },
         {
           number: 2,
@@ -174,7 +174,7 @@ const FirstAidGuidanceScreen = ({ navigation }) => {
           title: 'Choking Relief',
           description: 'For infants (under 1 year): Back blows and chest thrusts. For older: Abdominal thrusts',
           icon: 'hand-left',
-          tips: ['Never insert fingers blindly', 'Be forceful but controlled', 'Call 911 immediately'],
+          tips: ['Never insert fingers blindly', 'Be forceful but controlled', 'Call Emergency Services immediately'],
         },
       ],
     },
@@ -200,7 +200,7 @@ const FirstAidGuidanceScreen = ({ navigation }) => {
           title: 'Severe Reaction (Anaphylaxis)',
           description: 'If difficulty breathing, swelling of throat, loss of consciousness: Use EpiPen immediately',
           icon: 'syringe',
-          tips: ['Inject into outer thigh', 'Call 911 immediately', 'Keep on side if unconscious'],
+          tips: ['Inject into outer thigh', 'Call Emergency Services immediately', 'Keep on side if unconscious'],
         },
         {
           number: 4,
@@ -403,7 +403,7 @@ const FirstAidGuidanceScreen = ({ navigation }) => {
           </Animated.View>
           <View style={styles.emergencyText}>
             <Text style={styles.emergencyTitle}>Emergency?</Text>
-            <Text style={styles.emergencyNumber}>Call 911 immediately</Text>
+            <Text style={styles.emergencyNumber}>Call Emergency Services immediately</Text>
           </View>
         </LinearGradient>
 
@@ -538,7 +538,7 @@ const FirstAidGuidanceScreen = ({ navigation }) => {
             style={styles.warningGradient}
           >
             <MaterialCommunityIcons name="alert-box" size={28} color="#C0392B" style={styles.warningIcon} />
-            <Text style={styles.warningTitle}>When to Call 911:</Text>
+            <Text style={styles.warningTitle}>When to Call Emergency :</Text>
             <Text style={styles.warningText}>
               • Difficulty breathing or gasping{'\n'}
               • Unconsciousness or unresponsiveness{'\n'}
@@ -562,10 +562,9 @@ const FirstAidGuidanceScreen = ({ navigation }) => {
             <MaterialCommunityIcons name="phone" size={28} color="#2E86C1" style={styles.phoneIcon} />
             <Text style={styles.doctorTitle}>Keep These Numbers Handy:</Text>
             <Text style={styles.doctorText}>
-              • Emergency: 911{'\n'}
-              • Poison Control: 1-800-222-1222{'\n'}
-              • Your Pediatrician: ________________{'\n'}
-              • Nearest Hospital: __________________
+              • Emergency: 115 {'\n'}
+              • Rescue 1122: 042-99231701-2{'\n'}
+            
             </Text>
           </LinearGradient>
         </View>
@@ -640,13 +639,13 @@ const FirstAidGuidanceScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#E74C3C', '#C0392B']}
+        colors={['#f0cfe3', '#de81fa']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.header}
       >
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <MaterialCommunityIcons name="arrow-left" size={24} color="#FFFFFF" />
+          <MaterialCommunityIcons name="arrow-left" size={24} color="#961e46" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>First Aid Guidance</Text>
         <View style={styles.headerSpacer} />
