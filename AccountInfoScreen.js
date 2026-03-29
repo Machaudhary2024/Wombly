@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator, Modal } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator, Modal, BackHandler } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { API_BASE_URL } from './apiConfig';
@@ -11,49 +12,47 @@ const AccountInfoScreen = ({ navigation, route }) => {
   const [editing, setEditing] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
-  const [userData, setUserData] = useState({
-    name: '',
-    age: '',
-    height: '',
-    weight: '',
-    email: '',
-    phone: '',
-    pregnancyWeek: '',
-  });
+  const emptyUserData = { name: '', age: '', height: '', weight: '', email: '', phone: '', pregnancyWeek: '' };
+  const [userData, setUserData] = useState(emptyUserData);
+  const [originalUserData, setOriginalUserData] = useState(emptyUserData);
 
   useEffect(() => {
     fetchUserData();
   }, []);
 
+  const cancelEditing = useCallback(() => {
+    setEditing(false);
+    setUserData(originalUserData);
+  }, [originalUserData]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        if (editing) {
+          cancelEditing();
+          return true;
+        }
+        return false;
+      };
+      const sub = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () => sub.remove();
+    }, [editing, cancelEditing])
+  );
+
   const fetchUserData = async () => {
     if (!userEmail) {
-      console.error('userEmail is not provided');
       setLoading(false);
       return;
     }
-
     try {
-      console.log('Fetching user data for email:', userEmail);
       const response = await fetch(`${API_BASE_URL}/api/user?email=${encodeURIComponent(userEmail)}`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
       });
-
-      console.log('Response status:', response.status);
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Response error:', errorText);
-        throw new Error(`Failed to fetch user data: ${response.status}`);
-      }
-
+      if (!response.ok) throw new Error(`Failed to fetch user data: ${response.status}`);
       const data = await response.json();
-      console.log('Response data:', data);
-      
       if (data.success) {
-        setUserData({
+        const loaded = {
           name: data.user.name || '',
           age: data.user.age !== null && data.user.age !== undefined ? data.user.age.toString() : '',
           height: data.user.height !== null && data.user.height !== undefined ? data.user.height.toString() : '',
@@ -61,8 +60,9 @@ const AccountInfoScreen = ({ navigation, route }) => {
           email: data.user.email || '',
           phone: data.user.phone || '',
           pregnancyWeek: data.user.pregnancyWeek !== null && data.user.pregnancyWeek !== undefined ? data.user.pregnancyWeek.toString() : '',
-        });
-        console.log('User data loaded successfully:', data.user);
+        };
+        setUserData(loaded);
+        setOriginalUserData(loaded);
       } else {
         throw new Error(data.message || 'Failed to load user data');
       }
@@ -73,81 +73,42 @@ const AccountInfoScreen = ({ navigation, route }) => {
     }
   };
 
-  // Validate Pakistani mobile number
   const validatePakistaniMobile = (phone) => {
-    if (!phone) {
-      return { valid: false, message: 'Phone number is required' };
-    }
-    // Pakistani phone numbers: 10-11 digits (can include +92, 0, etc.)
+    if (!phone) return { valid: false, message: 'Phone number is required' };
     const cleanedPhone = phone.replace(/\D/g, '');
-    if (cleanedPhone.length < 10 || cleanedPhone.length > 11) {
+    if (cleanedPhone.length < 10 || cleanedPhone.length > 11)
       return { valid: false, message: 'Phone number must be 10-11 digits' };
-    }
     return { valid: true };
   };
 
   const handleUpdate = async () => {
-    if (!userData.name || !userData.age || !userData.email || !userData.phone) {
-      return;
-    }
-
-    // Name should not contain numbers or special characters
-    if (!/^[A-Za-z\s]+$/.test(userData.name.trim())) {
-      return;
-    }
-
-    // Basic email format check
-    const emailTrimmed = userData.email ? userData.email.trim() : '';
+    if (!userData.name || !userData.age || !userData.email || !userData.phone) return;
+    if (!/^[A-Za-z\s]+$/.test(userData.name.trim())) return;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(emailTrimmed)) {
-      return;
-    }
-
-    // Pakistani mobile number validation
+    if (!emailRegex.test(userData.email.trim())) return;
     const phoneCheck = validatePakistaniMobile(userData.phone);
-    if (!phoneCheck.valid) {
-      return;
-    }
-
+    if (!phoneCheck.valid) return;
     const ageNum = parseInt(userData.age);
     const heightNum = userData.height ? parseFloat(userData.height) : undefined;
     const weightNum = userData.weight ? parseFloat(userData.weight) : undefined;
     const pregnancyWeekNum = userData.pregnancyWeek ? parseInt(userData.pregnancyWeek) : undefined;
-
-    if (isNaN(ageNum) || ageNum < 1 || ageNum > 100) {
-      return;
-    }
-
-    if (userData.height && (isNaN(heightNum) || heightNum < 50 || heightNum > 250)) {
-      return;
-    }
-
-    if (userData.weight && (isNaN(weightNum) || weightNum < 20 || weightNum > 200)) {
-      return;
-    }
-
-    if (pregnancyWeekNum && (pregnancyWeekNum < 1 || pregnancyWeekNum > 38)) {
-      return;
-    }
-
-    // All validations passed, show confirmation modal
+    if (isNaN(ageNum) || ageNum < 1 || ageNum > 100) return;
+    if (userData.height && (isNaN(heightNum) || heightNum < 50 || heightNum > 250)) return;
+    if (userData.weight && (isNaN(weightNum) || weightNum < 20 || weightNum > 200)) return;
+    if (pregnancyWeekNum && (pregnancyWeekNum < 1 || pregnancyWeekNum > 38)) return;
     setShowConfirmModal(true);
   };
 
   const confirmUpdate = async () => {
     setIsUpdating(true);
-    
     const ageNum = parseInt(userData.age);
     const heightNum = userData.height ? parseFloat(userData.height) : undefined;
     const weightNum = userData.weight ? parseFloat(userData.weight) : undefined;
     const pregnancyWeekNum = userData.pregnancyWeek ? parseInt(userData.pregnancyWeek) : undefined;
-
     try {
       const response = await fetch(`${API_BASE_URL}/api/update-user`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: userEmail,
           name: userData.name,
@@ -158,16 +119,9 @@ const AccountInfoScreen = ({ navigation, route }) => {
           ...(pregnancyWeekNum !== undefined && { pregnancyWeek: pregnancyWeekNum }),
         }),
       });
-
       const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        const text = await response.text();
-        console.error('Non-JSON response:', text);
-        return;
-      }
-
+      if (!contentType || !contentType.includes('application/json')) return;
       const data = await response.json();
-
       if (data.success) {
         setShowConfirmModal(false);
         setEditing(false);
@@ -183,35 +137,53 @@ const AccountInfoScreen = ({ navigation, route }) => {
     }
   };
 
+  const getInitials = (name) => {
+    if (!name || !name.trim()) return '?';
+    return name.trim().split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  };
+
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#FF6B9D" />
-        <Text style={styles.loadingText}>Loading...</Text>
-      </View>
+      <LinearGradient colors={['#f0cfe3', '#de81fa']} style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#FFFFFF" />
+        <Text style={styles.loadingText}>Loading your profile...</Text>
+      </LinearGradient>
     );
   }
 
   return (
     <View style={styles.container}>
+      {/* Header */}
       <LinearGradient
         colors={['#f0cfe3', '#de81fa']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.header}
       >
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <MaterialCommunityIcons name="arrow-left" size={24} color="#961e46" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Manage Profile</Text>
         <TouchableOpacity
-          onPress={() => setEditing(!editing)}
-          style={styles.editButton}
+          onPress={() => editing ? cancelEditing() : navigation.goBack()}
+          style={styles.headerIconBtn}
+        >
+          <MaterialCommunityIcons name="arrow-left" size={22} color="#961e46" />
+        </TouchableOpacity>
+
+        <View style={styles.headerCenter}>
+          <Text style={styles.headerTitle}>
+            {editing ? 'Edit Profile' : 'My Profile'}
+          </Text>
+          {editing && (
+            <Text style={styles.headerSubtitle}>Tap a field to update</Text>
+          )}
+        </View>
+
+        <TouchableOpacity
+          onPress={() => editing ? cancelEditing() : setEditing(true)}
+          style={[styles.headerIconBtn, editing && styles.headerIconBtnActive]}
         >
           <MaterialCommunityIcons
-            name={editing ? 'close' : 'pencil'}
-            size={20}
-            color="#FFFFFF"
+            name={editing ? 'close' : 'pencil-outline'}
+            size={22}
+            color={editing ? '#961e46' : '#961e46'}
           />
         </TouchableOpacity>
       </LinearGradient>
@@ -221,166 +193,179 @@ const AccountInfoScreen = ({ navigation, route }) => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.profileCard}>
-          <View style={styles.profileIconContainer}>
+        {/* Avatar & Name */}
+        <View style={styles.profileSection}>
+          <View style={styles.avatarRing}>
             <LinearGradient
               colors={['#FFE5F1', '#F3E5F5']}
-              style={styles.profileIconBg}
+              style={styles.avatarBg}
             >
-              <MaterialCommunityIcons name="account" size={50} color="#FF6B9D" />
+              {userData.name && userData.name.trim() ? (
+                <Text style={styles.avatarInitials}>{getInitials(userData.name)}</Text>
+              ) : (
+                <MaterialCommunityIcons name="account" size={48} color="#FF6B9D" />
+              )}
             </LinearGradient>
           </View>
-          <Text style={styles.profileTitle}>Your Profile</Text>
-          <Text style={styles.profileSubtitle}>
-            {editing ? 'Edit your information below' : 'View your account information'}
+          <Text style={styles.profileName}>
+            {userData.name && userData.name.trim() ? userData.name : 'Your Name'}
           </Text>
+          <Text style={styles.profileEmail}>{userData.email || userEmail || ''}</Text>
         </View>
 
+        {/* Stats strip — view mode only */}
+        {!editing && (
+          <View style={styles.statsStrip}>
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>{userData.age || '—'}</Text>
+              <Text style={styles.statLabel}>Age</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>{userData.height || '—'}</Text>
+              <Text style={styles.statLabel}>Height cm</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>{userData.weight || '—'}</Text>
+              <Text style={styles.statLabel}>Weight kg</Text>
+            </View>
+          </View>
+        )}
+
+        {/* Change Password — view mode only */}
         {!editing && (
           <TouchableOpacity
             style={styles.changePasswordButton}
             onPress={() => navigation.navigate('ChangePassword', { userEmail })}
+            activeOpacity={0.8}
           >
-            <MaterialCommunityIcons name="lock-reset" size={20} color="#FFFFFF" />
-            <Text style={styles.changePasswordButtonText}>Change Password</Text>
+            <View style={styles.changePasswordLeft}>
+              <View style={[styles.rowIconBadge, { backgroundColor: '#FFF0F5' }]}>
+                <MaterialCommunityIcons name="lock-reset" size={18} color="#FF6B9D" />
+              </View>
+              <Text style={styles.changePasswordText}>Change Password</Text>
+            </View>
+            <MaterialCommunityIcons name="chevron-right" size={20} color="#FF6B9D" />
           </TouchableOpacity>
         )}
 
+        {/* Info Card — Personal */}
         <View style={styles.infoCard}>
-          <View style={styles.infoRow}>
-            <View style={styles.infoLabelContainer}>
-              <MaterialCommunityIcons name="account" size={20} color="#9C27B0" />
-              <Text style={styles.infoLabel}>Name *</Text>
-            </View>
-            {editing ? (
-              <TextInput
-                style={styles.infoInput}
-                value={userData.name}
-                onChangeText={(text) => setUserData({ ...userData, name: text })}
-                placeholder="Enter your name"
-              />
-            ) : (
-              <Text style={styles.infoValue}>{userData.name && userData.name.trim() ? userData.name : 'Not set'}</Text>
-            )}
-          </View>
+          <Text style={styles.cardSectionLabel}>Personal Info</Text>
 
-          <View style={styles.infoRow}>
-            <View style={styles.infoLabelContainer}>
-              <MaterialCommunityIcons name="calendar" size={20} color="#9C27B0" />
-              <Text style={styles.infoLabel}>Age *</Text>
-            </View>
-            {editing ? (
-              <TextInput
-                style={styles.infoInput}
-                value={userData.age}
-                onChangeText={(text) => setUserData({ ...userData, age: text })}
-                placeholder="Enter your age"
-                keyboardType="numeric"
-              />
-            ) : (
-              <Text style={styles.infoValue}>{userData.age && userData.age.trim() ? userData.age : 'Not set'}</Text>
-            )}
-          </View>
-
-          <View style={styles.infoRow}>
-            <View style={styles.infoLabelContainer}>
-              <MaterialCommunityIcons name="human-male-height" size={20} color="#9C27B0" />
-              <Text style={styles.infoLabel}>Height (cm)</Text>
-            </View>
-            {editing ? (
-              <TextInput
-                style={styles.infoInput}
-                value={userData.height}
-                onChangeText={(text) => setUserData({ ...userData, height: text })}
-                placeholder="Enter height in cm"
-                keyboardType="numeric"
-              />
-            ) : (
-              <Text style={styles.infoValue}>{userData.height && userData.height.trim() ? `${userData.height} cm` : 'Not set'}</Text>
-            )}
-          </View>
-
-          <View style={styles.infoRow}>
-            <View style={styles.infoLabelContainer}>
-              <MaterialCommunityIcons name="scale-bathroom" size={20} color="#9C27B0" />
-              <Text style={styles.infoLabel}>Weight (kg)</Text>
-            </View>
-            {editing ? (
-              <TextInput
-                style={styles.infoInput}
-                value={userData.weight}
-                onChangeText={(text) => setUserData({ ...userData, weight: text })}
-                placeholder="Enter weight in kg"
-                keyboardType="numeric"
-              />
-            ) : (
-              <Text style={styles.infoValue}>{userData.weight && userData.weight.trim() ? `${userData.weight} kg` : 'Not set'}</Text>
-            )}
-          </View>
-
-          <View style={styles.infoRow}>
-            <View style={styles.infoLabelContainer}>
-              <MaterialCommunityIcons name="email" size={20} color="#9C27B0" />
-              <Text style={styles.infoLabel}>Email</Text>
-            </View>
-            <Text style={styles.infoValue}>{userData.email && userData.email.trim() ? userData.email : 'Not set'}</Text>
-          </View>
-
-          <View style={styles.infoRow}>
-            <View style={styles.infoLabelContainer}>
-              <MaterialCommunityIcons name="phone" size={20} color="#9C27B0" />
-              <Text style={styles.infoLabel}>Phone *</Text>
-            </View>
-            {editing ? (
-              <TextInput
-                style={styles.infoInput}
-                value={userData.phone}
-                onChangeText={(text) => setUserData({ ...userData, phone: text })}
-                placeholder="Enter phone number"
-                keyboardType="phone-pad"
-              />
-            ) : (
-              <Text style={styles.infoValue}>{userData.phone && userData.phone.trim() ? userData.phone : 'Not set'}</Text>
-            )}
-          </View>
-
-          <View style={styles.infoRow}>
-            <View style={styles.infoLabelContainer}>
-              <MaterialCommunityIcons name="calendar-heart" size={20} color="#9C27B0" />
-              <Text style={styles.infoLabel}>Pregnancy Week</Text>
-            </View>
-            {editing ? (
-              <TextInput
-                style={styles.infoInput}
-                value={userData.pregnancyWeek}
-                onChangeText={(text) => setUserData({ ...userData, pregnancyWeek: text })}
-                placeholder="Enter week (1-38)"
-                keyboardType="numeric"
-              />
-            ) : (
-              <Text style={styles.infoValue}>
-                {userData.pregnancyWeek && userData.pregnancyWeek.trim() ? `Week ${userData.pregnancyWeek}` : 'Not set'}
-              </Text>
-            )}
-          </View>
+          <InfoRow
+            icon="account-outline"
+            iconBg="#FFE5F1"
+            iconColor="#FF6B9D"
+            label="Name"
+            editing={editing}
+            value={userData.name}
+            displayValue={userData.name && userData.name.trim() ? userData.name : 'Not set'}
+            onChangeText={(text) => setUserData({ ...userData, name: text })}
+            placeholder="Enter your name"
+          />
+          <InfoRow
+            icon="email-outline"
+            iconBg="#F3E5F5"
+            iconColor="#9C27B0"
+            label="Email"
+            value={userData.email}
+            displayValue={userData.email && userData.email.trim() ? userData.email : 'Not set'}
+            locked
+          />
+          <InfoRow
+            icon="phone-outline"
+            iconBg="#E0F2F1"
+            iconColor="#009688"
+            label="Phone"
+            editing={editing}
+            value={userData.phone}
+            displayValue={userData.phone && userData.phone.trim() ? userData.phone : 'Not set'}
+            onChangeText={(text) => setUserData({ ...userData, phone: text })}
+            placeholder="Enter phone number"
+            keyboardType="phone-pad"
+            last
+          />
         </View>
 
+        {/* Info Card — Health */}
+        <View style={[styles.infoCard, { marginTop: 14 }]}>
+          <Text style={styles.cardSectionLabel}>Health & Pregnancy</Text>
+
+          {editing && (
+            <InfoRow
+              icon="calendar-outline"
+              iconBg="#E3F2FD"
+              iconColor="#2196F3"
+              label="Age"
+              editing={editing}
+              value={userData.age}
+              displayValue={userData.age && userData.age.trim() ? `${userData.age} yrs` : 'Not set'}
+              onChangeText={(text) => setUserData({ ...userData, age: text })}
+              placeholder="Enter your age"
+              keyboardType="numeric"
+            />
+          )}
+          {editing && (
+            <InfoRow
+              icon="human-male-height"
+              iconBg="#E8F5E9"
+              iconColor="#4CAF50"
+              label="Height (cm)"
+              editing={editing}
+              value={userData.height}
+              displayValue={userData.height && userData.height.trim() ? `${userData.height} cm` : 'Not set'}
+              onChangeText={(text) => setUserData({ ...userData, height: text })}
+              placeholder="Enter height in cm"
+              keyboardType="numeric"
+            />
+          )}
+          {editing && (
+            <InfoRow
+              icon="scale-bathroom"
+              iconBg="#FFF3E0"
+              iconColor="#FF9800"
+              label="Weight (kg)"
+              editing={editing}
+              value={userData.weight}
+              displayValue={userData.weight && userData.weight.trim() ? `${userData.weight} kg` : 'Not set'}
+              onChangeText={(text) => setUserData({ ...userData, weight: text })}
+              placeholder="Enter weight in kg"
+              keyboardType="numeric"
+            />
+          )}
+          <InfoRow
+            icon="calendar-heart"
+            iconBg="#FCE4EC"
+            iconColor="#E91E63"
+            label="Pregnancy Week"
+            editing={editing}
+            value={userData.pregnancyWeek}
+            displayValue={userData.pregnancyWeek && userData.pregnancyWeek.trim() ? `Week ${userData.pregnancyWeek}` : 'Not set'}
+            onChangeText={(text) => setUserData({ ...userData, pregnancyWeek: text })}
+            placeholder="Week (1–38)"
+            keyboardType="numeric"
+            last
+          />
+        </View>
+
+        {/* Save / Cancel */}
         {editing && (
           <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.saveButton}
-              onPress={handleUpdate}
-            >
-              <Text style={styles.saveButtonText}>Save Changes</Text>
+            <TouchableOpacity style={styles.saveButton} onPress={handleUpdate} activeOpacity={0.85}>
+              <LinearGradient
+                colors={['#FF6B9D', '#E91E63']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.saveButtonGradient}
+              >
+                <MaterialCommunityIcons name="check" size={20} color="#FFFFFF" />
+                <Text style={styles.saveButtonText}>Save Changes</Text>
+              </LinearGradient>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={() => {
-                setEditing(false);
-                fetchUserData();
-              }}
-            >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
+            <TouchableOpacity style={styles.cancelButton} onPress={cancelEditing} activeOpacity={0.7}>
+              <Text style={styles.cancelButtonText}>Discard</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -388,17 +373,19 @@ const AccountInfoScreen = ({ navigation, route }) => {
 
       {/* Confirmation Modal */}
       <Modal
-        transparent={true}
+        transparent
         visible={showConfirmModal}
         animationType="fade"
         onRequestClose={() => setShowConfirmModal(false)}
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
-            <MaterialCommunityIcons name="check-circle" size={50} color="#FF6B9D" />
-            <Text style={styles.modalTitle}>Confirm Changes</Text>
+            <LinearGradient colors={['#FFE5F1', '#F3E5F5']} style={styles.modalIconBg}>
+              <MaterialCommunityIcons name="check-circle-outline" size={36} color="#FF6B9D" />
+            </LinearGradient>
+            <Text style={styles.modalTitle}>Save Changes?</Text>
             <Text style={styles.modalMessage}>
-              Are you sure you want to save these changes to your profile?
+              Your profile information will be updated.
             </Text>
             <View style={styles.modalButtons}>
               <TouchableOpacity
@@ -416,245 +403,393 @@ const AccountInfoScreen = ({ navigation, route }) => {
                 {isUpdating ? (
                   <ActivityIndicator size="small" color="#FFFFFF" />
                 ) : (
-                  <Text style={styles.modalButtonYesText}>Yes, Save</Text>
+                  <Text style={styles.modalButtonYesText}>Save</Text>
                 )}
               </TouchableOpacity>
             </View>
           </View>
         </View>
       </Modal>
+
       <FloatingChatButton navigation={navigation} userEmail={route.params?.userEmail} />
     </View>
   );
 };
 
+/* ─── Reusable row component ─── */
+const InfoRow = ({ icon, iconBg, iconColor, label, editing, value, displayValue, onChangeText, placeholder, keyboardType, locked, last }) => (
+  <View style={[styles.infoRow, last && styles.infoRowLast]}>
+    <View style={styles.infoLabelContainer}>
+      <View style={[styles.rowIconBadge, { backgroundColor: iconBg }]}>
+        <MaterialCommunityIcons name={icon} size={16} color={iconColor} />
+      </View>
+      <Text style={styles.infoLabel}>{label}</Text>
+    </View>
+    {editing && !locked ? (
+      <TextInput
+        style={styles.infoInput}
+        value={value}
+        onChangeText={onChangeText}
+        placeholder={placeholder}
+        placeholderTextColor="#C0C0C0"
+        keyboardType={keyboardType || 'default'}
+      />
+    ) : (
+      <View style={styles.infoValueContainer}>
+        <Text style={[styles.infoValue, locked && styles.infoValueLocked]}>{displayValue}</Text>
+        {locked && <MaterialCommunityIcons name="lock-outline" size={13} color="#C0C0C0" style={{ marginLeft: 4 }} />}
+      </View>
+    )}
+  </View>
+);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#F4F4F8',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5F5F5',
   },
   loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: '#636E72',
+    marginTop: 14,
+    fontSize: 15,
+    color: '#FFFFFF',
+    fontWeight: '500',
   },
+
+  /* Header */
   header: {
     paddingTop: 50,
-    paddingBottom: 15,
-    paddingHorizontal: 20,
+    paddingBottom: 16,
+    paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  backButton: {
-    padding: 5,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-    flex: 1,
-    textAlign: 'center',
-  },
-  editButton: {
-    padding: 5,
-    width: 34,
-    alignItems: 'center',
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: 20,
-  },
-  profileCard: {
-    alignItems: 'center',
-    marginBottom: 25,
-    paddingTop: 20,
-  },
-  profileIconContainer: {
-    marginBottom: 15,
-  },
-  profileIconBg: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+  headerIconBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: 'rgba(255,255,255,0.45)',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  profileTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
+  headerIconBtnActive: {
+    backgroundColor: 'rgba(255,255,255,0.65)',
+  },
+  headerCenter: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontSize: 19,
+    fontWeight: '700',
+    color: '#961e46',
+  },
+  headerSubtitle: {
+    fontSize: 12,
+    color: '#c45a7a',
+    marginTop: 2,
+  },
+
+  /* Scroll */
+  scrollView: { flex: 1 },
+  scrollContent: {
+    padding: 18,
+    paddingBottom: 100,
+  },
+
+  /* Profile section */
+  profileSection: {
+    alignItems: 'center',
+    paddingVertical: 24,
+  },
+  avatarRing: {
+    width: 116,
+    height: 116,
+    borderRadius: 58,
+    borderWidth: 3,
+    borderColor: '#FF6B9D',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 14,
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#FF6B9D',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  avatarBg: {
+    width: 104,
+    height: 104,
+    borderRadius: 52,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  avatarInitials: {
+    fontSize: 36,
+    fontWeight: '700',
+    color: '#FF6B9D',
+    letterSpacing: 1,
+  },
+  profileName: {
+    fontSize: 22,
+    fontWeight: '700',
     color: '#2D3436',
-    marginBottom: 8,
+    marginBottom: 4,
   },
-  profileSubtitle: {
-    fontSize: 16,
-    color: '#636E72',
-    textAlign: 'center',
+  profileEmail: {
+    fontSize: 13,
+    color: '#888',
   },
+
+  /* Stats strip */
+  statsStrip: {
+    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    marginBottom: 14,
+    paddingVertical: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.07,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  statItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  statValue: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#2D3436',
+  },
+  statLabel: {
+    fontSize: 11,
+    color: '#999',
+    marginTop: 3,
+    fontWeight: '500',
+  },
+  statDivider: {
+    width: 1,
+    backgroundColor: '#F0F0F0',
+    marginVertical: 4,
+  },
+
+  /* Change password row */
+  changePasswordButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    marginBottom: 14,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.07,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  changePasswordLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  changePasswordText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#2D3436',
+    marginLeft: 12,
+  },
+
+  /* Info card */
   infoCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    padding: 20,
+    paddingHorizontal: 16,
+    paddingTop: 6,
+    paddingBottom: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
+    shadowOpacity: 0.07,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  cardSectionLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#9C27B0',
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+    paddingTop: 14,
+    paddingBottom: 4,
   },
   infoRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 15,
+    paddingVertical: 13,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: '#F4F4F8',
+  },
+  infoRowLast: {
+    borderBottomWidth: 0,
   },
   infoLabelContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1,
+    width: 130,
+  },
+  rowIconBadge: {
+    width: 30,
+    height: 30,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
   },
   infoLabel: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
     color: '#2D3436',
-    marginLeft: 10,
+  },
+  infoValueContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
   infoValue: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#636E72',
-    flex: 1,
     textAlign: 'right',
+  },
+  infoValueLocked: {
+    color: '#BDBDBD',
   },
   infoInput: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 14,
     color: '#2D3436',
     textAlign: 'right',
-    borderBottomWidth: 1,
-    borderBottomColor: '#FFB8D1',
-    paddingVertical: 5,
+    backgroundColor: '#F8F0FF',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    marginLeft: 8,
   },
-  cancelButton: {
-    marginTop: 20,
-    paddingVertical: 15,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  cancelButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#636E72',
-  },
-  // Save/Cancel Button Container
+
+  /* Save / Cancel */
   buttonContainer: {
     marginTop: 20,
-    gap: 12,
+    gap: 10,
   },
   saveButton: {
-    paddingVertical: 15,
-    backgroundColor: '#FF6B9D',
-    borderRadius: 12,
-    alignItems: 'center',
+    borderRadius: 14,
+    overflow: 'hidden',
+    shadowColor: '#FF6B9D',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
-  saveButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  changePasswordButton: {
+  saveButtonGradient: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FF6B9D',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 12,
-    marginVertical: 15,
-    shadowColor: '#FF6B9D',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 3,
+    paddingVertical: 15,
+    gap: 8,
   },
-  changePasswordButtonText: {
+  saveButtonText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  cancelButton: {
+    paddingVertical: 14,
+    borderRadius: 14,
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: '#E0E0E0',
+    backgroundColor: '#FFFFFF',
+  },
+  cancelButtonText: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#FFFFFF',
-    marginLeft: 8,
+    color: '#9E9E9E',
   },
-  // Confirmation Modal Styles
+
+  /* Modal */
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.45)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalBox: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 30,
-    width: '80%',
+    borderRadius: 24,
+    padding: 28,
+    width: '82%',
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 10,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 12,
+  },
+  modalIconBg: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 14,
   },
   modalTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '700',
     color: '#2D3436',
-    marginTop: 12,
-    marginBottom: 8,
+    marginBottom: 6,
   },
   modalMessage: {
     fontSize: 14,
     color: '#636E72',
     textAlign: 'center',
     lineHeight: 20,
-    marginBottom: 24,
+    marginBottom: 22,
   },
   modalButtons: {
     flexDirection: 'row',
-    gap: 12,
-    flexWrap: 'wrap',
-    justifyContent: 'center',
+    gap: 10,
+    width: '100%',
   },
   modalButton: {
     flex: 1,
-    minWidth: 100,
-    paddingVertical: 12,
-    paddingHorizontal: 8,
+    paddingVertical: 13,
     borderRadius: 12,
     alignItems: 'center',
   },
   modalButtonNo: {
-    backgroundColor: '#F0F0F0',
+    backgroundColor: '#F5F5F5',
   },
   modalButtonYes: {
     backgroundColor: '#FF6B9D',
   },
   modalButtonNoText: {
-    color: '#2D3436',
+    color: '#636E72',
     fontWeight: '600',
     fontSize: 15,
   },
   modalButtonYesText: {
     color: '#FFFFFF',
-    fontWeight: '600',
+    fontWeight: '700',
     fontSize: 15,
-    textAlign: 'center',
   },
 });
 

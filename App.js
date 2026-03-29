@@ -34,6 +34,7 @@ import CulturalRemediesScreen from "./CulturalRemediesScreen"
 import FoodSafetyScreen from "./FoodSafetyScreen"
 import TrimesterNutritionScreen from "./TrimesterNutritionScreen"
 import MythsScreen from "./MythsScreen"
+import DosDontsScreen from "./DosDontsScreen"
 
 const Stack = createNativeStackNavigator()
 
@@ -75,6 +76,7 @@ export default function App() {
         <Stack.Screen name="SetReminders" component={SetRemindersScreen} options={{ headerShown: false }} />
         <Stack.Screen name="PostpartumRecovery" component={PostpartumRecoveryScreen} options={{ headerShown: false }} />
         <Stack.Screen name="AccountInfo" component={AccountInfoScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="DosDonts" component={DosDontsScreen} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   )

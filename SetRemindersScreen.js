@@ -387,11 +387,12 @@ const SetRemindersScreen = ({ navigation }) => {
 
   // Toggle day selection for weekly repeats
   const toggleDay = (dayIndex) => {
-    setSelectedDays(prev =>
-      prev.includes(dayIndex)
-        ? prev.filter(d => d !== dayIndex)
-        : [...prev, dayIndex].sort()
-    );
+    setSelectedDays(prev => {
+      const days = Array.isArray(prev) ? prev : [];
+      return days.includes(dayIndex)
+        ? days.filter(d => d !== dayIndex)
+        : [...days, dayIndex].sort();
+    });
   };
 
   // Get the next occurrence date for a given day of week and time
@@ -696,13 +697,13 @@ const SetRemindersScreen = ({ navigation }) => {
                     key={day}
                     style={[
                       styles.dayButton,
-                      selectedDays.includes(index) && styles.dayButtonActive
+                      Array.isArray(selectedDays) && selectedDays.includes(index) && styles.dayButtonActive
                     ]}
                     onPress={() => toggleDay(index)}
                   >
                     <Text style={[
                       styles.dayButtonText,
-                      selectedDays.includes(index) && styles.dayButtonTextActive
+                      Array.isArray(selectedDays) && selectedDays.includes(index) && styles.dayButtonTextActive
                     ]}>
                       {day}
                     </Text>
@@ -851,6 +852,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 20,
+    paddingBottom: 90,
   },
   quoteCard: {
     borderRadius: 16,

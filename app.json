@@ -2,11 +2,11 @@
   "expo": {
     "name": "WOMBLY",
     "slug": "wombly",
+    "scheme": "wombly",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/4.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
     "splash": {
       "image": "./assets/4.png",
       "resizeMode": "contain",
@@ -19,11 +19,14 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/4.png",
         "backgroundColor": "#de81fa"
-      },
-      "edgeToEdgeEnabled": true
+      }
     },
     "web": {
       "favicon": "./assets/4.png"
-    }
+    },
+    "plugins": [
+      "@react-native-community/datetimepicker",
+      "expo-font"
+    ]
   }
 }

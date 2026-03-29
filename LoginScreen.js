@@ -130,8 +130,19 @@ const LoginScreen = ({ navigation }) => {
       end={{ x: 0, y: 1 }}
       style={styles.container}
     >
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardView}>
-        <ScrollView contentContainerStyle={styles.scrollContent}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        enabled={Platform.OS === "ios"}
+        style={styles.keyboardView}
+      >
+        <ScrollView
+          contentContainerStyle={[
+            styles.scrollContent,
+            Platform.OS === "android" && styles.scrollContentAndroid,
+          ]}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode={Platform.OS === "ios" ? "interactive" : "on-drag"}
+        >
         <View style={styles.headerSection}>
           <MaterialCommunityIcons name="heart-pulse" size={60} color="#FF6B9D" />
           <Text style={styles.title}>Wombly</Text>
@@ -292,6 +303,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 20,
     paddingVertical: 40,
+  },
+  scrollContentAndroid: {
+    justifyContent: "flex-start",
+    paddingTop: 60,
   },
   headerSection: {
     alignItems: "center",

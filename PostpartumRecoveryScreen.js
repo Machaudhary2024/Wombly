@@ -5,6 +5,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated, Alert }
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { MaterialCommunityIcons } from "@expo/vector-icons"
 import { LinearGradient } from "expo-linear-gradient"
+import FloatingChatButton from "./components/FloatingChatButton"
 
 const PostpartumRecoveryScreen = ({ navigation }) => {
   const [milestoneProgress, setMilestoneProgress] = useState({})
@@ -343,6 +344,7 @@ const PostpartumRecoveryScreen = ({ navigation }) => {
 
         <View style={styles.bottomSpacer} />
       </ScrollView>
+      <FloatingChatButton navigation={navigation} />
     </View>
   )
 }
@@ -431,6 +433,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 20,
+    paddingBottom: 90,
   },
   progressContainer: {
     backgroundColor: "#FFFFFF",

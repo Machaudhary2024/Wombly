@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import FloatingChatButton from './components/FloatingChatButton';
 
 const PAGE_HEADING =
   'Craving chaat at 2 a.m.? You\'re in good company—many Pakistani mums-to-be do!';
@@ -196,6 +197,7 @@ const CravingsScreen = ({ navigation }) => {
 
         <View style={styles.bottomSpacer} />
       </ScrollView>
+      <FloatingChatButton navigation={navigation} />
     </View>
   );
 };
@@ -222,7 +224,7 @@ const styles = StyleSheet.create({
   },
   headerSpacer: { width: 40 },
   scroll: { flex: 1 },
-  scrollContent: { padding: 20, paddingBottom: 40 },
+  scrollContent: { padding: 20, paddingBottom: 90 },
   pageHeading: {
     fontSize: 22,
     fontWeight: 'bold',

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import FloatingChatButton from './components/FloatingChatButton';
 
 const buttons = [
   { title: 'Trimester Guide', icon: 'calendar-heart', color: '#9C27B0' },
@@ -57,6 +58,7 @@ const NutritionGuideScreen = ({ navigation, route }) => {
           </TouchableOpacity>
         ))}
       </ScrollView>
+      <FloatingChatButton navigation={navigation} />
     </View>
   );
 };
@@ -78,7 +80,7 @@ const styles = StyleSheet.create({
   headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#6C5CE7', flex: 1, textAlign: 'center' },
   headerSpacer: { width: 24 },
   scrollView: { flex: 1 },
-  scrollContent: { padding: 20, paddingBottom: 30 },
+  scrollContent: { padding: 20, paddingBottom: 90 },
   introLine: {
     fontSize: 15,
     color: '#636E72',

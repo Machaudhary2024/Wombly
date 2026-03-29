@@ -16,6 +16,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient"
 import { MaterialCommunityIcons } from "@expo/vector-icons"
 import { API_BASE_URL } from "./apiConfig"
+import FloatingChatButton from "./components/FloatingChatButton"
 
 const PregnancyTrackerScreen = ({ navigation, route }) => {
   const pregnancyWeekParam = route.params?.pregnancyWeek
@@ -323,6 +324,7 @@ const PregnancyTrackerScreen = ({ navigation, route }) => {
           </View>
         </View>
       </Modal>
+      <FloatingChatButton navigation={navigation} />
     </View>
   )
 }
@@ -355,6 +357,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 15,
+    paddingBottom: 90,
   },
   infoCard: {
     backgroundColor: "#FFF3CD",

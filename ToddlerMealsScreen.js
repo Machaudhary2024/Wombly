@@ -442,7 +442,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 30,
+    paddingBottom: 90,
   },
   introSection: {
     alignItems: 'center',

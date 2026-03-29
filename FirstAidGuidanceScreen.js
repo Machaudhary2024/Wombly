@@ -694,6 +694,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: isTablet ? 20 : 15,
     paddingVertical: 20,
+    paddingBottom: 90,
   },
   emergencyBanner: {
     flexDirection: 'row',
