@@ -10,6 +10,10 @@ const PostpartumRecoveryScreen = ({ navigation }) => {
   const [milestoneProgress, setMilestoneProgress] = useState({})
   const [completionPercentage, setCompletionPercentage] = useState(0)
   const [progressAnimation] = useState(new Animated.Value(0))
+  const [expandedSections, setExpandedSections] = useState({ "Week 1": true })
+  const toggleSection = (week) => {
+    setExpandedSections((prev) => ({ ...prev, [week]: !prev[week] }))
+  }
 
   const RECOVERY_MILESTONES = [
     { id: 1, title: "First week recovery started", category: "Week 1" },
@@ -48,10 +52,22 @@ const PostpartumRecoveryScreen = ({ navigation }) => {
     }
   }
 
+  const canToggleMilestone = (id) => {
+    if (id === 1) return true
+    return !!milestoneProgress[id - 1]
+  }
+
   const toggleMilestone = async (id) => {
-    const newProgress = {
-      ...milestoneProgress,
-      [id]: !milestoneProgress[id],
+    if (!canToggleMilestone(id)) return
+    const isCurrentlyChecked = milestoneProgress[id]
+    const newProgress = { ...milestoneProgress }
+    if (isCurrentlyChecked) {
+      newProgress[id] = false
+      for (let i = id + 1; i <= 7; i++) {
+        newProgress[i] = false
+      }
+    } else {
+      newProgress[id] = true
     }
     setMilestoneProgress(newProgress)
 
@@ -114,21 +130,35 @@ const PostpartumRecoveryScreen = ({ navigation }) => {
             />
           </View>
           <View style={styles.milestonesContainer}>
-            {RECOVERY_MILESTONES.map((milestone) => (
-              <TouchableOpacity
-                key={milestone.id}
-                style={[styles.milestoneItem, milestoneProgress[milestone.id] && styles.milestoneItemCompleted]}
-                onPress={() => toggleMilestone(milestone.id)}
-              >
-                <View style={styles.milestoneCheckbox}>
-                  {milestoneProgress[milestone.id] && <MaterialCommunityIcons name="check" size={20} color="#FF6B9D" />}
-                </View>
-                <View style={styles.milestoneContent}>
-                  <Text style={styles.milestoneCategory}>{milestone.category}</Text>
-                  <Text style={styles.milestoneTitle}>{milestone.title}</Text>
-                </View>
-              </TouchableOpacity>
-            ))}
+            {RECOVERY_MILESTONES.map((milestone) => {
+              const isLocked = !canToggleMilestone(milestone.id) && !milestoneProgress[milestone.id]
+              return (
+                <TouchableOpacity
+                  key={milestone.id}
+                  style={[
+                    styles.milestoneItem,
+                    milestoneProgress[milestone.id] && styles.milestoneItemCompleted,
+                    isLocked && styles.milestoneItemLocked,
+                  ]}
+                  onPress={() => toggleMilestone(milestone.id)}
+                  hitSlop={{ top: 14, bottom: 14, left: 12, right: 12 }}
+                  activeOpacity={0.7}
+                  disabled={isLocked}
+                >
+                  <View style={[styles.milestoneCheckbox, isLocked && styles.milestoneCheckboxLocked]}>
+                    {milestoneProgress[milestone.id] ? (
+                      <MaterialCommunityIcons name="check" size={20} color="#FF6B9D" />
+                    ) : isLocked ? (
+                      <MaterialCommunityIcons name="lock" size={18} color="#BDBDBD" />
+                    ) : null}
+                  </View>
+                  <View style={styles.milestoneContent}>
+                    <Text style={[styles.milestoneCategory, isLocked && styles.milestoneTextLocked]}>{milestone.category}</Text>
+                    <Text style={[styles.milestoneTitle, isLocked && styles.milestoneTextLocked]}>{milestone.title}</Text>
+                  </View>
+                </TouchableOpacity>
+              )
+            })}
           </View>
           {completionPercentage > 0 && (
             <TouchableOpacity style={styles.resetButton} onPress={resetProgress}>
@@ -159,7 +189,7 @@ const PostpartumRecoveryScreen = ({ navigation }) => {
           </View>
         </View>
 
-        <TimelineSection week="Week 1" icon="calendar-week" colors={["#FFE5F1", "#F3E5F5"]} iconColor="#FF6B9D">
+        <TimelineSection week="Week 1" icon="calendar-week" colors={["#FFE5F1", "#F3E5F5"]} iconColor="#FF6B9D" isExpanded={!!expandedSections["Week 1"]} onToggle={() => toggleSection("Week 1")}>
           <PhysicalStatusCard
             title="Vaginal Delivery"
             items={[
@@ -191,7 +221,7 @@ const PostpartumRecoveryScreen = ({ navigation }) => {
           />
         </TimelineSection>
 
-        <TimelineSection week="Week 2" icon="calendar-week-begin" colors={["#F3E5F5", "#E1BEE7"]} iconColor="#9C27B0">
+        <TimelineSection week="Week 2" icon="calendar-week-begin" colors={["#F3E5F5", "#E1BEE7"]} iconColor="#9C27B0" isExpanded={!!expandedSections["Week 2"]} onToggle={() => toggleSection("Week 2")}>
           <PhysicalStatusCard
             title="Vaginal Delivery"
             items={[
@@ -221,7 +251,7 @@ const PostpartumRecoveryScreen = ({ navigation }) => {
           />
         </TimelineSection>
 
-        <TimelineSection week="Week 6" icon="calendar-check" colors={["#FFE5F1", "#FFB8D1"]} iconColor="#FF6B9D">
+        <TimelineSection week="Week 6" icon="calendar-check" colors={["#FFE5F1", "#FFB8D1"]} iconColor="#FF6B9D" isExpanded={!!expandedSections["Week 6"]} onToggle={() => toggleSection("Week 6")}>
           <PhysicalStatusCard
             title="Vaginal Delivery"
             items={[
@@ -251,7 +281,7 @@ const PostpartumRecoveryScreen = ({ navigation }) => {
           />
         </TimelineSection>
 
-        <TimelineSection week="Six Months" icon="calendar-month" colors={["#E1BEE7", "#CE93D8"]} iconColor="#9C27B0">
+        <TimelineSection week="Six Months" icon="calendar-month" colors={["#E1BEE7", "#CE93D8"]} iconColor="#9C27B0" isExpanded={!!expandedSections["Six Months"]} onToggle={() => toggleSection("Six Months")}>
           <PhysicalStatusCard
             title="Vaginal Delivery"
             items={[
@@ -281,7 +311,7 @@ const PostpartumRecoveryScreen = ({ navigation }) => {
           />
         </TimelineSection>
 
-        <TimelineSection week="One Year" icon="calendar-star" colors={["#FFB8D1", "#FF6B9D"]} iconColor="#FF6B9D">
+        <TimelineSection week="One Year" icon="calendar-star" colors={["#FFB8D1", "#FF6B9D"]} iconColor="#FF6B9D" isExpanded={!!expandedSections["One Year"]} onToggle={() => toggleSection("One Year")}>
           <PhysicalStatusCard
             title="Vaginal Delivery"
             items={[
@@ -317,15 +347,16 @@ const PostpartumRecoveryScreen = ({ navigation }) => {
   )
 }
 
-const TimelineSection = ({ week, icon, colors, iconColor, children }) => (
+const TimelineSection = ({ week, icon, colors, iconColor, children, isExpanded, onToggle }) => (
   <View style={styles.timelineSection}>
-    <View style={styles.timelineHeader}>
+    <TouchableOpacity style={styles.timelineHeader} onPress={onToggle} activeOpacity={0.8} hitSlop={{ top: 16, bottom: 16, left: 12, right: 12 }}>
       <LinearGradient colors={colors} style={styles.timelineIconBg}>
         <MaterialCommunityIcons name={icon} size={32} color={iconColor} />
       </LinearGradient>
       <Text style={styles.timelineTitle}>{week}</Text>
-    </View>
-    {children}
+      <MaterialCommunityIcons name={isExpanded ? "chevron-up" : "chevron-down"} size={28} color="#636E72" />
+    </TouchableOpacity>
+    {isExpanded && children}
   </View>
 )
 
@@ -446,7 +477,8 @@ const styles = StyleSheet.create({
   milestoneItem: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 12,
+    paddingVertical: 14,
+    minHeight: 52,
     borderBottomWidth: 1,
     borderBottomColor: "#F0F0F0",
   },
@@ -454,6 +486,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFE5F1",
     borderRadius: 8,
     paddingHorizontal: 10,
+  },
+  milestoneItemLocked: {
+    opacity: 0.75,
+    backgroundColor: "#F5F5F5",
+  },
+  milestoneCheckboxLocked: {
+    borderColor: "#E0E0E0",
+    backgroundColor: "#EEEEEE",
+  },
+  milestoneTextLocked: {
+    color: "#9E9E9E",
   },
   milestoneCheckbox: {
     width: 28,
@@ -551,6 +594,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 15,
+    minHeight: 56,
+    paddingVertical: 8,
   },
   timelineIconBg: {
     width: 50,

@@ -1,17 +1,17 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   ActivityIndicator,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Modal,
 } from "react-native"
 import { MaterialCommunityIcons } from "@expo/vector-icons"
 import { LinearGradient } from "expo-linear-gradient"
@@ -24,6 +24,11 @@ const LoginScreen = ({ navigation }) => {
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [showErrorModal, setShowErrorModal] = useState(false)
+  const [errorTitle, setErrorTitle] = useState("")
+  const [errorMessage, setErrorMessage] = useState("")
+  const [errorType, setErrorType] = useState("")
+  const passwordInputRef = useRef(null)
 
   const validateForm = () => {
     const newErrors = {}
@@ -32,7 +37,10 @@ const LoginScreen = ({ navigation }) => {
     if (emailError) newErrors.email = emailError
 
     const passwordError = validateField("password", password)
-    if (passwordError) newErrors.password = passwordError
+    // if (passwordError) newErrors.password = passwordError // Don't show generic password error to avoid giving hints about valid passwords
+    // if (passwordError) newErrors.password = "The password is incorrect" // Show a generic error message instead of the specific validation error
+    // the generic msg is now a custom pop-up added to the program 
+    // P.S. Kashaf <3
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -59,7 +67,10 @@ const LoginScreen = ({ navigation }) => {
 
       const contentType = response.headers.get("content-type")
       if (!contentType || !contentType.includes("application/json")) {
-        Alert.alert("Error", "Server returned invalid response.")
+        setErrorTitle("Error")
+        setErrorMessage("Server returned invalid response.")
+        setErrorType("error")
+        setShowErrorModal(true)
         setLoading(false)
         return
       }
@@ -67,32 +78,49 @@ const LoginScreen = ({ navigation }) => {
       const data = await response.json()
 
       if (data.success) {
-        Alert.alert("Success", "Login successful!")
-        navigation.navigate("Home", {
-          userEmail: data.user.email,
-          userName: data.user.name,
-          token: data.token,
-          pregnancyWeek: data.user.pregnancyWeek,
-        })
+        setErrorTitle("Success")
+        setErrorMessage("Login successful!")
+        setErrorType("success")
+        setShowErrorModal(true)
+        setTimeout(() => {
+          navigation.navigate("Home", {
+            userEmail: data.user.email,
+            userName: data.user.name,
+            token: data.token,
+            pregnancyWeek: data.user.pregnancyWeek,
+          })
+        }, 500)
       } else {
         if (data.isVerified === false) {
-          Alert.alert("Verification Required", data.message, [
-            {
-              text: "Go to Sign Up",
-              onPress: () => navigation.navigate("SignUp"),
-            },
-            { text: "Cancel", style: "cancel" },
-          ])
+          setErrorTitle("Verification Required")
+          setErrorMessage(data.message)
+          setErrorType("verification")
+          setShowErrorModal(true)
         } else {
-          Alert.alert("Login Failed", data.message)
+          setErrorTitle("Login Failed")
+          setErrorMessage(data.message)
+          setErrorType("error")
+          setShowErrorModal(true)
         }
       }
     } catch (error) {
       console.error("Login error:", error)
-      Alert.alert("Error", "Network error. Please try again.")
+      setErrorTitle("Error")
+      setErrorMessage("Network error. Please try again.")
+      setErrorType("error")
+      setShowErrorModal(true)
     } finally {
       setLoading(false)
     }
+  }
+
+  const closeErrorModal = () => {
+    setShowErrorModal(false)
+  }
+
+  const handleVerificationNavigation = () => {
+    setShowErrorModal(false)
+    navigation.navigate("SignUp")
   }
 
   return (
@@ -128,6 +156,8 @@ const LoginScreen = ({ navigation }) => {
                 }}
                 keyboardType="email-address"
                 editable={!loading}
+                returnKeyType="next"
+                onSubmitEditing={() => passwordInputRef.current?.focus()}
               />
             </View>
             {errors.email && (
@@ -143,6 +173,7 @@ const LoginScreen = ({ navigation }) => {
             <View style={[styles.inputBox, errors.password && styles.inputBoxError]}>
               <MaterialCommunityIcons name="lock-outline" size={20} color="#FF6B9D" />
               <TextInput
+                ref={passwordInputRef}
                 style={styles.input}
                 placeholder="Enter your password"
                 placeholderTextColor="#BDBDBD"
@@ -153,6 +184,8 @@ const LoginScreen = ({ navigation }) => {
                 }}
                 secureTextEntry={!showPassword}
                 editable={!loading}
+                returnKeyType="done"
+                onSubmitEditing={handleLogin}
               />
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                 <MaterialCommunityIcons
@@ -170,6 +203,15 @@ const LoginScreen = ({ navigation }) => {
             )}
           </View>
 
+          {/* Forgot Password Link */}
+          <TouchableOpacity
+            style={styles.forgotPasswordButton}
+            onPress={() => navigation.navigate("ForgotPassword")}
+            disabled={loading}
+          >
+            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+          </TouchableOpacity>
+          
           <TouchableOpacity
             style={[styles.okButton, loading && styles.okButtonDisabled]}
             onPress={handleLogin}
@@ -189,6 +231,51 @@ const LoginScreen = ({ navigation }) => {
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
+
+    {/* Error/Success Modal */}
+    <Modal
+      transparent={true}
+      visible={showErrorModal}
+      animationType="fade"
+      onRequestClose={closeErrorModal}
+    >
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalBox}>
+          <MaterialCommunityIcons
+            name={errorType === "success" ? "check-circle" : errorType === "verification" ? "alert-circle" : "alert-circle"}
+            size={40}
+            color={errorType === "success" ? "#00B894" : "#FF6B9D"}
+          />
+          <Text style={styles.modalTitle}>{errorTitle}</Text>
+          <Text style={styles.modalMessage}>{errorMessage}</Text>
+          <View style={styles.modalButtons}>
+            {errorType === "verification" ? (
+              <>
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.modalButtonNo]}
+                  onPress={closeErrorModal}
+                >
+                  <Text style={styles.modalButtonNoText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.modalButton, styles.modalButtonYes]}
+                  onPress={handleVerificationNavigation}
+                >
+                  <Text style={styles.modalButtonYesText}>Go to Sign Up</Text>
+                </TouchableOpacity>
+              </>
+            ) : (
+              <TouchableOpacity
+                style={[styles.modalButton, styles.modalButtonYes]}
+                onPress={closeErrorModal}
+              >
+                <Text style={styles.modalButtonYesText}>OK</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      </View>
+    </Modal>
     </LinearGradient>
   )
 }
@@ -315,6 +402,80 @@ const styles = StyleSheet.create({
   signupLink: {
     fontSize: 14,
     color: "#eb4a7a",
+    fontWeight: "600",
+  },
+  // Error Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalBox: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 20,
+    padding: 30,
+    width: "80%",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 10,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#2D3436",
+    marginTop: 12,
+    marginBottom: 8,
+  },
+  modalMessage: {
+    fontSize: 14,
+    color: "#636E72",
+    textAlign: "center",
+    lineHeight: 20,
+    marginBottom: 24,
+  },
+  modalButtons: {
+    flexDirection: "row",
+    gap: 12,
+    flexWrap: "wrap",
+    justifyContent: "center",
+  },
+  modalButton: {
+    flex: 1,
+    minWidth: 100,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  modalButtonNo: {
+    backgroundColor: "#F0F0F0",
+  },
+  modalButtonYes: {
+    backgroundColor: "#eb4a7a",
+  },
+  modalButtonNoText: {
+    color: "#2D3436",
+    fontWeight: "600",
+    fontSize: 15,
+  },
+  modalButtonYesText: {
+    color: "#FFFFFF",
+    fontWeight: "600",
+    fontSize: 15,
+    textAlign: "center",
+  },
+  forgotPasswordButton: {
+    alignSelf: "flex-end",
+    marginBottom: 10,
+    marginTop: -5,
+  },
+  forgotPasswordText: {
+    fontSize: 13,
+    color: "#FF6B9D",
     fontWeight: "600",
   },
 })
