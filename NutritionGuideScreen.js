@@ -1,73 +1,68 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-const NutritionGuideScreen = ({ navigation }) => {
+const buttons = [
+  { title: 'Trimester Guide', icon: 'calendar-heart', color: '#9C27B0' },
+  { title: 'Cultural Remedies', icon: 'hand-heart', color: '#6C5CE7' },
+  { title: 'Cravings', icon: 'emoticon-happy-outline', color: '#FFA726' },
+  { title: 'Food Safety & Hygiene', icon: 'shield-check', color: '#26A69A' },
+];
+
+const NutritionGuideScreen = ({ navigation, route }) => {
+  const pregnancyWeek = route.params?.pregnancyWeek;
+  const userEmail = route.params?.userEmail;
+
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={['#f0cfe3', '#de81fa']}
+        colors={['#FFE5F1', '#FFFFFF']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.header}
       >
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <MaterialCommunityIcons name="arrow-left" size={24} color="#961e46" />
+          <MaterialCommunityIcons name="arrow-left" size={24} color="#6C5CE7" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Nutrition Guide</Text>
+        <Text style={styles.headerTitle}>Get Nutrition Guidance</Text>
         <View style={styles.headerSpacer} />
       </LinearGradient>
 
-      <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.card}>
-          <Text style={styles.title}>Healthy Eating in Pregnancy</Text>
-          <Text style={styles.text}>
-            Eating well is one of the best things you can do for yourself and your baby. 
-            Aim for a balanced diet with plenty of fruits, vegetables, whole grains, and lean proteins.
-          </Text>
-        </View>
-
-        <View style={styles.card}>
-          <Text style={styles.title}>Essential Nutrients</Text>
-          <View style={styles.nutrientItem}>
-            <Text style={styles.nutrientTitle}>Folic Acid</Text>
-            <Text style={styles.text}>Crucial for baby's neural tube development.</Text>
-          </View>
-          <View style={styles.nutrientItem}>
-            <Text style={styles.nutrientTitle}>Iron</Text>
-            <Text style={styles.text}>Helps red blood cells deliver oxygen to your baby.</Text>
-          </View>
-          <View style={styles.nutrientItem}>
-            <Text style={styles.nutrientTitle}>Calcium</Text>
-            <Text style={styles.text}>Builds strong bones and teeth.</Text>
-          </View>
-        </View>
-
-        <TouchableOpacity 
-          style={styles.dosDontsButton}
-          onPress={() => navigation.navigate('DosDonts')}
-        >
-          <LinearGradient
-            colors={['#FF6B9D', '#FF8EQA']} 
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.buttonGradient}
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <Text style={styles.introLine}>
+          Eat well for you and your baby—pick a topic below.
+        </Text>
+        {buttons.map((btn) => (
+          <TouchableOpacity
+            key={btn.title}
+            style={styles.card}
+            onPress={() => {
+              if (btn.title === 'Cravings') {
+                navigation.navigate('Cravings', { pregnancyWeek, userEmail });
+              } else if (btn.title === 'Trimester Guide') {
+                navigation.navigate('TrimesterNutrition', { pregnancyWeek, userEmail });
+              } else if (btn.title === 'Food Safety & Hygiene') {
+                navigation.navigate('FoodSafety');
+              } else if (btn.title === 'Cultural Remedies') {
+                navigation.navigate('CulturalRemedies');
+              }
+            }}
           >
-            <Text style={styles.buttonText}>Check Food Do's & Don'ts</Text>
-            <MaterialCommunityIcons name="chevron-right" size={24} color="#FFFFFF" />
-          </LinearGradient>
-        </TouchableOpacity>
+            <View style={[styles.iconCircle, { backgroundColor: btn.color + '22' }]}>
+              <MaterialCommunityIcons name={btn.icon} size={24} color={btn.color} />
+            </View>
+            <Text style={styles.cardTitle}>{btn.title}</Text>
+            <MaterialCommunityIcons name="chevron-right" size={24} color="#636E72" />
+          </TouchableOpacity>
+        ))}
       </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-  },
+  container: { flex: 1, backgroundColor: '#FFFFFF' },
   header: {
     paddingTop: 50,
     paddingBottom: 15,
@@ -75,66 +70,38 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    elevation: 4,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
   },
-  backButton: {
-    padding: 5,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-  },
-  headerSpacer: {
-    width: 34,
-  },
-  content: {
-    padding: 20,
+  backButton: { padding: 5 },
+  headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#6C5CE7', flex: 1, textAlign: 'center' },
+  headerSpacer: { width: 24 },
+  scrollView: { flex: 1 },
+  scrollContent: { padding: 20, paddingBottom: 30 },
+  introLine: {
+    fontSize: 15,
+    color: '#636E72',
+    marginBottom: 18,
+    textAlign: 'center',
   },
   card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 15,
-    padding: 20,
-    marginBottom: 20,
-    elevation: 2,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#6C5CE7',
-    marginBottom: 10,
-  },
-  text: {
-    fontSize: 16,
-    color: '#2D3436',
-    lineHeight: 24,
-  },
-  nutrientItem: {
-    marginBottom: 15,
-  },
-  nutrientTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#2D3436',
-    marginBottom: 5,
-  },
-  dosDontsButton: {
-    marginTop: 10,
+    backgroundColor: '#F5F5F5',
     borderRadius: 12,
-    overflow: 'hidden',
-    elevation: 3,
-  },
-  buttonGradient: {
+    padding: 16,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 15,
+    marginBottom: 12,
   },
-  buttonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: 'bold',
+  iconCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 14,
   },
+  cardTitle: { flex: 1, fontSize: 16, fontWeight: '700', color: '#2D3436' },
 });
 
 export default NutritionGuideScreen;

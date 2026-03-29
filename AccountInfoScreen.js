@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator, Modal } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { API_BASE_URL } from './apiConfig';
@@ -9,6 +9,8 @@ const AccountInfoScreen = ({ navigation, route }) => {
   const userEmail = route.params?.userEmail;
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const [userData, setUserData] = useState({
     name: '',
     age: '',
@@ -26,7 +28,6 @@ const AccountInfoScreen = ({ navigation, route }) => {
   const fetchUserData = async () => {
     if (!userEmail) {
       console.error('userEmail is not provided');
-      Alert.alert('Error', 'User email is missing. Please login again.');
       setLoading(false);
       return;
     }
@@ -67,21 +68,31 @@ const AccountInfoScreen = ({ navigation, route }) => {
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
-      Alert.alert('Error', `Failed to load user information: ${error.message}`);
     } finally {
       setLoading(false);
     }
   };
 
+  // Validate Pakistani mobile number
+  const validatePakistaniMobile = (phone) => {
+    if (!phone) {
+      return { valid: false, message: 'Phone number is required' };
+    }
+    // Pakistani phone numbers: 10-11 digits (can include +92, 0, etc.)
+    const cleanedPhone = phone.replace(/\D/g, '');
+    if (cleanedPhone.length < 10 || cleanedPhone.length > 11) {
+      return { valid: false, message: 'Phone number must be 10-11 digits' };
+    }
+    return { valid: true };
+  };
+
   const handleUpdate = async () => {
     if (!userData.name || !userData.age || !userData.email || !userData.phone) {
-      Alert.alert('Error', 'Please fill in all required fields');
       return;
     }
 
     // Name should not contain numbers or special characters
     if (!/^[A-Za-z\s]+$/.test(userData.name.trim())) {
-      Alert.alert('Error', 'Name must only contain letters and spaces');
       return;
     }
 
@@ -89,14 +100,12 @@ const AccountInfoScreen = ({ navigation, route }) => {
     const emailTrimmed = userData.email ? userData.email.trim() : '';
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(emailTrimmed)) {
-      Alert.alert('Error', 'Please enter a valid email address');
       return;
     }
 
     // Pakistani mobile number validation
     const phoneCheck = validatePakistaniMobile(userData.phone);
     if (!phoneCheck.valid) {
-      Alert.alert('Error', phoneCheck.message);
       return;
     }
 
@@ -106,24 +115,32 @@ const AccountInfoScreen = ({ navigation, route }) => {
     const pregnancyWeekNum = userData.pregnancyWeek ? parseInt(userData.pregnancyWeek) : undefined;
 
     if (isNaN(ageNum) || ageNum < 1 || ageNum > 100) {
-      Alert.alert('Error', 'Please enter a valid age');
       return;
     }
 
     if (userData.height && (isNaN(heightNum) || heightNum < 50 || heightNum > 250)) {
-      Alert.alert('Error', 'Please enter a valid height (in cm, between 50-250)');
       return;
     }
 
     if (userData.weight && (isNaN(weightNum) || weightNum < 20 || weightNum > 200)) {
-      Alert.alert('Error', 'Please enter a valid weight (in kg, between 20-200)');
       return;
     }
 
     if (pregnancyWeekNum && (pregnancyWeekNum < 1 || pregnancyWeekNum > 38)) {
-      Alert.alert('Error', 'Pregnancy week must be between 1 and 38');
       return;
     }
+
+    // All validations passed, show confirmation modal
+    setShowConfirmModal(true);
+  };
+
+  const confirmUpdate = async () => {
+    setIsUpdating(true);
+    
+    const ageNum = parseInt(userData.age);
+    const heightNum = userData.height ? parseFloat(userData.height) : undefined;
+    const weightNum = userData.weight ? parseFloat(userData.weight) : undefined;
+    const pregnancyWeekNum = userData.pregnancyWeek ? parseInt(userData.pregnancyWeek) : undefined;
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/update-user`, {
@@ -146,21 +163,23 @@ const AccountInfoScreen = ({ navigation, route }) => {
       if (!contentType || !contentType.includes('application/json')) {
         const text = await response.text();
         console.error('Non-JSON response:', text);
-        Alert.alert('Error', 'Server returned invalid response');
         return;
       }
 
       const data = await response.json();
 
       if (data.success) {
-        Alert.alert('Success', 'Profile updated successfully!');
+        setShowConfirmModal(false);
         setEditing(false);
+        fetchUserData();
       } else {
-        Alert.alert('Error', data.message || 'Failed to update profile');
+        setShowConfirmModal(false);
       }
     } catch (error) {
       console.error('Update error:', error);
-      Alert.alert('Error', `Network error: ${error.message}`);
+      setShowConfirmModal(false);
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -186,11 +205,11 @@ const AccountInfoScreen = ({ navigation, route }) => {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Manage Profile</Text>
         <TouchableOpacity
-          onPress={() => editing ? handleUpdate() : setEditing(true)}
+          onPress={() => setEditing(!editing)}
           style={styles.editButton}
         >
           <MaterialCommunityIcons
-            name={editing ? 'check' : 'pencil'}
+            name={editing ? 'close' : 'pencil'}
             size={20}
             color="#FFFFFF"
           />
@@ -216,6 +235,16 @@ const AccountInfoScreen = ({ navigation, route }) => {
             {editing ? 'Edit your information below' : 'View your account information'}
           </Text>
         </View>
+
+        {!editing && (
+          <TouchableOpacity
+            style={styles.changePasswordButton}
+            onPress={() => navigation.navigate('ChangePassword', { userEmail })}
+          >
+            <MaterialCommunityIcons name="lock-reset" size={20} color="#FFFFFF" />
+            <Text style={styles.changePasswordButtonText}>Change Password</Text>
+          </TouchableOpacity>
+        )}
 
         <View style={styles.infoCard}>
           <View style={styles.infoRow}>
@@ -337,17 +366,63 @@ const AccountInfoScreen = ({ navigation, route }) => {
         </View>
 
         {editing && (
-          <TouchableOpacity
-            style={styles.cancelButton}
-            onPress={() => {
-              setEditing(false);
-              fetchUserData();
-            }}
-          >
-            <Text style={styles.cancelButtonText}>Cancel</Text>
-          </TouchableOpacity>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={styles.saveButton}
+              onPress={handleUpdate}
+            >
+              <Text style={styles.saveButtonText}>Save Changes</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={() => {
+                setEditing(false);
+                fetchUserData();
+              }}
+            >
+              <Text style={styles.cancelButtonText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
         )}
       </ScrollView>
+
+      {/* Confirmation Modal */}
+      <Modal
+        transparent={true}
+        visible={showConfirmModal}
+        animationType="fade"
+        onRequestClose={() => setShowConfirmModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <MaterialCommunityIcons name="check-circle" size={50} color="#FF6B9D" />
+            <Text style={styles.modalTitle}>Confirm Changes</Text>
+            <Text style={styles.modalMessage}>
+              Are you sure you want to save these changes to your profile?
+            </Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.modalButtonNo]}
+                onPress={() => setShowConfirmModal(false)}
+                disabled={isUpdating}
+              >
+                <Text style={styles.modalButtonNoText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.modalButtonYes]}
+                onPress={confirmUpdate}
+                disabled={isUpdating}
+              >
+                {isUpdating ? (
+                  <ActivityIndicator size="small" color="#FFFFFF" />
+                ) : (
+                  <Text style={styles.modalButtonYesText}>Yes, Save</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
       <FloatingChatButton navigation={navigation} userEmail={route.params?.userEmail} />
     </View>
   );
@@ -479,6 +554,107 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#636E72',
+  },
+  // Save/Cancel Button Container
+  buttonContainer: {
+    marginTop: 20,
+    gap: 12,
+  },
+  saveButton: {
+    paddingVertical: 15,
+    backgroundColor: '#FF6B9D',
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  saveButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  changePasswordButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FF6B9D',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    marginVertical: 15,
+    shadowColor: '#FF6B9D',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  changePasswordButtonText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    marginLeft: 8,
+  },
+  // Confirmation Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalBox: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 30,
+    width: '80%',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 10,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2D3436',
+    marginTop: 12,
+    marginBottom: 8,
+  },
+  modalMessage: {
+    fontSize: 14,
+    color: '#636E72',
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 24,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    gap: 12,
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
+  modalButton: {
+    flex: 1,
+    minWidth: 100,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  modalButtonNo: {
+    backgroundColor: '#F0F0F0',
+  },
+  modalButtonYes: {
+    backgroundColor: '#FF6B9D',
+  },
+  modalButtonNoText: {
+    color: '#2D3436',
+    fontWeight: '600',
+    fontSize: 15,
+  },
+  modalButtonYesText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+    fontSize: 15,
+    textAlign: 'center',
   },
 });
 
