@@ -21,7 +21,7 @@
     "clsx": "^2.1.1",
     "cors": "latest",
     "dotenv": "latest",
-    "expo": "latest",
+    "expo": "^55.0.9",
     "expo-font": "latest",
     "expo-linear-gradient": "latest",
     "expo-notifications": "latest",
