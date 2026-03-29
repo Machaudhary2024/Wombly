@@ -13,8 +13,14 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Sensors from 'expo-sensors';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const { width } = Dimensions.get('window');
+const ACTIVITY_STORAGE_KEY = 'activityTrackerData';
+
+const getTodayKey = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
 
 const ActivityTrackingScreen = ({ navigation, route }) => {
   const [steps, setSteps] = useState(0);
@@ -27,11 +33,42 @@ const ActivityTrackingScreen = ({ navigation, route }) => {
   const [showDisclaimer, setShowDisclaimer] = useState(false);
   const [encouragementMessage, setEncouragementMessage] = useState('');
   const [isTracking, setIsTracking] = useState(true);
-  
+  const [loaded, setLoaded] = useState(false);
+
   const accelerometerSubscription = useRef(null);
   const stepCountRef = useRef(0);
   const lastStepTime = useRef(Date.now());
   const accelerationHistory = useRef([]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const raw = await AsyncStorage.getItem(ACTIVITY_STORAGE_KEY);
+        const today = getTodayKey();
+        if (raw) {
+          const data = JSON.parse(raw);
+          if (data.date === today) {
+            const s = data.steps ?? 0;
+            const g = data.dailyGoal ?? 5000;
+            setSteps(s);
+            setDailyGoal(g);
+            stepCountRef.current = s;
+          }
+        }
+      } catch (e) {}
+      setLoaded(true);
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (!loaded) return;
+    const today = getTodayKey();
+    AsyncStorage.setItem(ACTIVITY_STORAGE_KEY, JSON.stringify({
+      date: today,
+      steps,
+      dailyGoal,
+    })).catch(() => {});
+  }, [steps, dailyGoal, loaded]);
 
   useEffect(() => {
     if (isTracking) {
@@ -92,10 +129,10 @@ const ActivityTrackingScreen = ({ navigation, route }) => {
 
     const avg = accelerationHistory.current.reduce((sum, v) => sum + v, 0) / accelerationHistory.current.length;
     const variance = accelerationHistory.current.reduce((sum, v) => sum + Math.pow(v - avg, 2), 0) / accelerationHistory.current.length;
-    const dynamicThreshold = Math.max(0.08, Math.min(0.2, avg + Math.sqrt(variance) * 1.2));
+    const dynamicThreshold = Math.max(0.12, Math.min(0.25, avg + Math.sqrt(variance) * 1.8));
     const timeSinceLastStep = now - lastStepTime.current;
 
-    if (adjusted > dynamicThreshold && timeSinceLastStep > 250) {
+    if (adjusted > dynamicThreshold && timeSinceLastStep > 480) {
       stepCountRef.current += 1;
       lastStepTime.current = now;
       setSteps(stepCountRef.current);
