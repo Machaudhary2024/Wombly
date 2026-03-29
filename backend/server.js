@@ -12,6 +12,9 @@ const entertainmentService = require("./services/entertainmentService")
 const app = express()
 const PORT = process.env.PORT || 5000
 
+// Chatbot Logs
+const ChatLog = require("./models/ChatLog");
+
 // Middleware
 app.use(cors())
 app.use(express.json())
@@ -348,6 +351,163 @@ app.post("/api/resend-otp", async (req, res) => {
   }
 })
 
+// Forgot Password: Send OTP to verified user's email
+app.post("/api/forgot-password", async (req, res) => {
+  try {
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(500).json({
+        success: false,
+        message: "Database connection not available",
+      })
+    }
+
+    const { email } = req.body
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      })
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase() })
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "No account found with this email address",
+      })
+    }
+
+    if (!user.isVerified) {
+      return res.status(403).json({
+        success: false,
+        message: "Account not verified. Please verify your email first.",
+      })
+    }
+
+    // Generate and send OTP using existing OTP service
+    const otp = otpService.generateOTP()
+    otpService.storeOTP(email.toLowerCase(), otp)
+
+    // Send OTP email with password reset context
+    try {
+      const nodemailer = require("nodemailer")
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASSWORD,
+        },
+      })
+
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email.toLowerCase(),
+        subject: "Wombly - Password Reset Verification Code",
+        html: `
+          <h2>Password Reset Request</h2>
+          <p>You requested to reset your password. Use the following verification code:</p>
+          <h1 style="color: #FF69B4; font-size: 32px; letter-spacing: 5px;">${otp}</h1>
+          <p>This code will expire in 5 minutes.</p>
+          <p>If you did not request a password reset, please ignore this email.</p>
+          <hr>
+          <p style="color: #666; font-size: 12px;">Wombly - Your Pregnancy Care Companion</p>
+        `,
+      }
+
+      await transporter.sendMail(mailOptions)
+      console.log(`Password reset OTP sent to ${email.toLowerCase()}: ${otp}`)
+    } catch (emailError) {
+      console.error("Error sending password reset email:", emailError)
+      // Still log OTP to console for development
+      console.log(`\n${"=".repeat(50)}`)
+      console.log(`Password Reset OTP for ${email.toLowerCase()}: ${otp}`)
+      console.log(`Valid for 5 minutes`)
+      console.log(`${"=".repeat(50)}\n`)
+    }
+
+    res.json({
+      success: true,
+      message: "Verification code sent to your email",
+    })
+  } catch (error) {
+    console.error("Forgot password error:", error)
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    })
+  }
+})
+
+// Reset Password - Verify OTP and update password
+app.post("/api/reset-password", async (req, res) => {
+  try {
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(500).json({
+        success: false,
+        message: "Database connection not available",
+      })
+    }
+
+    const { email, otp, newPassword } = req.body
+
+    if (!email || !otp || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Email, OTP, and new password are required",
+      })
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 6 characters",
+      })
+    }
+
+    // Verify OTP using existing OTP service
+    const verification = otpService.verifyOTP(email.toLowerCase(), otp)
+
+    if (!verification.valid) {
+      return res.status(400).json({
+        success: false,
+        message: verification.message,
+      })
+    }
+
+    // Update user's password
+    const user = await User.findOne({ email: email.toLowerCase() })
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      })
+    }
+
+    user.password = newPassword
+    user.otp = null
+    user.otpExpiry = null
+    user.otpAttempts = 0
+    await user.save()
+
+    console.log(`Password reset successfully for ${email.toLowerCase()}`)
+
+    res.json({
+      success: true,
+      message: "Password reset successfully. You can now login with your new password.",
+    })
+  } catch (error) {
+    console.error("Reset password error:", error)
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    })
+  }
+})
+
+
 // Update pregnancy week API endpoint
 app.post("/api/update-pregnancy-week", async (req, res) => {
   try {
@@ -521,6 +681,82 @@ app.post("/api/update-user", async (req, res) => {
   } catch (error) {
     console.error("Update user error:", error)
     res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    })
+  }
+})
+
+// Change Password Endpoint
+app.post("/api/change-password", async (req, res) => {
+  try {
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(500).json({
+        success: false,
+        message: "Database connection not available",
+      })
+    }
+
+    const { email, currentPassword, newPassword } = req.body
+
+    // Validate input
+    if (!email || !currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Email, current password, and new password are required",
+      })
+    }
+
+    // Find user by email
+    const user = await User.findOne({ email: email.toLowerCase().trim() })
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      })
+    }
+
+    // Verify current password (simple comparison since LoginScreen uses plain text comparison)
+    if (user.password !== currentPassword) {
+      return res.status(401).json({
+        success: false,
+        message: "Current password is incorrect",
+      })
+    }
+
+    // Validate new password requirements
+    const hasLetter = /[a-zA-Z]/.test(newPassword)
+    const hasNumber = /[0-9]/.test(newPassword)
+    const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(newPassword)
+
+    if (newPassword.length < 6 || !hasLetter || !hasNumber || !hasSpecialChar) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 6 characters with letters, numbers, and special characters",
+      })
+    }
+
+    // Ensure new password is different from current
+    if (newPassword === user.password) {
+      return res.status(400).json({
+        success: false,
+        message: "New password must be different from current password",
+      })
+    }
+
+    // Update password in database
+    user.password = newPassword
+    await user.save()
+
+    return res.json({
+      success: true,
+      message: "Password changed successfully",
+    })
+  } catch (error) {
+    console.error("Change password error:", error)
+    return res.status(500).json({
       success: false,
       message: "Internal server error",
       error: process.env.NODE_ENV === "development" ? error.message : undefined,
@@ -993,7 +1229,27 @@ const nutritionData = [
     category: "Meals",
     benefits: "Avoids foodborne illnesses",
     risks: "Unknown hygiene standards increase infection risk"
-  }
+  },
+  { id: 21, type: "Do", title: "Strawberry", category: "Fruit", benefits: "Rich in vitamin C and folate. Wash thoroughly before eating.", risks: "None if washed; avoid if allergic" },
+  { id: 22, type: "Do", title: "Banana", category: "Fruit", benefits: "Good source of potassium and vitamin B6. Easy to digest.", risks: "None in moderation" },
+  { id: 23, type: "Do", title: "Raspberry", category: "Fruit", benefits: "Fiber and vitamin C. Wash well before eating.", risks: "None if properly washed" },
+  { id: 24, type: "Do", title: "Radish", category: "Veggies", benefits: "Vitamin C and fiber. Eat cooked or well-washed raw.", risks: "Avoid unwashed raw; can cause gas in excess" },
+  { id: 25, type: "Do", title: "Apple", category: "Fruit", benefits: "Fiber and vitamin C. Wash skin well or peel.", risks: "None if washed" },
+  { id: 26, type: "Do", title: "Orange", category: "Fruit", benefits: "Vitamin C and folate. Supports immunity.", risks: "None in moderation" },
+  { id: 27, type: "Do", title: "Spinach", category: "Veggies", benefits: "Iron and folate. Cook to reduce oxalates.", risks: "Wash well; cook to avoid bacteria" },
+  { id: 28, type: "Do", title: "Carrot", category: "Veggies", benefits: "Beta-carotene and fiber. Cooked or washed raw.", risks: "None if washed" },
+  { id: 29, type: "Do", title: "Broccoli", category: "Veggies", benefits: "Folate, calcium, and fiber. Cook lightly.", risks: "None if washed and cooked" },
+  { id: 30, type: "Do", title: "Chicken", category: "Meat", benefits: "Lean protein. Eat fully cooked only.", risks: "Undercooked chicken risks salmonella" },
+  { id: 31, type: "Don't", title: "Raw Chicken or Undercooked Poultry", category: "Meat", benefits: "Avoiding prevents salmonella.", risks: "Food poisoning and harm to baby" },
+  { id: 32, type: "Do", title: "Salmon", category: "Meat", benefits: "Omega-3 for baby brain development. Choose cooked, low-mercury.", risks: "Avoid raw; limit high-mercury fish" },
+  { id: 33, type: "Do", title: "Lentils", category: "Grains", benefits: "Protein and iron. Safe and nutritious.", risks: "None" },
+  { id: 34, type: "Do", title: "Sweet Potato", category: "Veggies", benefits: "Beta-carotene and fiber. Cook well.", risks: "None" },
+  { id: 35, type: "Do", title: "Avocado", category: "Fruit", benefits: "Healthy fats and folate.", risks: "None in moderation" },
+  { id: 36, type: "Do", title: "Tomato", category: "Veggies", benefits: "Lycopene and vitamin C. Wash well.", risks: "None if washed" },
+  { id: 37, type: "Do", title: "Cucumber", category: "Veggies", benefits: "Hydration and vitamins. Wash or peel.", risks: "Wash well to avoid bacteria" },
+  { id: 38, type: "Do", title: "Blueberry", category: "Fruit", benefits: "Antioxidants and vitamin C. Wash before eating.", risks: "None if washed" },
+  { id: 39, type: "Do", title: "Lean Beef", category: "Meat", benefits: "Iron and protein. Must be well cooked.", risks: "Undercooked beef risks toxoplasmosis" },
+  { id: 40, type: "Don't", title: "Raw or Rare Beef", category: "Meat", benefits: "Avoiding prevents toxoplasmosis.", risks: "Parasitic infection harmful to fetus" }
 ];
 
 // Nutrition Do's and Don'ts endpoint
@@ -1049,3 +1305,153 @@ app.get("/api/test-signup", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`)
 })
+
+
+// ============== CHATBOT IMPLEMENTEATION BY KASHAF ==============
+
+// const Anthropic = require("@anthropic-ai/sdk");
+// const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+// using GROQ because its free
+const Groq = require("groq-sdk");
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+
+app.post("/api/chat", async (req, res) => {
+  try {
+    const { email, message, conversationHistory = [] } = req.body;
+
+    if (!email || !message) {
+      return res.status(400).json({ success: false, message: "Email and message are required" });
+    }
+
+    // Fetch user's real data from MongoDB
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    // Calculate current pregnancy week
+    const currentWeek = calculateCurrentWeek(user);
+
+    // Build a personalized system prompt using their actual data
+    const systemPrompt = `You are WOMBLY, a warm and knowledgeable maternal health assistant.
+
+Here is the profile of the mother you are speaking with:
+- Name: ${user.name}
+- Age: ${user.age} years old
+- Height: ${user.height ? user.height + " cm" : "not provided"}
+- Weight: ${user.weight ? user.weight + " kg" : "not provided"}
+- Current Pregnancy Week: ${currentWeek ? "Week " + currentWeek : "not specified (may be postpartum or pre-pregnancy)"}
+
+Your job:
+- Use this data to give PERSONALIZED advice, not generic answers
+- If she is in week ${currentWeek}, tell her what is happening to her baby and body THIS week
+- Track what she tells you in the conversation (symptoms, mood, concerns) and respond accordingly
+- Be warm, supportive, and encouraging — like a knowledgeable friend
+- Always remind her to consult her doctor for medical decisions
+- Keep responses concise and clear, avoid overwhelming her with too much text at once
+- If she mentions symptoms like bleeding, severe pain, or fever, urge her to contact her doctor immediately`;
+
+    // Build messages array with conversation history for multi-turn memory
+    const messages = [
+      ...conversationHistory.map(msg => ({
+        role: msg.sender === "user" ? "user" : "assistant",
+        content: msg.text,
+      })),
+      { role: "user", content: message },
+    ];
+
+    // Call GROQ API
+    const response = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      max_tokens: 1024,
+      messages: [
+        { role: "system", content: systemPrompt },
+        ...messages,
+      ],
+    });
+
+    const reply = response.choices[0].message.content;
+
+    // Store conversation in MongoDB
+    try {
+      await ChatLog.create({
+        userEmail: email.toLowerCase(),
+        message,
+        reply,                          
+        pregnancyWeekAtTime: currentWeek,
+      });
+    } catch (dbError) {
+      console.error("Error saving chat log:", dbError);
+      // Continue anyway - don't fail the response if logging fails
+    }
+
+    res.json({ success: true, reply }); 
+        
+  } catch (error) {
+    console.error("Chat error:", error);
+    res.status(500).json({ 
+      success: false, 
+      message: "Failed to get AI response",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined
+    });
+  }
+});
+
+// To preserve chatbot history
+app.get("/api/chat-history", async (req, res) => {
+  try {
+    const { email } = req.query;
+    if (!email) {
+      return res.status(400).json({ success: false, message: "Email is required" });
+    }
+
+    const emailLower = email.toLowerCase();
+    console.log(`Fetching chat history for: ${emailLower}`);
+
+    const logs = await ChatLog.find({ userEmail: emailLower })
+      .sort({ createdAt: 1 })
+      .limit(50);
+
+    console.log(`Found ${logs.length} chat logs for ${emailLower}`);
+
+    // Convert to the message format your frontend expects
+    const messages = [];
+    logs.forEach((log, index) => {
+      messages.push({
+        id: index * 2 + 1,
+        text: log.message,
+        sender: "user",
+        timestamp: log.createdAt,
+      });
+      messages.push({
+        id: index * 2 + 2,
+        text: log.reply,
+        sender: "bot",
+        timestamp: log.createdAt,
+      });
+    });
+
+    res.json({ success: true, messages, count: messages.length });
+  } catch (error) {
+    console.error("Chat history error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch chat history",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+});
+
+// Delete chat history
+app.delete("/api/chat-history", async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ success: false, message: "Email is required" });
+
+    await ChatLog.deleteMany({ userEmail: email.toLowerCase() });
+
+    res.json({ success: true, message: "Chat history cleared" });
+  } catch (error) {
+    console.error("Clear chat error:", error);
+    res.status(500).json({ success: false, message: "Failed to clear chat history" });
+  }
+});

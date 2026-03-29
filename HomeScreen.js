@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated, Dimensions } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated, Dimensions, Modal } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import FloatingChatButton from './components/FloatingChatButton';
@@ -9,6 +9,8 @@ const { width, height } = Dimensions.get('window');
 const HomeScreen = ({ navigation, route }) => {
   const userName = route.params?.userName || 'User';
   const userEmail = route.params?.userEmail;
+
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   // Animation refs for floating elements
   const floatAnim1 = useRef(new Animated.Value(0)).current;
@@ -79,7 +81,12 @@ const HomeScreen = ({ navigation, route }) => {
   });
 
   const handleLogout = () => {
-    navigation.goBack();
+    setShowLogoutModal(true);
+  };
+
+  const confirmLogout = () => {
+    setShowLogoutModal(false);
+    navigation.navigate('Login');
   };
 
   const handleManageProfile = () => {
@@ -257,6 +264,43 @@ const HomeScreen = ({ navigation, route }) => {
         </TouchableOpacity>
       </ScrollView>
       <FloatingChatButton navigation={navigation} userEmail={userEmail} userName={userName} />
+
+      {/* 
+      Logout Confirmation Modal: We made a custom modal because the 
+       The React Alert API has limitations and doesn't work reliably on all platforms.
+       It was disabling the logout button overall. Same approach has been used in AIChatScreen
+       P.S Kashaf <3
+       */}
+      <Modal
+        transparent={true}
+        visible={showLogoutModal}
+        animationType="fade"
+        onRequestClose={() => setShowLogoutModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <MaterialCommunityIcons name="logout" size={40} color="#FF6B9D" />
+            <Text style={styles.modalTitle}>Logout</Text>
+            <Text style={styles.modalMessage}>
+              Are you sure you want to logout? You will need to sign in again to access your account.
+            </Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.modalButtonNo]}
+                onPress={() => setShowLogoutModal(false)}
+              >
+                <Text style={styles.modalButtonNoText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.modalButtonYes]}
+                onPress={confirmLogout}
+              >
+                <Text style={styles.modalButtonYesText}>Logout</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </LinearGradient>
   );
 };
@@ -489,6 +533,70 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     marginLeft: 8,
+  },
+  // Logout Confirmation Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalBox: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 30,
+    width: '80%',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 10,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2D3436',
+    marginTop: 12,
+    marginBottom: 8,
+  },
+  modalMessage: {
+    fontSize: 14,
+    color: '#636E72',
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 24,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    gap: 12,
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
+  modalButton: {
+    flex: 1,
+    minWidth: 100,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  modalButtonNo: {
+    backgroundColor: '#F0F0F0',
+  },
+  modalButtonYes: {
+    backgroundColor: '#FF6B9D',
+  },
+  modalButtonNoText: {
+    color: '#2D3436',
+    fontWeight: '600',
+    fontSize: 15,
+  },
+  modalButtonYesText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+    fontSize: 15,
+    textAlign: 'center',
   },
 });
 
