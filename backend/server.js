@@ -20,9 +20,10 @@ app.use(cors())
 app.use(express.json())
 
 // MongoDB Connection
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/wombly"
 mongoose
-  .connect("mongodb://localhost:27017/wombly")
-  .then(() => console.log("MongoDB connected successfully"))
+  .connect(MONGODB_URI)
+  .then(() => console.log("MongoDB connected successfully to:", MONGODB_URI))
   .catch((err) => console.error("MongoDB connection error:", err))
 
 // Helper function to calculate current pregnancy week
