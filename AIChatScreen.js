@@ -35,7 +35,6 @@ const AIChatScreen = ({ navigation, route }) => {
   const userName = route.params?.userName || 'User';
 
   const [showClearModal, setShowClearModal] = useState(false); // for deleting chat history confirmation custom pop-up
-
   useEffect(() => {
     // Scroll to bottom when messages update
     setTimeout(() => {
@@ -180,9 +179,9 @@ const AIChatScreen = ({ navigation, route }) => {
     </View>
 
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.keyboardAvoidingView}
-        keyboardVerticalOffset={80}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
       >
         <ScrollView
           ref={scrollViewRef}

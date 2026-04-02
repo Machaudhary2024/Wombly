@@ -92,6 +92,7 @@ const DosDontsScreen = ({ navigation }) => {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
+        style={styles.categoryScroll}
         contentContainerStyle={styles.categoryRow}
       >
         {categories.map((cat) => (
@@ -156,6 +157,7 @@ const DosDontsScreen = ({ navigation }) => {
           </TouchableOpacity>
         ))}
       </ScrollView>
+      <FloatingChatButton navigation={navigation} />
     </View>
   );
 };
@@ -199,9 +201,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
   },
+  categoryScroll: {
+    flexGrow: 0,
+    flexShrink: 0,
+  },
   categoryRow: {
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 10,
+    alignItems: 'center',
   },
   categoryChip: {
     paddingVertical: 8,
@@ -216,7 +223,7 @@ const styles = StyleSheet.create({
   categoryText: { fontSize: 13, color: '#2D3436', fontWeight: '600' },
   categoryTextActive: { color: '#FFFFFF' },
   list: { flex: 1 },
-  listContent: { paddingHorizontal: 16, paddingBottom: 24 },
+  listContent: { paddingHorizontal: 16, paddingBottom: 90 },
   loadingRow: { flexDirection: 'row', alignItems: 'center', marginTop: 20 },
   loadingText: { marginLeft: 10, color: '#636E72' },
   errorText: { color: '#F44336', marginVertical: 12 },

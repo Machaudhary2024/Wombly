@@ -471,6 +471,7 @@ const ActivityTrackingScreen = ({ navigation, route }) => {
           </View>
         </Modal>
       </LinearGradient>
+      <FloatingChatButton navigation={navigation} />
     </View>
   );
 };
@@ -511,6 +512,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 20,
+    paddingBottom: 90,
   },
   mainCard: {
     backgroundColor: '#FFFFFF',

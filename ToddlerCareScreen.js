@@ -6,6 +6,7 @@ import FloatingChatButton from './components/FloatingChatButton';
 
 const ToddlerCareScreen = ({ navigation, route }) => {
   const userName = route.params?.userName || '';
+  const userEmail = route.params?.userEmail;
   const features = [
     {
       id: 1,
@@ -90,13 +91,13 @@ const ToddlerCareScreen = ({ navigation, route }) => {
             activeOpacity={0.85}
             onPress={() => {
               if (feature.screen === 'EntertainmentModule') {
-                navigation.navigate('EntertainmentModule');
+                navigation.navigate('EntertainmentModule', { userEmail, userName });
               } else if (feature.screen === 'ToddlerMeals') {
-                navigation.navigate('ToddlerMeals');
+                navigation.navigate('ToddlerMeals', { userEmail, userName });
               } else if (feature.screen === 'FirstAidGuidance') {
-                navigation.navigate('FirstAidGuidance');
+                navigation.navigate('FirstAidGuidance', { userEmail, userName });
               } else if (feature.screen === 'HygieneGuidance') {
-                navigation.navigate('HygieneGuidance');
+                navigation.navigate('HygieneGuidance', { userEmail, userName });
               }
               console.log(`Navigate to ${feature.screen}`);
             }}
@@ -145,7 +146,7 @@ const ToddlerCareScreen = ({ navigation, route }) => {
           </LinearGradient>
         </View>
       </ScrollView>
-      <FloatingChatButton navigation={navigation} />
+      <FloatingChatButton navigation={navigation} userEmail={userEmail} userName={userName} />
     </View>
   );
 };
@@ -186,7 +187,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 20,
-    paddingBottom: 30,
+    paddingBottom: 90,
   },
   subtitle: {
     fontSize: 16,

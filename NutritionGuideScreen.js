@@ -59,6 +59,7 @@ const NutritionGuideScreen = ({ navigation, route }) => {
           </TouchableOpacity>
         ))}
       </ScrollView>
+      <FloatingChatButton navigation={navigation} />
     </View>
   );
 };
@@ -80,7 +81,7 @@ const styles = StyleSheet.create({
   headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#6C5CE7', flex: 1, textAlign: 'center' },
   headerSpacer: { width: 24 },
   scrollView: { flex: 1 },
-  scrollContent: { padding: 20, paddingBottom: 30 },
+  scrollContent: { padding: 20, paddingBottom: 90 },
   introLine: {
     fontSize: 15,
     color: '#636E72',

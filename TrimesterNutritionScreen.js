@@ -218,6 +218,7 @@ const TrimesterNutritionScreen = ({ navigation, route }) => {
         ))}
         <View style={styles.bottomSpacer} />
       </ScrollView>
+      <FloatingChatButton navigation={navigation} />
     </View>
   );
 };
@@ -241,7 +242,7 @@ const styles = StyleSheet.create({
   },
   headerSpacer: { width: 40 },
   scroll: { flex: 1 },
-  scrollContent: { padding: 20, paddingBottom: 40 },
+  scrollContent: { padding: 20, paddingBottom: 90 },
   youAreHere: {
     flexDirection: 'row',
     alignItems: 'center',

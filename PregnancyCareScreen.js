@@ -204,6 +204,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 15,
+    paddingBottom: 90,
   },
   subBannerWrap: {
     paddingHorizontal: 15,

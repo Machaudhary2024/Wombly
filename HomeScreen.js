@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated, Dimensions, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated, Dimensions, Modal, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -18,6 +18,10 @@ const HomeScreen = ({ navigation, route }) => {
 
   // Start floating animations
   useEffect(() => {
+    if (Platform.OS === 'android') {
+      return;
+    }
+
     Animated.loop(
       Animated.sequence([
         Animated.timing(floatAnim1, {
@@ -62,21 +66,21 @@ const HomeScreen = ({ navigation, route }) => {
         }),
       ])
     ).start();
-  }, []);
+  }, [floatAnim1, floatAnim2, floatAnim3]);
 
   const translateY1 = floatAnim1.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, -15],
+    outputRange: Platform.OS === 'android' ? [0, 0] : [0, -15],
   });
 
   const translateY2 = floatAnim2.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, -18],
+    outputRange: Platform.OS === 'android' ? [0, 0] : [0, -18],
   });
 
   const translateY3 = floatAnim3.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, -12],
+    outputRange: Platform.OS === 'android' ? [0, 0] : [0, -12],
   });
 
   const handleLogout = () => {
@@ -203,7 +207,8 @@ const HomeScreen = ({ navigation, route }) => {
           style={styles.card} 
           activeOpacity={0.85}
           onPress={() => navigation.navigate('ToddlerCare', { 
-            userEmail: route.params?.userEmail
+            userEmail: route.params?.userEmail,
+            userName: userName,
           })}
         >
           <LinearGradient
@@ -432,7 +437,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   scrollContent: {
-    paddingBottom: 40,
+    paddingBottom: 90,
   },
   // Cards
   card: {

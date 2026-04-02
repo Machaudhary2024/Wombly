@@ -345,6 +345,7 @@ const PostpartumRecoveryScreen = ({ navigation }) => {
 
         <View style={styles.bottomSpacer} />
       </ScrollView>
+      <FloatingChatButton navigation={navigation} />
     </View>
   )
 }
@@ -433,6 +434,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 20,
+    paddingBottom: 90,
   },
   progressContainer: {
     backgroundColor: "#FFFFFF",

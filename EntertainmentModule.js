@@ -559,7 +559,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 20,
-    paddingBottom: 30,
+    paddingBottom: 90,
   },
   selectorContainer: {
     marginBottom: 24,

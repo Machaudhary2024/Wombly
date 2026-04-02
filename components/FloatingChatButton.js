@@ -1,14 +1,20 @@
-import React, { useEffect } from 'react';
-import { TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { TouchableOpacity, StyleSheet, Animated, Platform } from 'react-native';
+import { useRoute } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const FloatingChatButton = ({ navigation, userEmail, userName }) => {
-  const scaleAnim = new Animated.Value(1);
+  const route = useRoute();
+  const scaleAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
+    if (Platform.OS === 'android') {
+      return;
+    }
+
     // Pulsing animation
-    Animated.loop(
+    const pulseLoop = Animated.loop(
       Animated.sequence([
         Animated.timing(scaleAnim, {
           toValue: 1.1,
@@ -21,13 +27,22 @@ const FloatingChatButton = ({ navigation, userEmail, userName }) => {
           useNativeDriver: true,
         }),
       ])
-    ).start();
-  }, []);
+    );
+
+    pulseLoop.start();
+
+    return () => {
+      pulseLoop.stop();
+    };
+  }, [scaleAnim]);
 
   const handlePress = () => {
+    const resolvedUserEmail = userEmail || route.params?.userEmail;
+    const resolvedUserName = userName || route.params?.userName || 'User';
+
     navigation.navigate('AIChat', {
-      userEmail: userEmail || undefined,
-      userName: userName || 'User',
+      userEmail: resolvedUserEmail || undefined,
+      userName: resolvedUserName,
     });
   };
 
