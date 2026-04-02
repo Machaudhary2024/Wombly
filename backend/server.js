@@ -1303,6 +1303,49 @@ app.get("/api/test-signup", (req, res) => {
   res.json({ message: "Signup endpoint is available at POST /api/signup" })
 })
 
+// Root endpoint
+app.get("/", (req, res) => {
+  res.json({ success: true, message: "Wombly Backend Server is running", timestamp: new Date() })
+})
+
+// Health check endpoint
+app.get("/api/health", (req, res) => {
+  res.json({ 
+    success: true, 
+    message: "Server is healthy",
+    mongoDBStatus: mongoose.connection.readyState === 1 ? "connected" : "disconnected",
+    timestamp: new Date()
+  })
+})
+
+// Catch 404 and forward to error handler
+app.use((req, res, next) => {
+  res.status(404).json({ 
+    success: false, 
+    message: `Endpoint not found: ${req.method} ${req.path}`,
+    availableEndpoints: [
+      "POST /api/login",
+      "POST /api/signup",
+      "POST /api/verify-otp",
+      "POST /api/forgot-password",
+      "POST /api/reset-password",
+      "GET /api/nutrition/dos-donts",
+      "GET /api/health",
+      "GET /"
+    ]
+  })
+})
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error("Unhandled error:", err)
+  res.status(500).json({ 
+    success: false, 
+    message: "Internal Server Error",
+    error: process.env.NODE_ENV === "development" ? err.message : undefined
+  })
+})
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`)
 })

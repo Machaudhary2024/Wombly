@@ -52,8 +52,11 @@ const LoginScreen = ({ navigation }) => {
     }
 
     setLoading(true)
+    console.log('Login attempt with email:', email)
+    console.log('API Base URL:', API_BASE_URL)
 
     try {
+      console.log('Fetching from:', `${API_BASE_URL}/api/login`)
       const response = await fetch(`${API_BASE_URL}/api/login`, {
         method: "POST",
         headers: {
@@ -65,17 +68,12 @@ const LoginScreen = ({ navigation }) => {
         }),
       })
 
+      console.log('Response status:', response.status)
       const contentType = response.headers.get("content-type")
-      if (!contentType || !contentType.includes("application/json")) {
-        setErrorTitle("Error")
-        setErrorMessage("Server returned invalid response.")
-        setErrorType("error")
-        setShowErrorModal(true)
-        setLoading(false)
-        return
-      }
-
+      console.log('Content-Type:', contentType)
+      
       const data = await response.json()
+      console.log('Response data:', data)
 
       if (data.success) {
         setErrorTitle("Success")
@@ -105,8 +103,9 @@ const LoginScreen = ({ navigation }) => {
       }
     } catch (error) {
       console.error("Login error:", error)
-      setErrorTitle("Error")
-      setErrorMessage("Network error. Please try again.")
+      console.error("Error details:", error.message)
+      setErrorTitle("Connection Error")
+      setErrorMessage(`Cannot connect to server. ${error.message}`)
       setErrorType("error")
       setShowErrorModal(true)
     } finally {

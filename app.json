@@ -7,6 +7,7 @@
     "icon": "./assets/4.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "sdkVersion": "54.0.0",
     "splash": {
       "image": "./assets/4.png",
       "resizeMode": "contain",
@@ -24,6 +25,7 @@
     },
     "web": {
       "favicon": "./assets/4.png"
-    }
+    },
+    "scheme": "wombly"
   }
 }

@@ -85,6 +85,8 @@ const PregnancyCareScreen = ({ navigation, route }) => {
       navigation.navigate('SetReminders');
     } else if (module.title === 'Get Postpartum Guidance') {
       navigation.navigate('PostpartumRecovery');
+    } else if (module.title === 'Myths') {
+      navigation.navigate('Myths');
     } else {
       console.log('Other module pressed:', module.title);
     }

@@ -35,6 +35,22 @@ const SignUpScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [passwordStrength, setPasswordStrength] = useState({
+    hasMinLength: false,
+    hasNumber: false,
+    hasAlphabet: false,
+    hasSpecialChar: false,
+  })
+
+  // Check password strength in real-time
+  const checkPasswordStrength = (password) => {
+    setPasswordStrength({
+      hasMinLength: password.length >= 6,
+      hasNumber: /\d/.test(password),
+      hasAlphabet: /[a-zA-Z]/.test(password),
+      hasSpecialChar: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
+    })
+  }
 
   const validateForm = () => {
     const newErrors = {}
@@ -122,6 +138,10 @@ const SignUpScreen = ({ navigation }) => {
     setFormData({ ...formData, [field]: value })
     if (errors[field]) {
       setErrors({ ...errors, [field]: "" })
+    }
+    // Check password strength in real-time
+    if (field === "password") {
+      checkPasswordStrength(value)
     }
   }
 
@@ -260,6 +280,57 @@ const SignUpScreen = ({ navigation }) => {
               <View style={styles.errorRow}>
                 <MaterialCommunityIcons name="alert-circle" size={14} color="#F44336" />
                 <Text style={styles.errorText}>{errors.password}</Text>
+              </View>
+            )}
+            
+            {/* Password Strength Indicator */}
+            {formData.password.length > 0 && (
+              <View style={styles.passwordStrengthContainer}>
+                <Text style={styles.passwordStrengthTitle}>Password Requirements:</Text>
+                
+                <View style={styles.strengthRequirement}>
+                  <MaterialCommunityIcons
+                    name={passwordStrength.hasMinLength ? "check-circle" : "circle-outline"}
+                    size={18}
+                    color={passwordStrength.hasMinLength ? "#4CAF50" : "#BDBDBD"}
+                  />
+                  <Text style={[styles.strengthText, { color: passwordStrength.hasMinLength ? "#4CAF50" : "#757575" }]}>
+                    At least 6 characters
+                  </Text>
+                </View>
+
+                <View style={styles.strengthRequirement}>
+                  <MaterialCommunityIcons
+                    name={passwordStrength.hasAlphabet ? "check-circle" : "circle-outline"}
+                    size={18}
+                    color={passwordStrength.hasAlphabet ? "#4CAF50" : "#BDBDBD"}
+                  />
+                  <Text style={[styles.strengthText, { color: passwordStrength.hasAlphabet ? "#4CAF50" : "#757575" }]}>
+                    Contains letters (A-Z, a-z)
+                  </Text>
+                </View>
+
+                <View style={styles.strengthRequirement}>
+                  <MaterialCommunityIcons
+                    name={passwordStrength.hasNumber ? "check-circle" : "circle-outline"}
+                    size={18}
+                    color={passwordStrength.hasNumber ? "#4CAF50" : "#BDBDBD"}
+                  />
+                  <Text style={[styles.strengthText, { color: passwordStrength.hasNumber ? "#4CAF50" : "#757575" }]}>
+                    Contains number (0-9)
+                  </Text>
+                </View>
+
+                <View style={styles.strengthRequirement}>
+                  <MaterialCommunityIcons
+                    name={passwordStrength.hasSpecialChar ? "check-circle" : "circle-outline"}
+                    size={18}
+                    color={passwordStrength.hasSpecialChar ? "#4CAF50" : "#BDBDBD"}
+                  />
+                  <Text style={[styles.strengthText, { color: passwordStrength.hasSpecialChar ? "#4CAF50" : "#757575" }]}>
+                    Contains special character (!@#$%^&*)
+                  </Text>
+                </View>
               </View>
             )}
           </View>
@@ -481,6 +552,30 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#961e46",
     marginBottom: 12,
+  },
+  passwordStrengthContainer: {
+    marginTop: 12,
+    backgroundColor: "#F0F8FF",
+    borderRadius: 10,
+    padding: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: "#6C5CE7",
+  },
+  passwordStrengthTitle: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#6C5CE7",
+    marginBottom: 10,
+  },
+  strengthRequirement: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  strengthText: {
+    fontSize: 12,
+    marginLeft: 8,
+    fontWeight: "500",
   },
   okButton: {
     backgroundColor: "#eb4a7a",

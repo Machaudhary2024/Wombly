@@ -3,7 +3,6 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Activi
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { API_BASE_URL } from './apiConfig';
-import FloatingChatButton from './components/FloatingChatButton';
 
 const AccountInfoScreen = ({ navigation, route }) => {
   const userEmail = route.params?.userEmail;
@@ -423,7 +422,6 @@ const AccountInfoScreen = ({ navigation, route }) => {
           </View>
         </View>
       </Modal>
-      <FloatingChatButton navigation={navigation} userEmail={route.params?.userEmail} />
     </View>
   );
 };

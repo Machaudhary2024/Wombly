@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import FloatingChatButton from './components/FloatingChatButton';
 
 const SECTIONS = [
   {
@@ -94,6 +95,7 @@ const FoodSafetyScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <FloatingChatButton navigation={navigation} />
       <LinearGradient
         colors={['#FFE5F1', '#FFFFFF']}
         start={{ x: 0, y: 0 }}

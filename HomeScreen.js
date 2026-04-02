@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated, Dimensions, Modal } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import FloatingChatButton from './components/FloatingChatButton';
 
 const { width, height } = Dimensions.get('window');
 
@@ -263,7 +262,6 @@ const HomeScreen = ({ navigation, route }) => {
           </LinearGradient>
         </TouchableOpacity>
       </ScrollView>
-      <FloatingChatButton navigation={navigation} userEmail={userEmail} userName={userName} />
 
       {/* 
       Logout Confirmation Modal: We made a custom modal because the 

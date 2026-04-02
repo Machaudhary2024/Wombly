@@ -14,6 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Sensors from 'expo-sensors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import FloatingChatButton from './components/FloatingChatButton';
 
 const ACTIVITY_STORAGE_KEY = 'activityTrackerData';
 
@@ -238,6 +239,7 @@ const ActivityTrackingScreen = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
+      <FloatingChatButton navigation={navigation} />
       <LinearGradient
         colors={['#f0cfe3', '#de81fa']}
         start={{ x: 0, y: 0 }}
