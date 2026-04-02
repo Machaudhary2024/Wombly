@@ -6,18 +6,32 @@
 const isWeb = typeof window !== 'undefined';
 const isAndroidEmulator = typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.includes('Linux');
 
-let API_URL = 'http://10.106.209.126:5000'; // use your machine's IP address for both web and physical devices by default
+// Get machine IP from environment or use defaults
+// For development, you can set WOMBLY_API_URL environment variable
+let API_URL = process.env.WOMBLY_API_URL || 'http://10.11.117.126:5000';
 
 if (!isWeb) {
   // React Native environment
   if (isAndroidEmulator) {
     // Android emulator uses 10.0.2.2 to access host machine
-    API_URL = 'http://10.0.2.2:5000';
+    API_URL = process.env.WOMBLY_API_URL || 'http://10.0.2.2:5000';
   } else {
     // iOS simulator or physical device - use your machine IP
-    // Change 192.168.29.1 to your machine's IP if needed
-    API_URL = 'http://10.106.209.126:5000';
+    // To change: export WOMBLY_API_URL=http://YOUR_IP:5000 before running
+    API_URL = process.env.WOMBLY_API_URL || 'http://10.11.117.126:5000';
   }
+}
+
+// For web development with localhost
+if (isWeb && !process.env.WOMBLY_API_URL) {
+  // Try localhost first for web development
+  API_URL = 'http://localhost:5000';
+  console.log('Using localhost for web development. API URL:', API_URL);
+}
+
+// Add debugging info in development
+if (process.env.NODE_ENV !== 'production') {
+  console.log('API Configuration - Platform:', isWeb ? 'Web' : 'Mobile', ', Emulator:', isAndroidEmulator, ', API_URL:', API_URL);
 }
 
 export const API_BASE_URL = API_URL;

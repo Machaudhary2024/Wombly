@@ -44,20 +44,48 @@ const AIChatScreen = ({ navigation, route }) => {
 
   // ============ CHATBOT IMPLEMENTATION UPDATED CODE =============
   const getAIResponse = async (userMessage, updatedMessages) => {
-  // Send message + full conversation history for memory
-  const response = await fetch(`${BACKEND_URL}/api/chat`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email: userEmail,           // already passed via route.params
-      message: userMessage,
-      conversationHistory: updatedMessages, // sends full chat history so AI remembers context
-    }),
-  });
+    try {
+      // Send message + full conversation history for memory
+      const chatUrl = `${BACKEND_URL}/api/chat`;
+      console.log('Sending chat message to:', chatUrl);
+      console.log('User email:', userEmail);
+      
+      const response = await fetch(chatUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: userEmail,           // already passed via route.params
+          message: userMessage,
+          conversationHistory: updatedMessages, // sends full chat history so AI remembers context
+        }),
+        timeout: 15000, // 15 second timeout
+      });
 
-  const data = await response.json();
-  if (!data.success) throw new Error(data.message || "Failed to get AI response");
-  return data.reply;
+      console.log('Response status:', response.status);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log('Chat response:', data);
+      
+      if (!data.success) {
+        throw new Error(data.message || "Failed to get AI response");
+      }
+      
+      return data.reply;
+    } catch (error) {
+      console.error('Chat API Error:', error.message);
+      console.error('Error details:', error);
+      
+      // Provide more specific error messages
+      if (error.message.includes('Failed to fetch')) {
+        throw new Error('Cannot connect to server. Check your network and server status.');
+      }
+      
+      throw error;
+    }
   };
 
   // Update handleSendMessage to handle errors
@@ -79,6 +107,10 @@ const AIChatScreen = ({ navigation, route }) => {
     setIsLoading(true);
 
     try {
+      if (!userEmail) {
+        throw new Error("User email is missing. Please log in again.");
+      }
+
       const botResponse = await getAIResponse(inputText, updatedMessages);
       const newBotMessage = {
         id: updatedMessages.length + 1,
@@ -89,9 +121,16 @@ const AIChatScreen = ({ navigation, route }) => {
       setMessages((prev) => [...prev, newBotMessage]);
     } catch (error) {
       console.error("Chat error:", error);
+      let errorText = error.message;
+      
+      // Fallback to generic message if too technical
+      if (!errorText || errorText.includes('HTTP')) {
+        errorText = "Sorry, I'm having trouble connecting to the server. Please check your network connection and try again.";
+      }
+      
       const errorMessage = {
-        id: messages.length + 2,
-        text: "Sorry, I'm having trouble connecting right now. Please try again in a moment.",
+        id: updatedMessages.length + 1,
+        text: errorText || "Sorry, I'm having trouble connecting right now. Please try again in a moment.",
         sender: "bot",
         timestamp: new Date(),
       };
@@ -110,15 +149,31 @@ const AIChatScreen = ({ navigation, route }) => {
 
   // Function tp Load Chat History
   const loadChatHistory = async () => {
+    if (!userEmail) {
+      console.warn("Cannot load chat history: userEmail is missing");
+      return;
+    }
+
     try {
-      const response = await fetch(`${BACKEND_URL}/api/chat-history?email=${userEmail}`);
+      const historyUrl = `${BACKEND_URL}/api/chat-history?email=${encodeURIComponent(userEmail)}`;
+      console.log('Loading chat history from:', historyUrl);
+      
+      const response = await fetch(historyUrl);
+      
+      if (!response.ok) {
+        console.warn(`Failed to load chat history: HTTP ${response.status}`);
+        return;
+      }
+
       const data = await response.json();
 
-      if (data.success && data.messages.length > 0) {
+      if (data.success && data.messages && data.messages.length > 0) {
+        console.log('Loaded', data.messages.length, 'messages from history');
         setMessages(data.messages); // replaces the default welcome message with real history
       }
     } catch (error) {
       console.error("Failed to load chat history:", error);
+      // Don't throw - this is not critical, user can still chat
     }
   };
 

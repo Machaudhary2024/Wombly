@@ -935,7 +935,11 @@ app.get("/api/playlist-videos/:playlistId", async (req, res) => {
 app.get("/api/entertainment/lullabies", async (req, res) => {
   try {
     const maxResults = parseInt(req.query.maxResults) || 10;
-    const lullabies = await entertainmentService.getLullabies(maxResults);
+    const query = req.query.query || ''; // Optional search query
+
+    // Use new youtubeService function
+    const youtubeService = require("./services/youtubeService");
+    const lullabies = await youtubeService.getLullabyVideos(query, maxResults);
 
     res.json({
       success: true,
@@ -957,14 +961,23 @@ app.get("/api/entertainment/lullabies", async (req, res) => {
 // Get all cartoon channels info
 app.get("/api/entertainment/cartoons/channels", async (req, res) => {
   try {
-    const cartoons = entertainmentService.getAllCartoons();
+    const entertainmentService = require("./services/entertainmentService");
+    
+    // Get cartoon channels and format for frontend
+    const cartoonChannels = entertainmentService.CARTOON_CHANNELS;
+    const formattedChannels = Object.entries(cartoonChannels).map(([key, value]) => ({
+      key,
+      name: value.name,
+      description: value.description,
+      icon: value.icon,
+      channelId: value.channelId,
+    }));
 
     res.json({
       success: true,
       message: "Cartoon channels fetched successfully",
       type: "cartoons",
-      data: cartoons,
-      count: cartoons.length,
+      data: formattedChannels,
     });
   } catch (error) {
     console.error("Get cartoon channels error:", error);
@@ -980,27 +993,15 @@ app.get("/api/entertainment/cartoons/channels", async (req, res) => {
 app.get("/api/entertainment/cartoons/:cartoonKey", async (req, res) => {
   try {
     const { cartoonKey } = req.params;
-    const maxResults = parseInt(req.query.maxResults) || 5;
-
-    // Create a modified version of the function that accepts maxResults
-    const cartoonChannels = entertainmentService.getCartoonChannels();
-    const cartoon = cartoonChannels[cartoonKey.toLowerCase()];
-
-    if (!cartoon) {
-      return res.status(404).json({
-        success: false,
-        message: `Cartoon "${cartoonKey}" not found`,
-        availableCartoons: Object.keys(cartoonChannels),
-      });
-    }
+    const maxResults = parseInt(req.query.maxResults) || 8;
 
     const youtubeService = require("./services/youtubeService");
-    const videos = await youtubeService.getChannelVideos(cartoon.channelId, maxResults);
+    const videos = await youtubeService.getCartoonVideos(cartoonKey, maxResults);
 
     res.json({
       success: true,
-      message: `Videos from ${cartoon.name} channel`,
-      channel: cartoon,
+      message: `Videos from ${cartoonKey}`,
+      cartoonKey: cartoonKey,
       data: videos,
       count: videos.length,
     });
@@ -1346,11 +1347,6 @@ app.use((err, req, res, next) => {
   })
 })
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`)
-})
-
-
 // ============== CHATBOT IMPLEMENTEATION BY KASHAF ==============
 
 // const Anthropic = require("@anthropic-ai/sdk");
@@ -1358,11 +1354,21 @@ app.listen(PORT, () => {
 
 // using GROQ because its free
 const Groq = require("groq-sdk");
+
+// Log GROQ API key status at startup
+if (!process.env.GROQ_API_KEY) {
+  console.error("⚠️  WARNING: GROQ_API_KEY is not set in .env file! Chat will fail.");
+} else {
+  console.log("✓ GROQ_API_KEY is configured");
+}
+
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 app.post("/api/chat", async (req, res) => {
   try {
     const { email, message, conversationHistory = [] } = req.body;
+
+    console.log(`[CHAT] Incoming request - Email: ${email}, Message: "${message.substring(0, 50)}..."`);
 
     if (!email || !message) {
       return res.status(400).json({ success: false, message: "Email and message are required" });
@@ -1404,6 +1410,7 @@ Your job:
     ];
 
     // Call GROQ API
+    console.log(`[GROQ] Calling GROQ API with ${messages.length} messages`);
     const response = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
       max_tokens: 1024,
@@ -1413,7 +1420,9 @@ Your job:
       ],
     });
 
+    console.log(`[GROQ] Got response from GROQ API`);
     const reply = response.choices[0].message.content;
+    console.log(`[GROQ] Reply length: ${reply.length} characters`);
 
     // Store conversation in MongoDB
     try {
@@ -1431,10 +1440,26 @@ Your job:
     res.json({ success: true, reply }); 
         
   } catch (error) {
-    console.error("Chat error:", error);
+    console.error("❌ Chat error:", error.message);
+    console.error("Error details:", {
+      name: error.name,
+      message: error.message,
+      status: error.status,
+      code: error.code,
+    });
+    
+    let errorMessage = "Failed to get AI response";
+    
+    // Specific error handling
+    if (error.message.includes("GROQ") || error.message.includes("API")) {
+      errorMessage = "Error connecting to AI service. Please try again.";
+    } else if (error.message.includes("User not found")) {
+      errorMessage = "User not found. Please log in again.";
+    }
+    
     res.status(500).json({ 
       success: false, 
-      message: "Failed to get AI response",
+      message: errorMessage,
       error: process.env.NODE_ENV === "development" ? error.message : undefined
     });
   }
@@ -1499,3 +1524,8 @@ app.delete("/api/chat-history", async (req, res) => {
     res.status(500).json({ success: false, message: "Failed to clear chat history" });
   }
 });
+
+// Start server after all routes are registered
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`)
+})

@@ -1,22 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, FlatList, Modal, Image, Alert, Linking, ActivityIndicator, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, FlatList, Alert, ActivityIndicator, TextInput, Image, Modal } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { API_BASE_URL } from './apiConfig';
 import FloatingChatButton from './components/FloatingChatButton';
+import YouTubeVideoPlayer from './components/YouTubeVideoPlayer';
 
 const EntertainmentModule = ({ navigation }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [lullabies, setLullabies] = useState([]);
   const [cartoons, setCartoons] = useState([]);
-  const [cartoonVideos, setCartoonVideos] = useState({});
   const [loading, setLoading] = useState(false);
-  const [selectedCartoonKey, setSelectedCartoonKey] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showCartoonSearch, setShowCartoonSearch] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
+
+  // Video player state
+  const [selectedVideoId, setSelectedVideoId] = useState(null);
+  const [selectedVideoTitle, setSelectedVideoTitle] = useState('');
+  const [showPlayer, setShowPlayer] = useState(false);
+
+  // Cartoon state
+  const [selectedCartoonKey, setSelectedCartoonKey] = useState(null);
+  const [cartoonVideos, setCartoonVideos] = useState({});
+  const [showCartoonSearch, setShowCartoonSearch] = useState(false);
 
   const API_URL = `${API_BASE_URL}/api/entertainment`;
 
@@ -30,12 +39,13 @@ const EntertainmentModule = ({ navigation }) => {
         if (result.success && result.data) {
           // Transform YouTube data to match UI format
           const transformedLullabies = result.data.map((video, index) => ({
-            id: video.id || index,
+            id: video.id || video.videoId || index,
             title: video.title,
             description: video.channelTitle,
             icon: 'music',
             duration: '~3:00',
-            url: video.url,
+            videoId: video.videoId || video.id,
+            thumbnail: video.thumbnail,
           }));
           setLullabies(transformedLullabies);
         }
@@ -75,9 +85,14 @@ const EntertainmentModule = ({ navigation }) => {
       const response = await fetch(`${API_URL}/cartoons/${cartoonKey}?maxResults=8`);
       const result = await response.json();
       if (result.success && result.data) {
+        // Transform videos to ensure videoId is present
+        const transformedVideos = result.data.map((video) => ({
+          ...video,
+          videoId: video.videoId || video.id,
+        }));
         setCartoonVideos((prev) => ({
           ...prev,
-          [cartoonKey]: result.data,
+          [cartoonKey]: transformedVideos,
         }));
       }
     } catch (error) {
@@ -88,28 +103,28 @@ const EntertainmentModule = ({ navigation }) => {
     }
   };
 
-  const handlePlayLullaby = (url) => {
-    if (!url) {
-      Alert.alert('Error', 'Video URL not available');
+  const handlePlayLullaby = (lullaby) => {
+    if (!lullaby.videoId) {
+      Alert.alert('Error', 'Video ID not available');
       return;
     }
-    Linking.openURL(url).catch(() => {
-      Alert.alert('Error', 'Unable to open the lullaby. Please check your internet connection.');
-    });
+    setSelectedVideoId(lullaby.videoId);
+    setSelectedVideoTitle(lullaby.title);
+    setShowPlayer(true);
   };
 
   const handleCartoonPress = (cartoonKey) => {
     fetchCartoonVideos(cartoonKey);
   };
 
-  const handlePlayCartoon = (url) => {
-    if (!url) {
-      Alert.alert('Error', 'Video URL not available');
+  const handlePlayCartoon = (video) => {
+    if (!video.videoId) {
+      Alert.alert('Error', 'Video ID not available');
       return;
     }
-    Linking.openURL(url).catch(() => {
-      Alert.alert('Error', 'Unable to open the cartoon. Please check your internet connection.');
-    });
+    setSelectedVideoId(video.videoId);
+    setSelectedVideoTitle(video.title);
+    setShowPlayer(true);
   };
 
   // Dynamic cartoon search function
@@ -163,7 +178,7 @@ const EntertainmentModule = ({ navigation }) => {
           </View>
           <TouchableOpacity
             style={styles.playButton}
-            onPress={() => handlePlayLullaby(item.url)}
+            onPress={() => handlePlayLullaby(item)}
           >
             <MaterialCommunityIcons name="play-circle" size={40} color="#FF6B9D" />
           </TouchableOpacity>
@@ -208,7 +223,7 @@ const EntertainmentModule = ({ navigation }) => {
     <TouchableOpacity
       style={styles.videoCard}
       activeOpacity={0.8}
-      onPress={() => handlePlayCartoon(item.url)}
+      onPress={() => handlePlayCartoon(item)}
     >
       <LinearGradient
         colors={['#FFE5F1', '#F3E5F5']}
@@ -430,7 +445,7 @@ const EntertainmentModule = ({ navigation }) => {
                   <TouchableOpacity
                     style={styles.videoCard}
                     activeOpacity={0.8}
-                    onPress={() => handlePlayCartoon(item.url)}
+                    onPress={() => handlePlayCartoon(item)}
                   >
                     <LinearGradient
                       colors={['#FFE5F1', '#F3E5F5']}
@@ -518,6 +533,42 @@ const EntertainmentModule = ({ navigation }) => {
           </View>
         )}
       </ScrollView>
+
+      {/* Video Player Modal */}
+      {showPlayer && selectedVideoId && (
+        <Modal
+          visible={showPlayer}
+          transparent={false}
+          animationType="slide"
+          onRequestClose={() => setShowPlayer(false)}
+        >
+          <View style={styles.playerModalContainer}>
+            <TouchableOpacity
+              style={styles.playerCloseTop}
+              onPress={() => setShowPlayer(false)}
+              activeOpacity={0.7}
+            >
+              <MaterialCommunityIcons name="close-circle" size={40} color="#FFFFFF" />
+            </TouchableOpacity>
+
+            <YouTubeVideoPlayer
+              videoId={selectedVideoId}
+              height={400}
+            />
+
+            <View style={styles.playerInfoContainer}>
+              <Text style={styles.playerTitle} numberOfLines={2}>{selectedVideoTitle}</Text>
+              <TouchableOpacity
+                style={styles.playerCloseButton}
+                onPress={() => setShowPlayer(false)}
+              >
+                <Text style={styles.playerCloseText}>Close Player</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      )}
+
       <FloatingChatButton navigation={navigation} />
     </View>
   );
@@ -892,6 +943,43 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   searchButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  playerModalContainer: {
+    flex: 1,
+    backgroundColor: '#000000',
+    justifyContent: 'flex-start',
+    paddingTop: 50,
+  },
+  playerCloseTop: {
+    alignSelf: 'flex-end',
+    paddingRight: 20,
+    paddingBottom: 20,
+  },
+  playerInfoContainer: {
+    alignItems: 'center',
+    paddingVertical: 20,
+    backgroundColor: '#1a1a1a',
+  },
+  playerTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: 16,
+    paddingHorizontal: 20,
+  },
+  playerCloseButton: {
+    backgroundColor: '#FF6B9D',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 12,
+    minWidth: 140,
+    alignItems: 'center',
+  },
+  playerCloseText: {
     fontSize: 16,
     fontWeight: '600',
     color: '#FFFFFF',

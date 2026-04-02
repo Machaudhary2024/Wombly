@@ -1,42 +1,59 @@
 const youtubeService = require('./youtubeService');
 
 // YouTube channel IDs and information for cartoons
+// User-specified cartoon channels with popular/official IDs
 const CARTOON_CHANNELS = {
-  bluey: {
-    name: 'Bluey',
-    channelId: 'UC42KDR80LW4EjEn5M0eTJg',
-    description: 'Educational and fun adventures',
-    icon: 'dog',
+  pink_panther: {
+    name: 'Pink Panther',
+    channelId: 'UCkMeyN87kTCyFZi4j_UNvZg',
+    description: 'Classic animated adventures',
+    icon: 'cat',
   },
-  peppa_pig: {
-    name: 'Peppa Pig',
-    channelId: 'UCwR8iBGwL4xFMaWJ4v31r3w',
-    description: 'Fun family stories',
-    icon: 'pig',
+  tom_jerry: {
+    name: 'Tom & Jerry',
+    channelId: 'UCkJDy3-cD-8l6xIjPt_8XAQ',
+    description: 'Classic comedy and chases',
+    icon: 'mouse',
   },
-  puffin_rock: {
-    name: 'Puffin Rock',
-    channelId: 'UCLp66IwFmAVy5i-ck8BTCHQ',
-    description: 'Nature and adventure stories',
-    icon: 'bird',
+  mr_bean: {
+    name: 'Mr Bean',
+    channelId: 'UChFV2yF2F6gOzpDCJ7Rmy6w',
+    description: 'Funny animated bean character',
+    icon: 'smiley-plus',
   },
-  daniel_tiger: {
-    name: 'Daniel Tiger',
-    channelId: 'UCTzXp8bVTkWLLx0SRXLOXNg',
-    description: 'Learning and emotions',
-    icon: 'tiger',
+  deans_tv: {
+    name: 'Dean\'s TV',
+    channelId: 'UCJ0DumJQmH5rQqCXgIL_5cw',
+    description: 'Educational and fun content',
+    icon: 'television',
   },
-  cocomelon: {
-    name: 'Cocomelon',
-    channelId: 'UCjwhUcAN3U3YiqeVxHBqG8A',
-    description: 'Songs and nursery rhymes',
-    icon: 'music-box-multiple',
+  islamic_cartoon: {
+    name: 'Islamic Cartoon',
+    channelId: 'UCEz3-x8n7Ym2JvhN0UZr2rQ',
+    description: 'Islamic educational content',
+    icon: 'book-open-page-variant',
   },
-  bubble_guppies: {
-    name: 'Bubble Guppies',
-    channelId: 'UC2Yg3Y0Fdk6E5Hdt0n7LrRA',
-    description: 'Educational underwater fun',
-    icon: 'water',
+};
+
+// YouTube channel IDs and information for lullabies
+const LULLABY_CHANNELS = {
+  super_simple_songs: {
+    name: 'Super Simple Songs',
+    channelId: 'UCkRfArvrzheW2E7b6SVV-Cw',
+    description: 'Songs and nursery rhymes for babies',
+    icon: 'music-box',
+  },
+  wonderful_lullabies: {
+    name: 'Wonderful Lullabies',
+    channelId: 'UC5W_VPjcq5MBGvmT-eLkqig',
+    description: 'Soothing lullabies for sleep',
+    icon: 'moon-waning-crescent',
+  },
+  zeazara_kids_tv: {
+    name: 'Zeazara Kids TV',
+    channelId: 'UC2m5SVhCN2RNvP0MZ-qVwZQ',
+    description: 'Educational songs and nursery rhymes',
+    icon: 'television-box',
   },
 };
 
@@ -176,6 +193,8 @@ const getAllCartoons = () => {
 };
 
 module.exports = {
+  CARTOON_CHANNELS,
+  LULLABY_CHANNELS,
   getLullabies,
   searchCartoons,
   getPopularCartoons,

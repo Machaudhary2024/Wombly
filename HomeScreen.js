@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated, Dimensions, Modal, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import FloatingChatButton from './components/FloatingChatButton';
 
 const { width, height } = Dimensions.get('window');
 
@@ -304,6 +305,7 @@ const HomeScreen = ({ navigation, route }) => {
           </View>
         </View>
       </Modal>
+      <FloatingChatButton navigation={navigation} userEmail={userEmail} userName={userName} />
     </LinearGradient>
   );
 };
