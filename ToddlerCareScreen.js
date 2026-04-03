@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import FloatingChatButton from './components/FloatingChatButton';
 
-const ToddlerCareScreen = ({ navigation, route }) => {
+const ToddlerCareScreen = ({ navigation, route = {} }) => {
   const userName = route.params?.userName || '';
   const userEmail = route.params?.userEmail;
   const features = [

@@ -7,9 +7,9 @@ import FloatingChatButton from './components/FloatingChatButton';
 import YouTubeVideoPlayer from './components/YouTubeVideoPlayer';
 
 const EntertainmentModule = ({ navigation }) => {
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState('Cartoons');
   const [showDropdown, setShowDropdown] = useState(false);
-  const [lullabies, setLullabies] = useState([]);
+  const [lullabyChannels, setLullabyChannels] = useState([]);
   const [cartoons, setCartoons] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -22,42 +22,70 @@ const EntertainmentModule = ({ navigation }) => {
   const [selectedVideoTitle, setSelectedVideoTitle] = useState('');
   const [showPlayer, setShowPlayer] = useState(false);
 
-  // Cartoon state
-  const [selectedCartoonKey, setSelectedCartoonKey] = useState(null);
-  const [cartoonVideos, setCartoonVideos] = useState({});
+  // Cartoon search state
   const [showCartoonSearch, setShowCartoonSearch] = useState(false);
+
+
 
   const API_URL = `${API_BASE_URL}/api/entertainment`;
 
-  // Fetch lullabies from YouTube API
+  // Default lullaby channels for fallback
+  const defaultLullabyChannels = [
+    {
+      key: 'SuperSimpleSongs',
+      name: 'Super Simple Songs',
+      description: 'Educational songs for babies',
+      icon: 'music-box-outline',
+    },
+    {
+      key: 'ZeaZaraKidsTV',
+      name: 'Zea Zara Kids TV',
+      description: 'Creative nursery rhymes',
+      icon: 'music-note-multiple',
+    },
+    {
+      key: 'Kidzone',
+      name: 'Kidzone',
+      description: 'Relaxing children songs',
+      icon: 'music-sleep',
+    },
+    {
+      key: 'BabyTV',
+      name: 'BabyTV',
+      description: 'Gentle lullabies for sleep',
+      icon: 'baby-carriage',
+    },
+    {
+      key: 'TinyMuslimsClub',
+      name: 'Tiny Muslims Club',
+      description: 'Islamic nursery rhymes',
+      icon: 'quran',
+    },
+  ];
+
+  // Fetch lullaby channels from API
   useEffect(() => {
-    const fetchLullabies = async () => {
+    const fetchLullabyChannels = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${API_URL}/lullabies?maxResults=10`);
+        const response = await fetch(`${API_URL}/lullabies/channels`);
         const result = await response.json();
-        if (result.success && result.data) {
-          // Transform YouTube data to match UI format
-          const transformedLullabies = result.data.map((video, index) => ({
-            id: video.id || video.videoId || index,
-            title: video.title,
-            description: video.channelTitle,
-            icon: 'music',
-            duration: '~3:00',
-            videoId: video.videoId || video.id,
-            thumbnail: video.thumbnail,
-          }));
-          setLullabies(transformedLullabies);
+        if (result.success && result.data && result.data.length > 0) {
+          setLullabyChannels(result.data);
+        } else {
+          // Use default lullaby channels if API returns empty
+          setLullabyChannels(defaultLullabyChannels);
         }
       } catch (error) {
-        console.log('Error fetching lullabies:', error);
-        Alert.alert('Error', 'Failed to load lullabies');
+        console.log('Error fetching lullaby channels:', error);
+        // Use default lullaby channels on error
+        setLullabyChannels(defaultLullabyChannels);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchLullabies();
+    fetchLullabyChannels();
   }, []);
 
   // Fetch cartoon channels info
@@ -77,31 +105,7 @@ const EntertainmentModule = ({ navigation }) => {
     fetchCartoons();
   }, []);
 
-  // Fetch videos for selected cartoon channel
-  const fetchCartoonVideos = async (cartoonKey) => {
-    try {
-      setLoading(true);
-      setSelectedCartoonKey(cartoonKey);
-      const response = await fetch(`${API_URL}/cartoons/${cartoonKey}?maxResults=8`);
-      const result = await response.json();
-      if (result.success && result.data) {
-        // Transform videos to ensure videoId is present
-        const transformedVideos = result.data.map((video) => ({
-          ...video,
-          videoId: video.videoId || video.id,
-        }));
-        setCartoonVideos((prev) => ({
-          ...prev,
-          [cartoonKey]: transformedVideos,
-        }));
-      }
-    } catch (error) {
-      console.log('Error fetching cartoon videos:', error);
-      Alert.alert('Error', `Failed to load ${cartoonKey} videos`);
-    } finally {
-      setLoading(false);
-    }
-  };
+
 
   const handlePlayLullaby = (lullaby) => {
     if (!lullaby.videoId) {
@@ -113,8 +117,18 @@ const EntertainmentModule = ({ navigation }) => {
     setShowPlayer(true);
   };
 
-  const handleCartoonPress = (cartoonKey) => {
-    fetchCartoonVideos(cartoonKey);
+  const handleCartoonPress = (cartoonKey, cartoonName) => {
+    navigation.navigate('CartoonDetail', {
+      cartoonKey,
+      cartoonName,
+    });
+  };
+
+  const handleLullabyPress = (lullabyKey, lullabyName) => {
+    navigation.navigate('LullabyDetail', {
+      lullabyKey,
+      lullabyName,
+    });
   };
 
   const handlePlayCartoon = (video) => {
@@ -159,64 +173,37 @@ const EntertainmentModule = ({ navigation }) => {
     { id: 2, name: 'Cartoons', icon: 'television-play', color: '#FFE5F1' },
   ];
 
-  const renderLullabyItem = ({ item }) => (
-    <TouchableOpacity style={styles.itemCard} activeOpacity={0.8}>
+  const renderChannelBox = ({ item, type = 'cartoon' }) => (
+    <TouchableOpacity
+      style={styles.channelBox}
+      activeOpacity={0.75}
+      onPress={() => type === 'cartoon' ? handleCartoonPress(item.key, item.name) : handleLullabyPress(item.key, item.name)}
+    >
       <LinearGradient
-        colors={['#E8D5FF', '#F3E5F5']}
+        colors={type === 'cartoon' ? ['#FFE5F1', '#F3E5F5'] : ['#E8D5FF', '#F3E5F5']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={styles.itemGradient}
+        style={styles.channelBoxGradient}
       >
-        <View style={styles.itemContent}>
-          <View style={styles.itemIcon}>
-            <MaterialCommunityIcons name={item.icon} size={32} color="#9C27B0" />
-          </View>
-          <View style={styles.itemTextContainer}>
-            <Text style={styles.itemTitle} numberOfLines={2}>{item.title}</Text>
-            <Text style={styles.itemDescription} numberOfLines={1}>{item.description}</Text>
-            <Text style={styles.itemDuration}>Duration: {item.duration}</Text>
-          </View>
-          <TouchableOpacity
-            style={styles.playButton}
-            onPress={() => handlePlayLullaby(item)}
-          >
-            <MaterialCommunityIcons name="play-circle" size={40} color="#FF6B9D" />
-          </TouchableOpacity>
+        <View style={styles.channelBoxIcon}>
+          <MaterialCommunityIcons
+            name={item.icon}
+            size={48}
+            color={type === 'cartoon' ? '#FF6B9D' : '#9C27B0'}
+          />
         </View>
+        <Text style={styles.channelBoxName}>{item.name}</Text>
+        <Text style={styles.channelBoxDescription} numberOfLines={1}>{item.description}</Text>
       </LinearGradient>
     </TouchableOpacity>
   );
 
   const renderCartoonItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.cartoonCard}
-      activeOpacity={0.8}
-      onPress={() => handleCartoonPress(item.key)}
-    >
-      <LinearGradient
-        colors={['#FFE5F1', '#F3E5F5']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.cartoonGradient}
-      >
-        <View style={styles.cartoonContent}>
-          <View style={styles.cartoonIcon}>
-            <MaterialCommunityIcons name={item.icon} size={48} color="#FF6B9D" />
-          </View>
-          <View style={styles.cartoonTextContainer}>
-            <Text style={styles.cartoonTitle}>{item.name}</Text>
-            <Text style={styles.cartoonDescription}>{item.description}</Text>
-            <Text style={styles.cartoonRating}>Tap to watch episodes</Text>
-          </View>
-          <TouchableOpacity
-            style={styles.watchButton}
-            onPress={() => handleCartoonPress(item.key)}
-          >
-            <MaterialCommunityIcons name="play" size={24} color="#FFFFFF" />
-          </TouchableOpacity>
-        </View>
-      </LinearGradient>
-    </TouchableOpacity>
+    renderChannelBox({ item, type: 'cartoon' })
+  );
+
+  const renderLullabyItem = ({ item }) => (
+    renderChannelBox({ item, type: 'lullaby' })
   );
 
   const renderCartoonVideoItem = ({ item }) => (
@@ -272,7 +259,8 @@ const EntertainmentModule = ({ navigation }) => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Category Selector */}
+        {/* Category Selector - Only show when not viewing cartoon search */}
+        {!showCartoonSearch && (
         <View style={styles.selectorContainer}>
           <Text style={styles.selectorLabel}>Choose Entertainment Type</Text>
           
@@ -322,6 +310,7 @@ const EntertainmentModule = ({ navigation }) => {
             </View>
           )}
         </View>
+        )}
 
         {/* Content Display */}
         {selectedCategory === 'Lullabies' && (
@@ -334,24 +323,26 @@ const EntertainmentModule = ({ navigation }) => {
             {loading ? (
               <View style={styles.loadingContainer}>
                 <ActivityIndicator size="large" color="#9C27B0" />
-                <Text style={styles.loadingText}>Loading lullabies...</Text>
+                <Text style={styles.loadingText}>Loading lullaby channels...</Text>
               </View>
-            ) : lullabies.length > 0 ? (
+            ) : lullabyChannels.length > 0 ? (
               <FlatList
-                data={lullabies}
+                data={lullabyChannels}
                 renderItem={renderLullabyItem}
-                keyExtractor={(item) => item.id.toString()}
+                keyExtractor={(item) => item.key}
                 scrollEnabled={false}
+                numColumns={2}
+                columnWrapperStyle={styles.gridContainer}
               />
             ) : (
               <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>No lullabies available</Text>
+                <Text style={styles.emptyText}>No lullaby channels available</Text>
               </View>
             )}
           </View>
         )}
 
-        {selectedCategory === 'Cartoons' && !selectedCartoonKey && !showCartoonSearch && (
+        {selectedCategory === 'Cartoons' && !showCartoonSearch && (
           <View style={styles.contentContainer}>
             <View style={styles.categoryHeader}>
               <MaterialCommunityIcons name="television-play" size={32} color="#FF6B9D" />
@@ -374,6 +365,8 @@ const EntertainmentModule = ({ navigation }) => {
                 renderItem={renderCartoonItem}
                 keyExtractor={(item) => item.key}
                 scrollEnabled={false}
+                numColumns={2}
+                columnWrapperStyle={styles.gridContainer}
               />
             ) : (
               <View style={styles.emptyContainer}>
@@ -487,51 +480,6 @@ const EntertainmentModule = ({ navigation }) => {
           </View>
         )}
 
-        {selectedCategory === 'Cartoons' && selectedCartoonKey && cartoonVideos[selectedCartoonKey] && (
-          <View style={styles.contentContainer}>
-            <TouchableOpacity
-              style={styles.backToCartoons}
-              onPress={() => setSelectedCartoonKey(null)}
-            >
-              <MaterialCommunityIcons name="arrow-left" size={24} color="#9C27B0" />
-              <Text style={styles.backText}>Back to Cartoons</Text>
-            </TouchableOpacity>
-            <View style={styles.categoryHeader}>
-              <MaterialCommunityIcons name="television-play" size={32} color="#FF6B9D" />
-              <Text style={styles.categoryTitle}>
-                {cartoons.find((c) => c.key === selectedCartoonKey)?.name}
-              </Text>
-            </View>
-            <Text style={styles.categorySubtitle}>Tap a video to watch on YouTube</Text>
-            {loading ? (
-              <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#9C27B0" />
-                <Text style={styles.loadingText}>Loading videos...</Text>
-              </View>
-            ) : cartoonVideos[selectedCartoonKey].length > 0 ? (
-              <FlatList
-                data={cartoonVideos[selectedCartoonKey]}
-                renderItem={renderCartoonVideoItem}
-                keyExtractor={(item) => item.id}
-                scrollEnabled={false}
-                numColumns={2}
-                columnWrapperStyle={styles.videoGridContainer}
-              />
-            ) : (
-              <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>No videos available for this cartoon</Text>
-              </View>
-            )}
-          </View>
-        )}
-
-        {!selectedCategory && (
-          <View style={styles.emptyState}>
-            <MaterialCommunityIcons name="smile-outline" size={64} color="#D4B3FF" />
-            <Text style={styles.emptyText}>Select a category to get started!</Text>
-            <Text style={styles.emptySubtext}>Choose between lullabies to relax or cartoons to have fun</Text>
-          </View>
-        )}
       </ScrollView>
 
       {/* Video Player Modal */}
@@ -983,6 +931,56 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#FFFFFF',
+  },
+  channelBox: {
+    flex: 0.48,
+    marginBottom: 12,
+    marginHorizontal: '1%',
+    borderRadius: 14,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  channelBoxGradient: {
+    padding: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: 150,
+  },
+  channelBoxIcon: {
+    marginBottom: 10,
+  },
+  channelBoxName: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#2D3436',
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+  channelBoxDescription: {
+    fontSize: 12,
+    color: '#636E72',
+    textAlign: 'center',
+    lineHeight: 16,
+  },
+  gridContainer: {
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
+  backToLullabies: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+    paddingVertical: 8,
+  },
+  backText: {
+    fontSize: 16,
+    color: '#9C27B0',
+    fontWeight: '600',
+    marginLeft: 8,
   },
 });
 

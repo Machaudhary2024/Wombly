@@ -958,6 +958,63 @@ app.get("/api/entertainment/lullabies", async (req, res) => {
   }
 });
 
+// Get all lullaby channels info
+app.get("/api/entertainment/lullabies/channels", async (req, res) => {
+  try {
+    const entertainmentService = require("./services/entertainmentService");
+    
+    // Get lullaby channels and format for frontend
+    const lullabyChannels = entertainmentService.LULLABY_CHANNELS;
+    const formattedChannels = Object.entries(lullabyChannels).map(([key, value]) => ({
+      key,
+      name: value.name,
+      description: value.description,
+      icon: value.icon,
+      channelId: value.channelId,
+    }));
+
+    res.json({
+      success: true,
+      message: "Lullaby channels fetched successfully",
+      type: "lullabies",
+      data: formattedChannels,
+    });
+  } catch (error) {
+    console.error("Get lullaby channels error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch lullaby channels",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+});
+
+// Get videos from a specific lullaby channel
+app.get("/api/entertainment/lullabies/:lullabyKey", async (req, res) => {
+  try {
+    const { lullabyKey } = req.params;
+    const maxResults = parseInt(req.query.maxResults) || 5;
+
+    const youtubeService = require("./services/youtubeService");
+    const videos = await youtubeService.getLullabyVideos(lullabyKey, maxResults);
+
+    res.json({
+      success: true,
+      message: `Videos from ${lullabyKey}`,
+      lullabyKey: lullabyKey,
+      data: videos,
+      count: videos.length,
+    });
+  } catch (error) {
+    console.error("Get lullaby videos error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch lullaby videos",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+});
+
 // Get all cartoon channels info
 app.get("/api/entertainment/cartoons/channels", async (req, res) => {
   try {
@@ -1296,7 +1353,12 @@ app.get("/api/nutrition/dos-donts", (req, res) => {
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
-  res.json({ status: "OK", message: "Wombly Backend Server is running" })
+  res.json({ 
+    success: true, 
+    message: "Server is healthy",
+    mongoDBStatus: mongoose.connection.readyState === 1 ? "connected" : "disconnected",
+    timestamp: new Date()
+  })
 })
 
 // Test signup endpoint exists
@@ -1309,43 +1371,44 @@ app.get("/", (req, res) => {
   res.json({ success: true, message: "Wombly Backend Server is running", timestamp: new Date() })
 })
 
-// Health check endpoint
-app.get("/api/health", (req, res) => {
-  res.json({ 
-    success: true, 
-    message: "Server is healthy",
-    mongoDBStatus: mongoose.connection.readyState === 1 ? "connected" : "disconnected",
-    timestamp: new Date()
-  })
-})
-
-// Catch 404 and forward to error handler
-app.use((req, res, next) => {
-  res.status(404).json({ 
-    success: false, 
-    message: `Endpoint not found: ${req.method} ${req.path}`,
+// 404 Handler - must be after all other routes
+app.use((req, res) => {
+  console.error(`404 Error: ${req.method} ${req.path} not found`);
+  res.status(404).json({
+    success: false,
+    message: `Endpoint ${req.method} ${req.path} not found`,
+    path: req.path,
+    method: req.method,
     availableEndpoints: [
       "POST /api/login",
       "POST /api/signup",
       "POST /api/verify-otp",
+      "POST /api/resend-otp",
       "POST /api/forgot-password",
       "POST /api/reset-password",
+      "POST /api/update-pregnancy-week",
+      "POST /api/update-user",
+      "POST /api/change-password",
+      "POST /api/chat",
+      "GET /api/user",
+      "GET /api/chat-history",
+      "DELETE /api/chat-history",
       "GET /api/nutrition/dos-donts",
       "GET /api/health",
       "GET /"
     ]
-  })
-})
+  });
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error("Unhandled error:", err)
-  res.status(500).json({ 
-    success: false, 
-    message: "Internal Server Error",
-    error: process.env.NODE_ENV === "development" ? err.message : undefined
-  })
-})
+  console.error('Server error:', err);
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || 'Internal server error',
+    error: process.env.NODE_ENV === 'development' ? err.message : undefined
+  });
+});
 
 // ============== CHATBOT IMPLEMENTEATION BY KASHAF ==============
 
@@ -1525,7 +1588,30 @@ app.delete("/api/chat-history", async (req, res) => {
   }
 });
 
+// 404 Handler - must be after all other routes
+app.use((req, res) => {
+  console.error(`404 Error: ${req.method} ${req.path} not found`);
+  res.status(404).json({
+    success: false,
+    message: `Endpoint ${req.method} ${req.path} not found`,
+    path: req.path,
+    method: req.method
+  });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Server error:', err);
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || 'Internal server error',
+    error: process.env.NODE_ENV === 'development' ? err.message : undefined
+  });
+});
+
 // Start server after all routes are registered
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`)
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server is running on http://0.0.0.0:${PORT}`)
+  console.log(`Access locally: http://localhost:${PORT}`)
+  console.log(`Access from network: http://192.168.13.1:${PORT}`)
 })

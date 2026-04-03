@@ -1,0 +1,306 @@
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, FlatList, ActivityIndicator, Modal, Image, Alert } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { API_BASE_URL } from './apiConfig';
+import YouTubeVideoPlayer from './components/YouTubeVideoPlayer';
+import FloatingChatButton from './components/FloatingChatButton';
+
+const LullabyDetailScreen = ({ navigation, route }) => {
+  const { lullabyKey, lullabyName } = route.params;
+  const [lullabyVideos, setLullabyVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  // Video player state
+  const [selectedVideoId, setSelectedVideoId] = useState(null);
+  const [selectedVideoTitle, setSelectedVideoTitle] = useState('');
+  const [showPlayer, setShowPlayer] = useState(false);
+
+  const API_URL = `${API_BASE_URL}/api/entertainment`;
+
+  // Fetch videos for selected lullaby channel
+  useEffect(() => {
+    const fetchLullabyVideos = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`${API_URL}/lullabies/${lullabyKey}?maxResults=5`);
+        const result = await response.json();
+        if (result.success && result.data) {
+          // Transform videos to ensure videoId is present
+          const transformedVideos = result.data.map((video) => ({
+            ...video,
+            videoId: video.videoId || video.id,
+          }));
+          setLullabyVideos(transformedVideos);
+        }
+      } catch (error) {
+        console.log('Error fetching lullaby videos:', error);
+        Alert.alert('Error', `Failed to load ${lullabyKey} videos`);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLullabyVideos();
+  }, [lullabyKey]);
+
+  const handlePlayLullaby = (video) => {
+    if (!video.videoId) {
+      Alert.alert('Error', 'Video ID not available');
+      return;
+    }
+    setSelectedVideoId(video.videoId);
+    setSelectedVideoTitle(video.title);
+    setShowPlayer(true);
+  };
+
+  const renderLullabyVideoItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.videoCard}
+      activeOpacity={0.8}
+      onPress={() => handlePlayLullaby(item)}
+    >
+      <LinearGradient
+        colors={['#E8D5FF', '#F3E5F5']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.videoGradient}
+      >
+        <View style={styles.videoContent}>
+          {item.thumbnail && (
+            <Image
+              source={{ uri: item.thumbnail }}
+              style={styles.videoThumbnail}
+              resizeMode="cover"
+            />
+          )}
+          <View style={styles.videoOverlay}>
+            <MaterialCommunityIcons name="play-circle" size={50} color="#FFFFFF" />
+          </View>
+          <View style={styles.videoInfo}>
+            <Text style={styles.videoTitle} numberOfLines={2}>
+              {item.title}
+            </Text>
+          </View>
+        </View>
+      </LinearGradient>
+    </TouchableOpacity>
+  );
+
+  return (
+    <View style={styles.container}>
+      <LinearGradient
+        colors={['#f0cfe3', '#de81fa']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.header}
+      >
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <MaterialCommunityIcons name="arrow-left" size={24} color="#961e46" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Entertainment</Text>
+        <View style={styles.headerSpacer} />
+      </LinearGradient>
+
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.categoryHeader}>
+          <MaterialCommunityIcons name="moon-waning-crescent" size={32} color="#9C27B0" />
+          <Text style={styles.categoryTitle}>{lullabyName}</Text>
+        </View>
+        <Text style={styles.categorySubtitle}>Tap a video to watch on YouTube</Text>
+
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#9C27B0" />
+            <Text style={styles.loadingText}>Loading videos...</Text>
+          </View>
+        ) : lullabyVideos.length > 0 ? (
+          <FlatList
+            data={lullabyVideos}
+            renderItem={renderLullabyVideoItem}
+            keyExtractor={(item) => item.id}
+            scrollEnabled={false}
+            numColumns={2}
+            columnWrapperStyle={styles.videoGridContainer}
+          />
+        ) : (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>No videos available for this lullaby channel</Text>
+          </View>
+        )}
+      </ScrollView>
+
+      {/* Video Player Modal */}
+      {showPlayer && selectedVideoId && (
+        <Modal
+          visible={showPlayer}
+          transparent={false}
+          animationType="slide"
+          onRequestClose={() => setShowPlayer(false)}
+        >
+          <View style={styles.playerModalContainer}>
+            <TouchableOpacity
+              style={styles.playerCloseTop}
+              onPress={() => setShowPlayer(false)}
+              activeOpacity={0.7}
+            >
+              <MaterialCommunityIcons name="close-circle" size={40} color="#FFFFFF" />
+            </TouchableOpacity>
+
+            <YouTubeVideoPlayer
+              videoId={selectedVideoId}
+              height={400}
+            />
+          </View>
+        </Modal>
+      )}
+
+      <FloatingChatButton navigation={navigation} />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+  },
+  header: {
+    paddingTop: 50,
+    paddingBottom: 15,
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  backButton: {
+    padding: 5,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    flex: 1,
+    textAlign: 'center',
+  },
+  headerSpacer: {
+    width: 34,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 15,
+    paddingVertical: 20,
+    paddingBottom: 90,
+  },
+  categoryHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  categoryTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#2D3436',
+    marginLeft: 12,
+  },
+  categorySubtitle: {
+    fontSize: 14,
+    color: '#7F8C8D',
+    marginBottom: 20,
+  },
+  loadingContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 60,
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#7F8C8D',
+    marginTop: 12,
+  },
+  emptyContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 60,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#7F8C8D',
+  },
+  videoCard: {
+    flex: 0.48,
+    marginBottom: 12,
+    marginHorizontal: '1%',
+    borderRadius: 12,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  videoGradient: {
+    padding: 0,
+  },
+  videoContent: {
+    position: 'relative',
+    width: '100%',
+    aspectRatio: 1,
+  },
+  videoThumbnail: {
+    width: '100%',
+    height: '100%',
+  },
+  videoOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+  },
+  videoInfo: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    padding: 8,
+  },
+  videoTitle: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  videoGridContainer: {
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
+  playerModalContainer: {
+    flex: 1,
+    backgroundColor: '#000',
+    justifyContent: 'center',
+  },
+  playerCloseTop: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    zIndex: 10,
+    padding: 10,
+  },
+});
+
+export default LullabyDetailScreen;

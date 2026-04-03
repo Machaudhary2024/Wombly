@@ -37,23 +37,35 @@ const CARTOON_CHANNELS = {
 
 // YouTube channel IDs and information for lullabies
 const LULLABY_CHANNELS = {
-  super_simple_songs: {
+  SuperSimpleSongs: {
     name: 'Super Simple Songs',
     channelId: 'UCkRfArvrzheW2E7b6SVV-Cw',
-    description: 'Songs and nursery rhymes for babies',
-    icon: 'music-box',
+    description: 'Educational songs for babies and toddlers',
+    icon: 'music-box-outline',
   },
-  wonderful_lullabies: {
-    name: 'Wonderful Lullabies',
-    channelId: 'UC5W_VPjcq5MBGvmT-eLkqig',
-    description: 'Soothing lullabies for sleep',
-    icon: 'moon-waning-crescent',
-  },
-  zeazara_kids_tv: {
-    name: 'Zeazara Kids TV',
+  ZeaZaraKidsTV: {
+    name: 'Zea Zara Kids TV',
     channelId: 'UC2m5SVhCN2RNvP0MZ-qVwZQ',
-    description: 'Educational songs and nursery rhymes',
-    icon: 'television-box',
+    description: 'Creative nursery rhymes and children songs',
+    icon: 'music-note-multiple',
+  },
+  Kidzone: {
+    name: 'Kidzone',
+    channelId: 'UCXJZdip7jrHk8urIjf_5Pcw',
+    description: 'Relaxing children songs and nursery rhymes',
+    icon: 'music-sleep',
+  },
+  BabyTV: {
+    name: 'BabyTV',
+    channelId: 'UCJLwpP9u-5q5q-q_q_q_q_q',
+    description: 'Gentle lullabies and soothing music for sleep',
+    icon: 'baby-carriage',
+  },
+  TinyMuslimsClub: {
+    name: 'Tiny Muslims Club',
+    channelId: 'UCKz-VvQ3f3WyJlTdL6yKZsw',
+    description: 'Islamic nursery rhymes and children songs',
+    icon: 'quran',
   },
 };
 

@@ -5,11 +5,8 @@ import {
   TouchableOpacity, 
   StyleSheet, 
   ScrollView, 
-  Animated, 
   Dimensions,
-  Alert,
-  Linking,
-  Modal,
+  Animated,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -20,12 +17,10 @@ const { width, height } = Dimensions.get('window');
 const isTablet = width > 600;
 
 const FirstAidGuidanceScreen = ({ navigation }) => {
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [animationValue] = useState(new Animated.Value(0));
-  const [pulseAnim] = useState(new Animated.Value(1));
-  const [showTutorialModal, setShowTutorialModal] = useState(false);
   const [tutorialLinks, setTutorialLinks] = useState({});
-  const [videosLoading, setVideosLoading] = useState(true);
+  const [pulseAnim] = useState(new Animated.Value(1));
+
+
 
   // Pulse animation for emergency indicator
   useEffect(() => {
@@ -49,7 +44,6 @@ const FirstAidGuidanceScreen = ({ navigation }) => {
   useEffect(() => {
     const fetchAllVideos = async () => {
       try {
-        setVideosLoading(true);
         const categoryNames = ['CPR', 'allergies', 'wounds', 'burns', 'poison', 'fever'];
         const categoryMap = {
           CPR: 1,
@@ -71,7 +65,7 @@ const FirstAidGuidanceScreen = ({ navigation }) => {
 
             if (result.success && result.data && result.data.length > 0) {
               newTutorialLinks[categoryMap[category]] = result.data
-                .slice(0, 3)
+                .slice(0, 1)
                 .map((video) => ({
                   title: video.title,
                   url: video.url,
@@ -91,8 +85,6 @@ const FirstAidGuidanceScreen = ({ navigation }) => {
       } catch (error) {
         console.error('Error fetching tutorials:', error);
         setTutorialLinks({});
-      } finally {
-        setVideosLoading(false);
       }
     };
 
@@ -104,42 +96,48 @@ const FirstAidGuidanceScreen = ({ navigation }) => {
       id: 1,
       title: 'CPR & Choking',
       icon: 'heart-pulse',
-      color: '#E74C3C',
+      color: '#F5B7B1',
+      iconColor: '#A93226',
       description: 'Life-saving techniques',
     },
     {
       id: 2,
       title: 'Allergies',
       icon: 'alert-circle',
-      color: '#E67E22',
+      color: '#F8B88B',
+      iconColor: '#BA4A00',
       description: 'Allergic reactions',
     },
     {
       id: 3,
       title: 'Minor Injuries',
       icon: 'bandage',
-      color: '#3498DB',
+      color: '#AED6F1',
+      iconColor: '#2E86C1',
       description: 'Cuts, bruises & sprains',
     },
     {
       id: 4,
       title: 'Burns & Scalds',
       icon: 'flame',
-      color: '#D35400',
+      color: '#F9D5C6',
+      iconColor: '#B35806',
       description: 'Thermal injuries',
     },
     {
       id: 5,
       title: 'Poisoning',
       icon: 'skull-crossbones',
-      color: '#8E44AD',
+      color: '#D7BDE2',
+      iconColor: '#6C3483',
       description: 'Chemical exposure',
     },
     {
       id: 6,
       title: 'Fever & Infection',
       icon: 'thermometer',
-      color: '#C0392B',
+      color: '#FADBD8',
+      iconColor: '#9B2C2C',
       description: 'Temperature & infections',
     },
   ];
@@ -345,41 +343,6 @@ const FirstAidGuidanceScreen = ({ navigation }) => {
     },
   };
 
-  const handleTutorialPress = (url) => {
-    if (!url) {
-      Alert.alert('No Video', 'This tutorial is loading or currently unavailable. Please try again shortly.');
-      return;
-    }
-    Linking.openURL(url).catch(() => {
-      Alert.alert('Error', 'Unable to open the tutorial. Please check your internet connection.');
-    });
-  };
-
-  const renderStepAnimation = (stepNumber) => {
-    return (
-      <Animated.View
-        style={{
-          transform: [
-            {
-              scale: animationValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0.9, 1],
-              }),
-            },
-          ],
-          opacity: animationValue.interpolate({
-            inputRange: [0, 1],
-            outputRange: [0.8, 1],
-          }),
-        }}
-      >
-        <View style={styles.stepNumber}>
-          <Text style={styles.stepNumberText}>{stepNumber}</Text>
-        </View>
-      </Animated.View>
-    );
-  };
-
   const renderCategoryList = () => {
     return (
       <ScrollView 
@@ -434,7 +397,15 @@ const FirstAidGuidanceScreen = ({ navigation }) => {
             <TouchableOpacity
               key={category.id}
               style={[styles.categoryCard, isTablet && styles.categoryCardTablet]}
-              onPress={() => setSelectedCategory(category.id)}
+              onPress={() => {
+                const categoryData = guidanceData[category.id];
+                navigation.navigate('FirstAidDetailScreen', {
+                  categoryId: category.id,
+                  categoryTitle: category.title,
+                  categorySteps: categoryData?.steps || [],
+                  tutorialLinks: tutorialLinks[category.id] || [],
+                });
+              }}
               activeOpacity={0.8}
             >
               <LinearGradient
@@ -443,103 +414,25 @@ const FirstAidGuidanceScreen = ({ navigation }) => {
                 end={{ x: 1, y: 1 }}
                 style={styles.categoryGradient}
               >
-                <MaterialCommunityIcons name={category.icon} size={40} color="#FFFFFF" />
+                <MaterialCommunityIcons name={category.icon} size={40} color={category.iconColor} />
                 <Text style={styles.categoryCardTitle}>{category.title}</Text>
                 <Text style={styles.categoryCardDescription}>{category.description}</Text>
               </LinearGradient>
             </TouchableOpacity>
           ))}
         </View>
-      </ScrollView>
-    );
-  };
 
-  const renderDetailedGuide = () => {
-    const data = guidanceData[selectedCategory];
-    if (!data) return null;
-
-    return (
-      <ScrollView 
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Header with back button */}
-        <View style={styles.detailHeader}>
-          <TouchableOpacity 
-            onPress={() => setSelectedCategory(null)}
-            style={styles.backButtonDetail}
-          >
-            <MaterialCommunityIcons name="arrow-left" size={24} color="#FFFFFF" />
-          </TouchableOpacity>
-          <Text style={styles.detailTitle}>{data.title}</Text>
-        </View>
-
-        {/* Tutorial Button */}
-        <TouchableOpacity
-          style={styles.tutorialButton}
-          onPress={() => setShowTutorialModal(true)}
-        >
-          <LinearGradient
-            colors={['#3498DB', '#2980B9']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.tutorialButtonGradient}
-          >
-            <MaterialCommunityIcons name="play-circle" size={20} color="#FFFFFF" />
-            <Text style={styles.tutorialButtonText}>Watch Tutorial Videos</Text>
-            <MaterialCommunityIcons name="chevron-right" size={20} color="#FFFFFF" />
-          </LinearGradient>
-        </TouchableOpacity>
-
-        {/* Steps */}
-        {data.steps.map((step, index) => (
-          <View key={step.number} style={styles.stepCard}>
-            <LinearGradient
-              colors={['#F8F9FA', '#FFFFFF']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.stepGradient}
-            >
-              <View style={styles.stepHeader}>
-                <View style={styles.stepNumberCircle}>
-                  <Text style={styles.stepNumberCircleText}>{step.number}</Text>
-                </View>
-                <View style={styles.stepTitleContainer}>
-                  <Text style={styles.stepTitle}>{step.title}</Text>
-                </View>
-                <MaterialCommunityIcons name={step.icon} size={28} color="#9C27B0" />
-              </View>
-
-              <Text style={styles.stepDescription}>{step.description}</Text>
-
-              {/* Tips Box */}
-              <View style={styles.tipsBox}>
-                <View style={styles.tipsHeader}>
-                  <MaterialCommunityIcons name="star" size={18} color="#F39C12" />
-                  <Text style={styles.tipsBoxTitle}>Important Tips:</Text>
-                </View>
-                {step.tips.map((tip, tipIndex) => (
-                  <Text key={tipIndex} style={styles.tipItem}>
-                    • {tip}
-                  </Text>
-                ))}
-              </View>
-            </LinearGradient>
-          </View>
-        ))}
-
-        {/* Warning Box */}
-        <View style={styles.warningCard}>
+        {/* When to Call Emergency Box */}
+        <View style={styles.emergencyCard}>
           <LinearGradient
             colors={['#FADBD8', '#F5B7B1']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
-            style={styles.warningGradient}
+            style={styles.emergencyGradient}
           >
-            <MaterialCommunityIcons name="alert-box" size={28} color="#C0392B" style={styles.warningIcon} />
-            <Text style={styles.warningTitle}>When to Call Emergency :</Text>
-            <Text style={styles.warningText}>
+            <MaterialCommunityIcons name="alert-box" size={28} color="#C0392B" style={styles.emergencyIcon} />
+            <Text style={styles.emergencyTitle}>When to Call Emergency :</Text>
+            <Text style={styles.emergencyText}>
               • Difficulty breathing or gasping{'\n'}
               • Unconsciousness or unresponsiveness{'\n'}
               • Severe bleeding that won't stop{'\n'}
@@ -551,87 +444,22 @@ const FirstAidGuidanceScreen = ({ navigation }) => {
           </LinearGradient>
         </View>
 
-        {/* Doctor Contact Card */}
-        <View style={styles.doctorCard}>
+        {/* Phone Numbers Box */}
+        <View style={styles.phoneCard}>
           <LinearGradient
             colors={['#D4E6F1', '#AED6F1']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
-            style={styles.doctorGradient}
+            style={styles.phoneGradient}
           >
             <MaterialCommunityIcons name="phone" size={28} color="#2E86C1" style={styles.phoneIcon} />
-            <Text style={styles.doctorTitle}>Keep These Numbers Handy:</Text>
-            <Text style={styles.doctorText}>
-              • Emergency: 115 {'\n'}
-              • Rescue 1122: 042-99231701-2{'\n'}
-            
+            <Text style={styles.phoneTitle}>Keep These Numbers Handy:</Text>
+            <Text style={styles.phoneText}>
+              • Emergency: 115{'\n'}
+              • Rescue 1122: 042-99231701-2
             </Text>
           </LinearGradient>
         </View>
-
-        {/* Tutorial Modal */}
-        <Modal
-          visible={showTutorialModal}
-          transparent={true}
-          animationType="slide"
-          onRequestClose={() => setShowTutorialModal(false)}
-        >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-              <View style={styles.modalHeader}>
-                <Text style={styles.modalTitle}>Tutorial Videos</Text>
-                <TouchableOpacity
-                  onPress={() => setShowTutorialModal(false)}
-                  style={styles.closeButton}
-                >
-                  <MaterialCommunityIcons name="close" size={28} color="#2D3436" />
-                </TouchableOpacity>
-              </View>
-
-              <ScrollView style={styles.tutorialList}>
-                {videosLoading ? (
-                  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-                    <MaterialCommunityIcons name="loading" size={48} color="#3498DB" />
-                    <Text style={{ marginTop: 16, fontSize: 16, color: '#666' }}>
-                      Loading videos...
-                    </Text>
-                  </View>
-                ) : tutorialLinks[selectedCategory] && tutorialLinks[selectedCategory].length > 0 ? (
-                  tutorialLinks[selectedCategory].map((tutorial, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      style={styles.tutorialItem}
-                      onPress={() => handleTutorialPress(tutorial.url)}
-                    >
-                      <LinearGradient
-                        colors={['#E8F4F8', '#D4E8F0']}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                        style={styles.tutorialItemGradient}
-                      >
-                        <View style={styles.tutorialItemLeft}>
-                          <MaterialCommunityIcons name="youtube" size={32} color="#E74C3C" />
-                          <View style={styles.tutorialItemText}>
-                            <Text style={styles.tutorialItemTitle}>{tutorial.title}</Text>
-                            <Text style={styles.tutorialItemSubtitle}>Tap to watch</Text>
-                          </View>
-                        </View>
-                        <MaterialCommunityIcons name="play" size={24} color="#3498DB" />
-                      </LinearGradient>
-                    </TouchableOpacity>
-                  ))
-                ) : (
-                  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-                    <MaterialCommunityIcons name="alert-circle-outline" size={48} color="#E67E22" />
-                    <Text style={{ marginTop: 16, fontSize: 16, color: '#666' }}>
-                      No videos available for this category
-                    </Text>
-                  </View>
-                )}
-              </ScrollView>
-            </View>
-          </View>
-        </Modal>
       </ScrollView>
     );
   };
@@ -651,7 +479,7 @@ const FirstAidGuidanceScreen = ({ navigation }) => {
         <View style={styles.headerSpacer} />
       </LinearGradient>
 
-      {selectedCategory === null ? renderCategoryList() : renderDetailedGuide()}
+      {renderCategoryList()}
       <FloatingChatButton navigation={navigation} />
     </View>
   );
@@ -760,38 +588,44 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
+    marginBottom: 8,
   },
   categoryCard: {
     width: '48%',
-    marginBottom: 15,
-    borderRadius: 12,
+    marginBottom: 16,
+    borderRadius: 14,
     overflow: 'hidden',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.05)',
+    minHeight: 140,
   },
   categoryCardTablet: {
     width: '31%',
   },
   categoryGradient: {
-    padding: 20,
+    padding: 22,
     alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
   },
   categoryCardTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-    marginTop: 10,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#2D3436',
+    marginTop: 12,
     textAlign: 'center',
   },
   categoryCardDescription: {
-    fontSize: 12,
-    color: '#FFFFFF',
-    marginTop: 5,
+    fontSize: 11,
+    color: '#636E72',
+    marginTop: 6,
     textAlign: 'center',
-    opacity: 0.9,
+    lineHeight: 15,
   },
   detailHeader: {
     flexDirection: 'row',
@@ -1033,6 +867,61 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#7F8C8D',
     marginTop: 4,
+  },
+  emergencyCard: {
+    marginTop: 20,
+    marginBottom: 15,
+    borderRadius: 16,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  emergencyGradient: {
+    padding: 20,
+  },
+  emergencyIcon: {
+    marginBottom: 10,
+  },
+  emergencyTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#C0392B',
+    marginBottom: 10,
+  },
+  emergencyText: {
+    fontSize: 13,
+    color: '#A93226',
+    lineHeight: 20,
+  },
+  phoneCard: {
+    marginBottom: 20,
+    borderRadius: 16,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  phoneGradient: {
+    padding: 20,
+  },
+  phoneIcon: {
+    marginBottom: 10,
+  },
+  phoneTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2E86C1',
+    marginBottom: 10,
+  },
+  phoneText: {
+    fontSize: 13,
+    color: '#1F5E86',
+    lineHeight: 22,
   },
 });
 

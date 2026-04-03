@@ -24,8 +24,12 @@ import ToddlerCareScreen from "./ToddlerCareScreen"
 import ToddlerMealsScreen from "./ToddlerMealsScreen"
 import TrimesterDetailsScreen from "./TrimesterDetailsScreen"
 import EntertainmentModule from "./EntertainmentModule"
+import CartoonDetailScreen from "./CartoonDetailScreen"
+import LullabyDetailScreen from "./LullabyDetailScreen"
 import FirstAidGuidanceScreen from "./FirstAidGuidanceScreen"
+import FirstAidDetailScreen from "./FirstAidDetailScreen"
 import HygieneGuidanceScreen from "./HygieneGuidanceScreen"
+import HygieneDetailScreen from "./HygieneDetailScreen"
 import AIChatScreen from "./AIChatScreen"
 import ActivityTrackingScreen from "./ActivityTrackingScreen"
 import NutritionGuideScreen from "./NutritionGuideScreen"
@@ -55,8 +59,12 @@ export default function App() {
         <Stack.Screen name="ToddlerMeals" component={ToddlerMealsScreen} options={{ headerShown: false }} />
         <Stack.Screen name="TrimesterDetails" component={TrimesterDetailsScreen} options={{ headerShown: false }} />
         <Stack.Screen name="EntertainmentModule" component={EntertainmentModule} options={{ headerShown: false }} />
+        <Stack.Screen name="CartoonDetail" component={CartoonDetailScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="LullabyDetail" component={LullabyDetailScreen} options={{ headerShown: false }} />
         <Stack.Screen name="FirstAidGuidance" component={FirstAidGuidanceScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="FirstAidDetailScreen" component={FirstAidDetailScreen} options={{ headerShown: false }} />
         <Stack.Screen name="HygieneGuidance" component={HygieneGuidanceScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="HygieneDetail" component={HygieneDetailScreen} options={{ headerShown: false }} />
         <Stack.Screen name="AIChat" component={AIChatScreen} options={{ headerShown: false }} />
         <Stack.Screen name="ActivityTracking" component={ActivityTrackingScreen} options={{ headerShown: false }} />
         <Stack.Screen name="NutritionGuide" component={NutritionGuideScreen} options={{ headerShown: false }} />

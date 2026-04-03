@@ -13,13 +13,11 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { API_BASE_URL } from './apiConfig';
-import FloatingChatButton from './components/FloatingChatButton';
 
 const { width, height } = Dimensions.get('window');
 const isTablet = width > 600;
 
 const HygieneGuidanceScreen = ({ navigation }) => {
-  const [selectedCategory, setSelectedCategory] = useState(null);
   const [showTutorialModal, setShowTutorialModal] = useState(false);
   const [tutorialLinks, setTutorialLinks] = useState({});
   const [videosLoading, setVideosLoading] = useState(true);
@@ -45,15 +43,16 @@ const HygieneGuidanceScreen = ({ navigation }) => {
 
         for (const category of categories) {
           try {
+            // Fetch videos for specific category
             const response = await fetch(
-              `${API_BASE_URL}/api/videos-by-category/hygiene`
+              `${API_BASE_URL}/api/videos-by-category/${category}`
             );
             const result = await response.json();
 
             if (result.success && result.data && result.data.length > 0) {
-              // Map videos to categories with specific queries for better results
+              // Get only 1 video per category
               newTutorialLinks[categoryMap[category]] = result.data
-                .slice(0, 3)
+                .slice(0, 1)
                 .map((video) => ({
                   title: video.title,
                   url: video.url,
@@ -61,7 +60,29 @@ const HygieneGuidanceScreen = ({ navigation }) => {
                   id: video.id,
                 }));
             } else {
-              newTutorialLinks[categoryMap[category]] = [];
+              // Fallback: fetch from hygiene category if specific category returns nothing
+              try {
+                const fallbackResponse = await fetch(
+                  `${API_BASE_URL}/api/videos-by-category/hygiene`
+                );
+                const fallbackResult = await fallbackResponse.json();
+                
+                if (fallbackResult.success && fallbackResult.data && fallbackResult.data.length > 0) {
+                  newTutorialLinks[categoryMap[category]] = fallbackResult.data
+                    .slice(0, 1)
+                    .map((video) => ({
+                      title: video.title,
+                      url: video.url,
+                      thumbnail: video.thumbnail,
+                      id: video.id,
+                    }));
+                } else {
+                  newTutorialLinks[categoryMap[category]] = [];
+                }
+              } catch (fallbackError) {
+                console.error(`Fallback error for ${category}:`, fallbackError);
+                newTutorialLinks[categoryMap[category]] = [];
+              }
             }
           } catch (error) {
             console.error(`Error fetching videos for ${category}:`, error);
@@ -87,56 +108,64 @@ const HygieneGuidanceScreen = ({ navigation }) => {
       id: 1,
       title: 'Diaper Care',
       icon: 'baby-face-outline',
-      color: '#3498DB',
+      color: '#AED6F1',
+      iconColor: '#2E86C1',
       description: 'Preventing diaper rashes',
     },
     {
       id: 2,
       title: 'Bathing & Washing',
       icon: 'shower-head',
-      color: '#2ECC71',
+      color: '#A9DFBF',
+      iconColor: '#186A3B',
       description: 'Proper cleaning techniques',
     },
     {
       id: 3,
       title: 'Hand Hygiene',
       icon: 'hand-wash',
-      color: '#E67E22',
+      color: '#F8B88B',
+      iconColor: '#BA4A00',
       description: 'Preventing germs & infections',
     },
     {
       id: 4,
       title: 'Oral Hygiene',
       icon: 'tooth',
-      color: '#9B59B6',
+      color: '#D7BDE2',
+      iconColor: '#6C3483',
       description: 'Teeth care & prevention',
     },
     {
       id: 5,
       title: 'Nail & Skin Care',
       icon: 'nail',
-      color: '#E74C3C',
+      color: '#F5B7B1',
+      iconColor: '#A93226',
       description: 'Preventing cuts & infections',
     },
     {
       id: 6,
       title: 'Clothing & Laundry',
       icon: 'tshirt-crew',
-      color: '#F39C12',
+      color: '#F9E79F',
+      iconColor: '#B7950B',
       description: 'Fabric care for sensitive skin',
     },
     {
       id: 7,
       title: 'Wound & Infection Prevention',
       icon: 'shield-alert',
-      color: '#C0392B',
+      color: '#FADBD8',
+      iconColor: '#9B2C2C',
       description: 'Keeping toddler safe & healthy',
     },
     {
       id: 8,
       title: 'Food Hygiene',
       icon: 'silverware-fork-knife',
-      color: '#16A085',
+      color: '#A3E4D7',
+      iconColor: '#117A65',
       description: 'Safe food handling',
     },
   ];
@@ -763,7 +792,15 @@ const HygieneGuidanceScreen = ({ navigation }) => {
             <TouchableOpacity
               key={category.id}
               style={[styles.categoryCard, isTablet && styles.categoryCardTablet]}
-              onPress={() => setSelectedCategory(category.id)}
+              onPress={() => {
+                const categoryData = guidanceData[category.id];
+                navigation.navigate('HygieneDetail', {
+                  categoryId: category.id,
+                  categoryTitle: categoryData.title,
+                  categoryTips: categoryData.tips,
+                  tutorialLinks: tutorialLinks[category.id] || [],
+                });
+              }}
               activeOpacity={0.8}
             >
               <LinearGradient
@@ -772,91 +809,13 @@ const HygieneGuidanceScreen = ({ navigation }) => {
                 end={{ x: 1, y: 1 }}
                 style={styles.categoryGradient}
               >
-                <MaterialCommunityIcons name={category.icon} size={40} color="#FFFFFF" />
+                <MaterialCommunityIcons name={category.icon} size={42} color={category.iconColor} />
                 <Text style={styles.categoryCardTitle}>{category.title}</Text>
                 <Text style={styles.categoryCardDescription}>{category.description}</Text>
               </LinearGradient>
             </TouchableOpacity>
           ))}
         </View>
-      </ScrollView>
-    );
-  };
-
-  const renderDetailedGuide = () => {
-    const data = guidanceData[selectedCategory];
-    if (!data) return null;
-
-    return (
-      <ScrollView 
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Header */}
-        <View style={styles.detailHeader}>
-          <TouchableOpacity 
-            onPress={() => setSelectedCategory(null)}
-            style={styles.backButtonDetail}
-          >
-            <MaterialCommunityIcons name="arrow-left" size={24} color="#FFFFFF" />
-          </TouchableOpacity>
-          <Text style={styles.detailTitle}>{data.title}</Text>
-        </View>
-
-        {/* Tutorial Button */}
-        <TouchableOpacity
-          style={styles.tutorialButton}
-          onPress={() => setShowTutorialModal(true)}
-        >
-          <LinearGradient
-            colors={['#16A085', '#138D75']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.tutorialButtonGradient}
-          >
-            <MaterialCommunityIcons name="play-circle" size={20} color="#FFFFFF" />
-            <Text style={styles.tutorialButtonText}>Watch Tutorial Videos</Text>
-            <MaterialCommunityIcons name="chevron-right" size={20} color="#FFFFFF" />
-          </LinearGradient>
-        </TouchableOpacity>
-
-        {/* Tips */}
-        {data.tips.map((tip) => (
-          <View key={tip.number} style={styles.tipCard}>
-            <LinearGradient
-              colors={['#F8F9FA', '#FFFFFF']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.tipGradient}
-            >
-              <View style={styles.tipHeader}>
-                <View style={styles.tipNumberCircle}>
-                  <Text style={styles.tipNumberText}>{tip.number}</Text>
-                </View>
-                <View style={styles.tipTitleContainer}>
-                  <Text style={styles.tipTitle}>{tip.title}</Text>
-                </View>
-                <MaterialCommunityIcons name={tip.icon} size={28} color="#16A085" />
-              </View>
-
-              <Text style={styles.tipDescription}>{tip.description}</Text>
-
-              {/* Details Box */}
-              <View style={styles.detailsBox}>
-                <View style={styles.detailsHeader}>
-                  <MaterialCommunityIcons name="information" size={18} color="#16A085" />
-                  <Text style={styles.detailsBoxTitle}>Key Details:</Text>
-                </View>
-                {tip.details.map((detail, index) => (
-                  <Text key={index} style={styles.detailItem}>
-                    • {detail}
-                  </Text>
-                ))}
-              </View>
-            </LinearGradient>
-          </View>
-        ))}
 
         {/* Important Note */}
         <View style={styles.importantCard}>
@@ -898,70 +857,6 @@ const HygieneGuidanceScreen = ({ navigation }) => {
             </Text>
           </LinearGradient>
         </View>
-
-        {/* Tutorial Modal */}
-        <Modal
-          visible={showTutorialModal}
-          transparent={true}
-          animationType="slide"
-          onRequestClose={() => setShowTutorialModal(false)}
-        >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-              <View style={styles.modalHeader}>
-                <Text style={styles.modalTitle}>Tutorial Videos</Text>
-                <TouchableOpacity
-                  onPress={() => setShowTutorialModal(false)}
-                  style={styles.closeButton}
-                >
-                  <MaterialCommunityIcons name="close" size={28} color="#2D3436" />
-                </TouchableOpacity>
-              </View>
-
-              <ScrollView style={styles.tutorialList}>
-                {videosLoading ? (
-                  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-                    <MaterialCommunityIcons name="loading" size={48} color="#3498DB" />
-                    <Text style={{ marginTop: 16, fontSize: 16, color: '#666' }}>
-                      Loading videos...
-                    </Text>
-                  </View>
-                ) : tutorialLinks[selectedCategory] && tutorialLinks[selectedCategory].length > 0 ? (
-                  tutorialLinks[selectedCategory].map((tutorial, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      style={styles.tutorialItem}
-                      onPress={() => handleTutorialPress(tutorial.url)}
-                    >
-                      <LinearGradient
-                        colors={['#E8F8F5', '#D5F4E6']}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                        style={styles.tutorialItemGradient}
-                      >
-                        <View style={styles.tutorialItemLeft}>
-                          <MaterialCommunityIcons name="youtube" size={32} color="#E74C3C" />
-                          <View style={styles.tutorialItemText}>
-                            <Text style={styles.tutorialItemTitle}>{tutorial.title}</Text>
-                            <Text style={styles.tutorialItemSubtitle}>Tap to watch</Text>
-                          </View>
-                        </View>
-                        <MaterialCommunityIcons name="play" size={24} color="#16A085" />
-                      </LinearGradient>
-                    </TouchableOpacity>
-                  ))
-                ) : (
-                  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-                    <MaterialCommunityIcons name="alert-circle-outline" size={48} color="#E67E22" />
-                    <Text style={{ marginTop: 16, fontSize: 16, color: '#666' }}>
-                      No videos available for this category
-                    </Text>
-                  </View>
-                )}
-              </ScrollView>
-            </View>
-          </View>
-        </Modal>
       </ScrollView>
     );
   };
@@ -981,8 +876,7 @@ const HygieneGuidanceScreen = ({ navigation }) => {
         <View style={styles.headerSpacer} />
       </LinearGradient>
 
-      {selectedCategory === null ? renderCategoryList() : renderDetailedGuide()}
-      <FloatingChatButton navigation={navigation} />
+      {renderCategoryList()}
     </View>
   );
 };
@@ -1090,38 +984,44 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
+    marginBottom: 8,
   },
   categoryCard: {
     width: '48%',
-    marginBottom: 15,
-    borderRadius: 12,
+    marginBottom: 16,
+    borderRadius: 14,
     overflow: 'hidden',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.05)',
+    minHeight: 140,
   },
   categoryCardTablet: {
     width: '31%',
   },
   categoryGradient: {
-    padding: 20,
+    padding: 22,
     alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
   },
   categoryCardTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-    marginTop: 10,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#2D3436',
+    marginTop: 12,
     textAlign: 'center',
   },
   categoryCardDescription: {
-    fontSize: 12,
-    color: '#FFFFFF',
-    marginTop: 5,
+    fontSize: 11,
+    color: '#636E72',
+    marginTop: 6,
     textAlign: 'center',
-    opacity: 0.9,
+    lineHeight: 15,
   },
   detailHeader: {
     flexDirection: 'row',
