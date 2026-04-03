@@ -383,7 +383,6 @@ const FirstAidGuidanceScreen = ({ navigation }) => {
             <Text style={styles.quickTipsText}>
               • Always keep a first aid kit at home{'\n'}
               • Know your pediatrician's emergency line{'\n'}
-              • Keep Poison Control (1-800-222-1222) handy{'\n'}
               • Take a CPR class for toddlers{'\n'}
               • Stay calm - your child takes cues from you
             </Text>
