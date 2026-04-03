@@ -177,142 +177,79 @@ The YouTube integration fetches relevant health and wellness videos for pregnanc
    - Search for "YouTube Data API v3"
    - Click on it and press "Enable"
 
-### Step 2: Create API Key
+### Backend Architecture
 
-1. **Generate Credentials:**
-   - Go to "APIs & Services" → "Credentials"
-   - Click "Create Credentials" → "API Key"
-   - Copy the generated API Key
+**Video Storage:** All videos are stored in MongoDB collection `videos` with the following types:
+- **Cartoons** - 25 videos across 5 channels (tom_jerry, pink_panther, DeanTV, MrBean, Masha_bear)
+- **Lullabies** - 25 videos across 5 channels (SuperSimpleSongs, Zeazara_KidsTV, kidzone, BabyTV, Tiny_MuslimClub)
+- **First Aid** - 6 videos (CPR & Choking, Allergies & Reactions, Minor Injuries, Burns & Scalds, Poisoning, Fever & Infection)
 
-2. **Restrict API Key (Security):**
-   - Click on your API Key
-   - Under "Application restrictions": Select "Android apps"
-   - Add package name: `com.wombly.app`
-   - Under "API restrictions": Select "YouTube Data API v3"
-   - Click "Save"
+**Video API Endpoints:**
 
-3. **Update Backend `.env`:**
-   ```env
-   YOUTUBE_API_KEY=AIzaSyD...your-key-here...
+1. **Get Entertainment Channels:**
+   ```javascript
+   GET /api/entertainment/cartoons/channels
+   GET /api/entertainment/lullabies/channels
+   
+   Response: { success: true, data: { channel: { icon, title, ... } } }
    ```
 
-### Step 3: YouTube Service Configuration
+2. **Get Videos for Channel:**
+   ```javascript
+   GET /api/entertainment/cartoons/:cartoonKey
+   GET /api/entertainment/lullabies/:lullabyKey
+   
+   Response: { success: true, data: [{ videoId, title, thumbnail, ... }] }
+   ```
 
-**File:** `backend/services/youtubeService.js`
+3. **First Aid Videos:**
+   ```javascript
+   GET /api/first-aid-videos/topics
+   GET /api/first-aid-videos/:topic
+   
+   Response: { success: true, data: [...] }
+   ```
 
-The service uses native `fetch` API (no external dependencies):
-- Builds optimized YouTube API queries
-- Implements safe search filter
-- Returns formatted video results
-- Handles errors gracefully
+4. **Add Videos:**
+   ```javascript
+   POST /api/videos/add
+   
+   Body: {
+     type: "cartoon" | "lullaby" | "first_aid",
+     channel: "channel_name",      // for cartoon/lullaby
+     topic: "topic_name",          // for first_aid
+     title: "Video Title",
+     youtubeUrl: "https://youtube.com/watch?v=...",
+     description: "Optional description"
+   }
+   ```
 
-**Key Functions:**
-```javascript
-searchVideos(query, maxResults)     // Search by keyword
-getChannelVideos(channelId)         // Get channel videos
-getPlaylistVideos(playlistId)       // Get playlist videos
-```
+### Step 2: YouTube Setup (For Video URLs)
 
-**Configuration (`backend/services/config.js`):**
-```javascript
+While videos are stored in MongoDB, they link to YouTube URLs. To add new videos:
+
+1. Find YouTube video URLs
+2. Use the `/api/videos/add` endpoint to store them in MongoDB
+3. Add via `addFirstAidVideos.ps1` script (see backend folder)
+
+**Example:**
+```bash
+# Videos stored in MongoDB with structure:
 {
-  YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY,
-  API_BASE_URL: 'https://www.googleapis.com/youtube/v3',
-  MAX_RESULTS: 10,              // Videos per request
-  SAFE_SEARCH: 'strict',        // Filter inappropriate content
-  VIDEO_TYPE: 'video'           // Only videos, no channels/playlists
+  _id: ObjectId,
+  type: "cartoon",
+  channel: "tom_jerry",
+  title: "Tom & Jerry Episode 1",
+  youtubeUrl: "https://www.youtube.com/watch?v=...",
+  videoId: "extracted_id",
+  thumbnail: "https://img.youtube.com/vi/.../0.jpg",
+  addedBy: "admin",
+  createdAt: timestamp,
+  updatedAt: timestamp
 }
 ```
 
-### Step 4: Backend API Endpoints
-
-**Search Videos:**
-```javascript
-GET /api/search-videos?q=pregnancy+nutrition&maxResults=10
-
-Response:
-{
-  success: true,
-  videos: [
-    {
-      id: "video-id",
-      title: "Healthy Pregnancy Diet",
-      description: "Guide to nutrition during pregnancy",
-      thumbnail: "https://i.ytimg.com/vi/...",
-      url: "https://www.youtube.com/watch?v=..."
-    }
-  ]
-}
-```
-
-**Get Channel Videos:**
-```javascript
-GET /api/channel-videos?channelId=UCxxxxx&maxResults=10
-
-Response: { success: true, videos: [...] }
-```
-
-**Get Playlist Videos:**
-```javascript
-GET /api/playlist-videos?playlistId=PLxxxxx&maxResults=10
-
-Response: { success: true, videos: [...] }
-```
-
-### Step 5: Frontend Integration
-
-**Screens Using YouTube:**
-- `HygieneGuidanceScreen.js` - Hygiene and first aid videos
-- `FirstAidGuidanceScreen.js` - Emergency first aid guidance
-- `NutritionGuideScreen.js` - Nutrition and diet videos
-- `DosDontsScreen.js` - Do's and don'ts for pregnancy
-- `EntertainmentModule.js` - Lullabies and cartoons for toddlers
-
-**Example Usage:**
-```javascript
-import { API_BASE_URL } from './apiConfig';
-
-const fetchVideos = async (topic) => {
-  try {
-    const response = await fetch(
-      `${API_BASE_URL}/api/search-videos?q=${topic}&maxResults=10`
-    );
-    const data = await response.json();
-    setVideos(data.videos);
-  } catch (error) {
-    console.error('Failed to fetch videos:', error);
-  }
-};
-```
-
-### Step 6: Quota Management
-
-**Free Tier Limits:**
-- 100 queries per day
-- ~10 API units per search query
-- Equivalent to ~10 searches/day
-
-**Optimization Tips:**
-1. Cache search results locally (AsyncStorage)
-2. Batch requests when possible
-3. Implement pagination for large results
-4. Use specific search terms for better results
-5. Cache video metadata for 24 hours
-
-**Quota Monitoring:**
-- Check usage: [Google Cloud Console Quotas](https://console.cloud.google.com/apis/dashboard)
-- Upgrade to paid plan for more requests
-- Set quotas to prevent overage
-
-### YouTube API Troubleshooting
-
-| Issue | Cause | Solution |
-|-------|-------|----------|
-| "API Key invalid" | Key not set or expired | Verify API_KEY in `.env` |
-| "API not enabled" | YouTube Data API not enabled | Enable in Google Cloud Console |
-| "Quota exceeded" | Used 100 daily queries | Wait until next day or upgrade |
-| "Videos not loading" | API key missing permissions | Regenerate key and restrict properly |
-| "No results found" | Poor search query | Use specific keywords (e.g., "pregnancy week 20") |
+### Step 3: Video Management
 
 ---
 
@@ -344,16 +281,15 @@ wombly/
     ├── server.js                   # Express server (MAIN)
     ├── .env                        # Configuration (EDIT THIS)
     ├── package.json                # Backend dependencies
-    ├── users-db.json               # MongoDB database
     │
     ├── models/
-    │  └── User.js                  # Mongoose User schema
+    │  ├── User.js                  # Mongoose User schema
+    │  └── Video.js                 # MongoDB Video schema (cartoon/lullaby/first_aid)
     │
-    └── services/
-       ├── config.js                # Centralized configuration
-       ├── otpService.js            # OTP generation & sending
-       ├── youtubeService.js        # YouTube API integration
-       └── entertainmentService.js  # Entertainment channels
+    ├── services/
+    │  └── otpService.js            # OTP generation & sending
+    │
+    └── addFirstAidVideos.ps1       # PowerShell script to add first aid videos to MongoDB
 ```
 
 ---
