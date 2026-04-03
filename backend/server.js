@@ -2,12 +2,12 @@ const express = require("express")
 const mongoose = require("mongoose")
 const cors = require("cors")
 const jwt = require("jsonwebtoken")
+const bcrypt = require("bcryptjs")
 require("dotenv").config()
 
 const User = require("./models/User")
+const Video = require("./models/Video")
 const otpService = require("./services/otpService")
-const youtubeService = require("./services/youtubeService")
-const entertainmentService = require("./services/entertainmentService")
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -69,11 +69,37 @@ app.post("/api/login", async (req, res) => {
       })
     }
 
-    if (user.password !== password) {
+    // Backward compatibility: Support both hashed and plain text passwords
+    let isPasswordValid = false
+    let isPlainTextPassword = false
+
+    // Try bcrypt comparison first (for hashed passwords)
+    try {
+      isPasswordValid = await bcrypt.compare(password, user.password)
+    } catch (err) {
+      // If bcrypt fails, it might be a plain text password
+      isPasswordValid = false
+    }
+
+    // If bcrypt failed, check if it's a plain text password (old user)
+    if (!isPasswordValid && user.password === password) {
+      isPasswordValid = true
+      isPlainTextPassword = true
+    }
+
+    if (!isPasswordValid) {
       return res.status(401).json({
         success: false,
         message: "Invalid username or password",
       })
+    }
+
+    // Upgrade plain text password to hashed (migration)
+    if (isPlainTextPassword) {
+      const hashedPassword = await bcrypt.hash(password, 10)
+      user.password = hashedPassword
+      await user.save()
+      console.log(`Upgraded plain text password to hashed for user: ${user.email}`)
     }
 
     if (!user.isVerified) {
@@ -90,7 +116,7 @@ app.post("/api/login", async (req, res) => {
       currentWeek = user.pregnancyWeek
     }
 
-    const token = jwt.sign({ userId: user._id, email: user.email }, "your-secret-key", { expiresIn: "24h" })
+    const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET || "your_jwt_secret_key_here", { expiresIn: "24h" })
 
     res.json({
       success: true,
@@ -196,6 +222,8 @@ app.post("/api/signup", async (req, res) => {
       })
     }
 
+    const hashedPassword = await bcrypt.hash(password, 10)
+
     const newUser = new User({
       name: name.trim(),
       age: ageNum,
@@ -205,7 +233,7 @@ app.post("/api/signup", async (req, res) => {
       phone: phone.trim(),
       pregnancyWeek: pregnancyWeek ? Number.parseInt(pregnancyWeek) : undefined,
       pregnancyWeekEnteredDate: pregnancyWeek ? new Date() : undefined,
-      password: password,
+      password: hashedPassword,
       isVerified: false,
     })
 
@@ -288,7 +316,7 @@ app.post("/api/verify-otp", async (req, res) => {
     await user.save()
 
     // Generate login token
-    const token = jwt.sign({ userId: user._id, email: user.email }, "your-secret-key", { expiresIn: "24h" })
+    const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET || "your_jwt_secret_key_here", { expiresIn: "24h" })
 
     res.json({
       success: true,
@@ -765,226 +793,137 @@ app.post("/api/change-password", async (req, res) => {
   }
 })
 
-// ========== YOUTUBE API ENDPOINTS ==========
+// ========== ENTERTAINMENT API ENDPOINTS - DYNAMIC MONGODB VIDEO STORAGE ==========
 
-// Get available video categories
-app.get("/api/video-categories", (req, res) => {
-  try {
-    const categories = youtubeService.getAvailableCategories();
-    res.json({
-      success: true,
-      message: "Available video categories",
-      data: categories,
-    });
-  } catch (error) {
-    console.error("Get categories error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to get video categories",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
-    });
+// Helper function to extract YouTube video ID from URL
+function extractYouTubeVideoId(url) {
+  if (!url) return null;
+  
+  // If it's already just a video ID (11 characters, alphanumeric with - and _)
+  if (/^[a-zA-Z0-9_-]{11}$/.test(url)) {
+    return url;
   }
-});
+  
+  // Extract from https://www.youtube.com/watch?v=VIDEO_ID
+  const match1 = url.match(/(?:youtube\.com\/watch\?v=|\youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  if (match1) return match1[1];
+  
+  // Extract from https://youtu.be/VIDEO_ID
+  const match2 = url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
+  if (match2) return match2[1];
+  
+  return null;
+}
 
-// Search YouTube videos by keyword
-app.get("/api/search-videos", async (req, res) => {
+// Add new video to MongoDB
+app.post("/api/videos/add", async (req, res) => {
   try {
-    const { query, maxResults = 10 } = req.query;
-
-    if (!query) {
+    const { type, channel, title, youtubeUrl, description } = req.body;
+    
+    // Validate required fields
+    if (!type || !channel || !title || !youtubeUrl) {
       return res.status(400).json({
         success: false,
-        message: "Search query is required",
+        message: "Missing required fields: type, channel, title, youtubeUrl",
       });
     }
-
-    const videos = await youtubeService.searchVideos(query, parseInt(maxResults));
-
-    res.json({
-      success: true,
-      message: "Videos found successfully",
-      data: videos,
-      count: videos.length,
-    });
-  } catch (error) {
-    console.error("Search videos error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to search videos",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
-    });
-  }
-});
-
-// Get videos by category (pregnancy, toddler, hygiene, etc.)
-app.get("/api/videos-by-category/:category", async (req, res) => {
-  try {
-    const { category } = req.params;
-
-    const videos = await youtubeService.getVideosByCategory(category);
-
-    res.json({
-      success: true,
-      message: `Videos for "${category}" category`,
-      category: category,
-      data: videos,
-      count: videos.length,
-    });
-  } catch (error) {
-    console.error("Get videos by category error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch videos",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
-    });
-  }
-});
-
-// Get videos by category and subcategory
-app.get("/api/videos/:category/:subcategory", async (req, res) => {
-  try {
-    const { category, subcategory } = req.params;
-
-    const videos = await youtubeService.getVideosBySubcategory(category, subcategory);
-
-    res.json({
-      success: true,
-      message: `Videos for "${category}" - "${subcategory}"`,
-      category: category,
-      subcategory: subcategory,
-      data: videos,
-      count: videos.length,
-    });
-  } catch (error) {
-    console.error("Get videos by subcategory error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch videos",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
-    });
-  }
-});
-
-// Get videos from a specific YouTube channel
-app.get("/api/channel-videos/:channelId", async (req, res) => {
-  try {
-    const { channelId } = req.params;
-    const { maxResults = 5 } = req.query;
-
-    if (!channelId) {
+    
+    // Validate type
+    if (!["cartoon", "lullaby"].includes(type)) {
       return res.status(400).json({
         success: false,
-        message: "Channel ID is required",
+        message: "Type must be 'cartoon' or 'lullaby'",
       });
     }
-
-    const videos = await youtubeService.getChannelVideos(channelId, parseInt(maxResults));
-
-    res.json({
-      success: true,
-      message: `Videos from channel ${channelId}`,
-      channelId: channelId,
-      data: videos,
-      count: videos.length,
-    });
-  } catch (error) {
-    console.error("Get channel videos error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch channel videos",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
-    });
-  }
-});
-
-// Get videos from a YouTube playlist
-app.get("/api/playlist-videos/:playlistId", async (req, res) => {
-  try {
-    const { playlistId } = req.params;
-    const { maxResults = 10 } = req.query;
-
-    if (!playlistId) {
+    
+    // Extract video ID
+    const videoId = extractYouTubeVideoId(youtubeUrl);
+    if (!videoId) {
       return res.status(400).json({
         success: false,
-        message: "Playlist ID is required",
+        message: "Invalid YouTube URL or video ID format",
       });
     }
-
-    const videos = await youtubeService.getPlaylistVideos(playlistId, parseInt(maxResults));
-
-    res.json({
+    
+    // Check if video already exists
+    const existingVideo = await Video.findOne({ videoId });
+    if (existingVideo) {
+      return res.status(409).json({
+        success: false,
+        message: "Video already exists in database",
+        videoId,
+      });
+    }
+    
+    // Create new video
+    const newVideo = new Video({
+      type,
+      channel,
+      title,
+      youtubeUrl,
+      videoId,
+      description: description || "",
+      thumbnail: `https://img.youtube.com/vi/${videoId}/0.jpg`,
+      addedBy: "admin",
+    });
+    
+    await newVideo.save();
+    
+    res.status(201).json({
       success: true,
-      message: `Videos from playlist ${playlistId}`,
-      playlistId: playlistId,
-      data: videos,
-      count: videos.length,
+      message: "Video added successfully",
+      data: newVideo,
     });
   } catch (error) {
-    console.error("Get playlist videos error:", error);
+    console.error("Add video error:", error);
     res.status(500).json({
       success: false,
-      message: "Failed to fetch playlist videos",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+      message: "Failed to add video",
+      error: error.message,
     });
   }
 });
 
-// ========== ENTERTAINMENT API ENDPOINTS ==========
+// Channel metadata mapping
+const channelMetadata = {
+  // Cartoons
+  "tom_jerry": { name: "Tom & Jerry", icon: "paw", description: "Classic cartoon adventures" },
+  "pink_panther": { name: "Pink Panther", icon: "cat", description: "Hilarious panther stories" },
+  "DeanTV": { name: "Dean TV", icon: "clapper-board", description: "Fun educational content" },
+  "MrBean": { name: "Mr. Bean", icon: "run", description: "Funny Mr. Bean episodes" },
+  "Masha_bear": { name: "Masha and Bear", icon: "teddy-bear", description: "Adventure tales" },
+  // Lullabies
+  "SuperSimpleSongs": { name: "Super Simple Songs", icon: "music-box-outline", description: "Educational songs for babies" },
+  "Zeazara_KidsTV": { name: "Zea Zara Kids TV", icon: "music-note-multiple", description: "Creative nursery rhymes" },
+  "kidzone": { name: "Kidzone", icon: "music-sleep", description: "Relaxing children songs" },
+  "BabyTV": { name: "BabyTV", icon: "baby-carriage", description: "Gentle lullabies for sleep" },
+  "Tiny_MuslimClub": { name: "Tiny Muslims Club", icon: "quran", description: "Islamic nursery rhymes" },
+};
 
-// Get lullabies
-app.get("/api/entertainment/lullabies", async (req, res) => {
-  try {
-    const maxResults = parseInt(req.query.maxResults) || 10;
-    const query = req.query.query || ''; // Optional search query
-
-    // Use new youtubeService function
-    const youtubeService = require("./services/youtubeService");
-    const lullabies = await youtubeService.getLullabyVideos(query, maxResults);
-
-    res.json({
-      success: true,
-      message: "Lullabies fetched successfully",
-      type: "lullabies",
-      data: lullabies,
-      count: lullabies.length,
-    });
-  } catch (error) {
-    console.error("Get lullabies error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch lullabies",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
-    });
-  }
-});
-
-// Get all lullaby channels info
+// Get all unique channels for lullabies
 app.get("/api/entertainment/lullabies/channels", async (req, res) => {
   try {
-    const entertainmentService = require("./services/entertainmentService");
+    const channels = await Video.distinct("channel", { type: "lullaby" });
     
-    // Get lullaby channels and format for frontend
-    const lullabyChannels = entertainmentService.LULLABY_CHANNELS;
-    const formattedChannels = Object.entries(lullabyChannels).map(([key, value]) => ({
-      key,
-      name: value.name,
-      description: value.description,
-      icon: value.icon,
-      channelId: value.channelId,
+    // Transform channels to include metadata
+    const channelData = channels.map((ch) => ({
+      key: ch,
+      name: channelMetadata[ch]?.name || ch,
+      description: channelMetadata[ch]?.description || "Lullaby channel",
+      icon: channelMetadata[ch]?.icon || "music-box-outline",
     }));
-
+    
     res.json({
       success: true,
       message: "Lullaby channels fetched successfully",
       type: "lullabies",
-      data: formattedChannels,
+      data: channelData,
     });
   } catch (error) {
     console.error("Get lullaby channels error:", error);
     res.status(500).json({
       success: false,
       message: "Failed to fetch lullaby channels",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
     });
   }
 });
@@ -993,10 +932,7 @@ app.get("/api/entertainment/lullabies/channels", async (req, res) => {
 app.get("/api/entertainment/lullabies/:lullabyKey", async (req, res) => {
   try {
     const { lullabyKey } = req.params;
-    const maxResults = parseInt(req.query.maxResults) || 5;
-
-    const youtubeService = require("./services/youtubeService");
-    const videos = await youtubeService.getLullabyVideos(lullabyKey, maxResults);
+    const videos = await Video.find({ type: "lullaby", channel: lullabyKey }).lean();
 
     res.json({
       success: true,
@@ -1010,38 +946,34 @@ app.get("/api/entertainment/lullabies/:lullabyKey", async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to fetch lullaby videos",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
     });
   }
 });
 
-// Get all cartoon channels info
+// Get all unique channels for cartoons
 app.get("/api/entertainment/cartoons/channels", async (req, res) => {
   try {
-    const entertainmentService = require("./services/entertainmentService");
+    const channels = await Video.distinct("channel", { type: "cartoon" });
     
-    // Get cartoon channels and format for frontend
-    const cartoonChannels = entertainmentService.CARTOON_CHANNELS;
-    const formattedChannels = Object.entries(cartoonChannels).map(([key, value]) => ({
-      key,
-      name: value.name,
-      description: value.description,
-      icon: value.icon,
-      channelId: value.channelId,
+    // Transform channels to include metadata
+    const channelData = channels.map((ch) => ({
+      key: ch,
+      name: channelMetadata[ch]?.name || ch,
+      description: channelMetadata[ch]?.description || "Cartoon channel",
+      icon: channelMetadata[ch]?.icon || "television-play",
     }));
-
+    
     res.json({
       success: true,
       message: "Cartoon channels fetched successfully",
       type: "cartoons",
-      data: formattedChannels,
+      data: channelData,
     });
   } catch (error) {
     console.error("Get cartoon channels error:", error);
     res.status(500).json({
       success: false,
       message: "Failed to fetch cartoon channels",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
     });
   }
 });
@@ -1050,15 +982,12 @@ app.get("/api/entertainment/cartoons/channels", async (req, res) => {
 app.get("/api/entertainment/cartoons/:cartoonKey", async (req, res) => {
   try {
     const { cartoonKey } = req.params;
-    const maxResults = parseInt(req.query.maxResults) || 8;
-
-    const youtubeService = require("./services/youtubeService");
-    const videos = await youtubeService.getCartoonVideos(cartoonKey, maxResults);
+    const videos = await Video.find({ type: "cartoon", channel: cartoonKey }).lean();
 
     res.json({
       success: true,
       message: `Videos from ${cartoonKey}`,
-      cartoonKey: cartoonKey,
+      cartoonKey,
       data: videos,
       count: videos.length,
     });
@@ -1067,62 +996,6 @@ app.get("/api/entertainment/cartoons/:cartoonKey", async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to fetch cartoon videos",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
-    });
-  }
-});
-
-// Dynamic cartoon search endpoint
-app.get("/api/entertainment/cartoons/search/:query", async (req, res) => {
-  try {
-    const { query } = req.params;
-    const maxResults = parseInt(req.query.maxResults) || 10;
-
-    if (!query || query.trim().length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "Search query is required",
-      });
-    }
-
-    const cartoonVideos = await entertainmentService.searchCartoons(query, maxResults);
-
-    res.json({
-      success: true,
-      message: `Cartoon videos for "${query}"`,
-      searchQuery: query,
-      data: cartoonVideos,
-      count: cartoonVideos.length,
-    });
-  } catch (error) {
-    console.error("Search cartoons error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to search for cartoon videos",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
-    });
-  }
-});
-
-// Get popular cartoons with dynamic YouTube video fetching
-app.get("/api/entertainment/cartoons/popular/all", async (req, res) => {
-  try {
-    const maxResults = parseInt(req.query.maxResults) || 8;
-
-    const popularCartoons = await entertainmentService.getPopularCartoons(maxResults);
-
-    res.json({
-      success: true,
-      message: "Popular cartoons fetched successfully",
-      data: popularCartoons,
-      cartoonCount: Object.keys(popularCartoons).length,
-    });
-  } catch (error) {
-    console.error("Get popular cartoons error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch popular cartoons",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
     });
   }
 });

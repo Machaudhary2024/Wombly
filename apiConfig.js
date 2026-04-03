@@ -10,7 +10,7 @@ const isAndroidEmulator =
 // 2. Android emulator default (10.0.2.2 maps to host machine)
 // 3. Web dev default (localhost)
 // 4. Physical device / iOS simulator (set your machine's IP here)
-const MACHINE_IP = '10.11.117.126';
+const MACHINE_IP = '192.168.29.1';
 
 let API_URL;
 

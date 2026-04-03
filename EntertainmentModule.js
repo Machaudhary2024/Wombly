@@ -349,15 +349,6 @@ const EntertainmentModule = ({ navigation }) => {
               <Text style={styles.categoryTitle}>Fun Cartoons</Text>
             </View>
             <Text style={styles.categorySubtitle}>Educational and entertaining shows for toddlers</Text>
-            
-            {/* Search Cartoons Button */}
-            <TouchableOpacity
-              style={styles.searchCartoonButton}
-              onPress={() => setShowCartoonSearch(true)}
-            >
-              <MaterialCommunityIcons name="magnify" size={20} color="#FFFFFF" />
-              <Text style={styles.searchCartoonButtonText}>Search for Cartoons</Text>
-            </TouchableOpacity>
 
             {cartoons.length > 0 ? (
               <FlatList

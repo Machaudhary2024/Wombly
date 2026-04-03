@@ -61,20 +61,6 @@ const ToddlerCareScreen = ({ navigation, route = {} }) => {
         <View style={styles.headerSpacer} />
       </LinearGradient>
 
-      {/* Subtle welcome banner consistent with HomeScreen */}
-      {userName ? (
-        <View style={styles.subBannerWrap}>
-          <LinearGradient
-            colors={['#1E5DAB', '#2E7BC4']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.subBanner}
-          >
-            <Text style={styles.subBannerText}>Welcome, {userName}!</Text>
-          </LinearGradient>
-        </View>
-      ) : null}
-
       <ScrollView 
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
