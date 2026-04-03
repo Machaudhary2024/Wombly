@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -6,9 +6,6 @@ import {
   StyleSheet,
   ScrollView,
   Dimensions,
-  Linking,
-  Modal,
-  Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -18,20 +15,7 @@ const { width } = Dimensions.get('window');
 const isTablet = width > 600;
 
 const HygieneDetailScreen = ({ navigation, route }) => {
-  const { categoryId, categoryTitle, categoryTips, tutorialLinks: passedTutorialLinks } = route.params;
-  const [showTutorialModal, setShowTutorialModal] = useState(false);
-  const [tutorialLinks, setTutorialLinks] = useState(passedTutorialLinks || []);
-  const [videosLoading, setVideosLoading] = useState(false);
-
-  const handleTutorialPress = (url) => {
-    if (!url) {
-      Alert.alert('No Video', 'This tutorial is loading or currently unavailable. Please try again shortly.');
-      return;
-    }
-    Linking.openURL(url).catch(() => {
-      Alert.alert('Error', 'Unable to open the tutorial. Please check your internet connection.');
-    });
-  };
+  const { categoryId, categoryTitle, categoryTips } = route.params;
 
   return (
     <View style={styles.container}>
@@ -54,23 +38,6 @@ const HygieneDetailScreen = ({ navigation, route }) => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Tutorial Button */}
-        <TouchableOpacity
-          style={styles.tutorialButton}
-          onPress={() => setShowTutorialModal(true)}
-        >
-          <LinearGradient
-            colors={['#16A085', '#138D75']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.tutorialButtonGradient}
-          >
-            <MaterialCommunityIcons name="play-circle" size={20} color="#FFFFFF" />
-            <Text style={styles.tutorialButtonText}>Watch Tutorial Videos</Text>
-            <MaterialCommunityIcons name="chevron-right" size={20} color="#FFFFFF" />
-          </LinearGradient>
-        </TouchableOpacity>
-
         {/* Tips */}
         {categoryTips && categoryTips.map((tip) => (
           <View key={tip.number} style={styles.tipCard}>
@@ -124,69 +91,6 @@ const HygieneDetailScreen = ({ navigation, route }) => {
                   style={styles.closeButton}
                 >
                   <MaterialCommunityIcons name="close" size={28} color="#2D3436" />
-                </TouchableOpacity>
-              </View>
-              <ScrollView style={styles.tutorialList}>
-                {videosLoading ? (
-                  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-                    <MaterialCommunityIcons name="loading" size={48} color="#3498DB" />
-                    <Text style={{ marginTop: 16, fontSize: 16, color: '#666' }}>
-                      Loading videos...
-                    </Text>
-                  </View>
-                ) : Array.isArray(tutorialLinks) && tutorialLinks.length > 0 ? (
-                  tutorialLinks.map((tutorial, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      style={styles.tutorialItem}
-                      onPress={() => handleTutorialPress(tutorial.url)}
-                    >
-                      <LinearGradient
-                        colors={['#E8F8F5', '#D5F4E6']}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                        style={styles.tutorialItemGradient}
-                      >
-                        <View style={styles.tutorialItemLeft}>
-                          <MaterialCommunityIcons name="youtube" size={32} color="#E74C3C" />
-                          <View style={styles.tutorialItemText}>
-                            <Text style={styles.tutorialItemTitle}>{tutorial.title}</Text>
-                            <Text style={styles.tutorialItemSubtitle}>Tap to watch</Text>
-                          </View>
-                        </View>
-                        <MaterialCommunityIcons name="play" size={24} color="#16A085" />
-                      </LinearGradient>
-                    </TouchableOpacity>
-                  ))
-                ) : (
-                  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-                    <MaterialCommunityIcons name="alert-circle-outline" size={48} color="#E67E22" />
-                    <Text style={{ marginTop: 16, fontSize: 16, color: '#666' }}>
-                      No videos available for this topic
-                    </Text>
-                  </View>
-                )}
-              </ScrollView>
-            </View>
-          </View>
-        </Modal>
-      </ScrollView>
-    </View>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-  },
-  header: {
-    paddingTop: 50,
-    paddingBottom: 15,
-    paddingHorizontal: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
@@ -212,29 +116,6 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: 20,
     paddingBottom: 30,
-  },
-  tutorialButton: {
-    marginBottom: 20,
-    borderRadius: 12,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  tutorialButtonGradient: {
-    paddingVertical: 14,
-    paddingHorizontal: 18,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  tutorialButtonText: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    marginHorizontal: 10,
   },
   tipCard: {
     marginBottom: 12,
@@ -363,79 +244,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#78281F',
     lineHeight: 22,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingTop: 20,
-    maxHeight: '80%',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingBottom: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#2D3436',
-  },
-  closeButton: {
-    padding: 8,
-  },
-  tutorialList: {
-    padding: 20,
-  },
-  noVideosText: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-    padding: 20,
-  },
-  tutorialItem: {
-    marginBottom: 15,
-    borderRadius: 12,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 2,
-  },
-  tutorialItemGradient: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 15,
-    justifyContent: 'space-between',
-  },
-  tutorialItemLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  tutorialItemText: {
-    marginLeft: 12,
-    flex: 1,
-  },
-  tutorialItemTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#0B5345',
-    marginBottom: 4,
-  },
-  tutorialItemSubtitle: {
-    fontSize: 12,
-    color: '#16A085',
   },
 });
 

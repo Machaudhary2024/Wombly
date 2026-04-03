@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { 
   View, 
   Text, 
@@ -18,90 +18,6 @@ const { width, height } = Dimensions.get('window');
 const isTablet = width > 600;
 
 const HygieneGuidanceScreen = ({ navigation }) => {
-  const [showTutorialModal, setShowTutorialModal] = useState(false);
-  const [tutorialLinks, setTutorialLinks] = useState({});
-  const [videosLoading, setVideosLoading] = useState(true);
-
-  // Fetch videos from YouTube API
-  useEffect(() => {
-    const fetchAllVideos = async () => {
-      try {
-        setVideosLoading(true);
-        const categories = ['diaper', 'bathing', 'handwash', 'dental', 'skincare', 'laundry', 'wounds', 'foodsafety'];
-        const categoryMap = {
-          diaper: 1,
-          bathing: 2,
-          handwash: 3,
-          dental: 4,
-          skincare: 5,
-          laundry: 6,
-          wounds: 7,
-          foodsafety: 8,
-        };
-
-        const newTutorialLinks = {};
-
-        for (const category of categories) {
-          try {
-            // Fetch videos for specific category
-            const response = await fetch(
-              `${API_BASE_URL}/api/videos-by-category/${category}`
-            );
-            const result = await response.json();
-
-            if (result.success && result.data && result.data.length > 0) {
-              // Get only 1 video per category
-              newTutorialLinks[categoryMap[category]] = result.data
-                .slice(0, 1)
-                .map((video) => ({
-                  title: video.title,
-                  url: video.url,
-                  thumbnail: video.thumbnail,
-                  id: video.id,
-                }));
-            } else {
-              // Fallback: fetch from hygiene category if specific category returns nothing
-              try {
-                const fallbackResponse = await fetch(
-                  `${API_BASE_URL}/api/videos-by-category/hygiene`
-                );
-                const fallbackResult = await fallbackResponse.json();
-                
-                if (fallbackResult.success && fallbackResult.data && fallbackResult.data.length > 0) {
-                  newTutorialLinks[categoryMap[category]] = fallbackResult.data
-                    .slice(0, 1)
-                    .map((video) => ({
-                      title: video.title,
-                      url: video.url,
-                      thumbnail: video.thumbnail,
-                      id: video.id,
-                    }));
-                } else {
-                  newTutorialLinks[categoryMap[category]] = [];
-                }
-              } catch (fallbackError) {
-                console.error(`Fallback error for ${category}:`, fallbackError);
-                newTutorialLinks[categoryMap[category]] = [];
-              }
-            }
-          } catch (error) {
-            console.error(`Error fetching videos for ${category}:`, error);
-            newTutorialLinks[categoryMap[category]] = [];
-          }
-        }
-
-        setTutorialLinks(newTutorialLinks);
-      } catch (error) {
-        console.error('Error fetching tutorials:', error);
-        // Keep app working with empty videos
-        setTutorialLinks({});
-      } finally {
-        setVideosLoading(false);
-      }
-    };
-
-    fetchAllVideos();
-  }, []);
 
   const categories = [
     {
@@ -798,7 +714,6 @@ const HygieneGuidanceScreen = ({ navigation }) => {
                   categoryId: category.id,
                   categoryTitle: categoryData.title,
                   categoryTips: categoryData.tips,
-                  tutorialLinks: tutorialLinks[category.id] || [],
                 });
               }}
               activeOpacity={0.8}
