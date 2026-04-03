@@ -208,7 +208,7 @@ const getChannelVideos = async (channelId, maxResults = 5) => {
               title: item.snippet.title,
               description: item.snippet.description,
               thumbnail: item.snippet.thumbnails.medium?.url || item.snippet.thumbnails.default.url,
-              url: `https://www.youtube.com/watch?v=${item.id.videoId}`,
+              url: `https://www.youtuboe.com/watch?v=${item.id.videoId}`,
             }));
           } catch (err) {
             console.log(`API fetch failed for ${key}: ${err.message}. Using mock data.`);

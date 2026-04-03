@@ -129,33 +129,6 @@ const searchCartoons = async (searchQuery, maxResults = 10) => {
  * @param {number} maxResults - Maximum number of results per cartoon
  * @returns {Promise<Object>} Object with cartoon videos organized by type
  */
-const getPopularCartoons = async (maxResults = 8) => {
-  try {
-    const cartoonKeywords = [
-      'Bluey',
-      'Peppa Pig',
-      'Cocomelon',
-      'Daniel Tiger',
-      'Puffin Rock',
-      'Bubble Guppies',
-    ];
-
-    const cartoonResults = {};
-
-    for (const cartoonName of cartoonKeywords) {
-      const videos = await searchCartoons(cartoonName, maxResults);
-      cartoonResults[cartoonName.toLowerCase().replace(/\s+/g, '_')] = {
-        name: cartoonName,
-        videos: videos,
-      };
-    }
-
-    return cartoonResults;
-  } catch (error) {
-    console.error('Error fetching popular cartoons:', error);
-    return {};
-  }
-};
 
 /**
  * Get all cartoon channels information
