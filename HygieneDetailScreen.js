@@ -74,23 +74,23 @@ const HygieneDetailScreen = ({ navigation, route }) => {
             </LinearGradient>
           </View>
         ))}
+      </ScrollView>
+    </View>
+  );
+};
 
-        {/* Tutorial Modal */}
-        <Modal
-          visible={showTutorialModal}
-          transparent={true}
-          animationType="slide"
-          onRequestClose={() => setShowTutorialModal(false)}
-        >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-              <View style={styles.modalHeader}>
-                <Text style={styles.modalTitle}>Tutorial Videos</Text>
-                <TouchableOpacity
-                  onPress={() => setShowTutorialModal(false)}
-                  style={styles.closeButton}
-                >
-                  <MaterialCommunityIcons name="close" size={28} color="#2D3436" />
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+  },
+  header: {
+    paddingTop: 50,
+    paddingBottom: 15,
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
