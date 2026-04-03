@@ -13,6 +13,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { API_BASE_URL } from './apiConfig';
+import YouTubeVideoPlayer from './components/YouTubeVideoPlayer';
 
 const { width } = Dimensions.get('window');
 const isTablet = width > 600;
@@ -22,15 +23,18 @@ const FirstAidDetailScreen = ({ navigation, route }) => {
   const [showTutorialModal, setShowTutorialModal] = useState(false);
   const [tutorialLinks, setTutorialLinks] = useState(passedTutorialLinks || []);
   const [videosLoading, setVideosLoading] = useState(false);
+  const [selectedVideoId, setSelectedVideoId] = useState(null);
+  const [selectedVideoTitle, setSelectedVideoTitle] = useState('');
+  const [showVideoPlayer, setShowVideoPlayer] = useState(false);
 
-  const handleTutorialPress = (url) => {
-    if (!url) {
+  const handleTutorialPress = (video) => {
+    if (!video?.videoId) {
       Alert.alert('No Video', 'This tutorial is loading or currently unavailable. Please try again shortly.');
       return;
     }
-    Linking.openURL(url).catch(() => {
-      Alert.alert('Error', 'Unable to open the tutorial. Please check your internet connection.');
-    });
+    setSelectedVideoId(video.videoId);
+    setSelectedVideoTitle(video.title || 'Tutorial Video');
+    setShowVideoPlayer(true);
   };
 
   return (
@@ -139,7 +143,7 @@ const FirstAidDetailScreen = ({ navigation, route }) => {
                     <TouchableOpacity
                       key={index}
                       style={styles.tutorialItem}
-                      onPress={() => handleTutorialPress(tutorial.url)}
+                      onPress={() => handleTutorialPress(tutorial)}
                     >
                       <LinearGradient
                         colors={['#FADBD8', '#F5B7B1']}
@@ -170,6 +174,35 @@ const FirstAidDetailScreen = ({ navigation, route }) => {
             </View>
           </View>
         </Modal>
+
+        {/* Video Player Modal */}
+        {showVideoPlayer && selectedVideoId && (
+          <Modal
+            visible={showVideoPlayer}
+            transparent={false}
+            animationType="slide"
+            onRequestClose={() => setShowVideoPlayer(false)}
+          >
+            <View style={styles.videoPlayerContainer}>
+              <View style={styles.videoPlayerHeader}>
+                <TouchableOpacity
+                  style={styles.videoPlayerCloseButton}
+                  onPress={() => setShowVideoPlayer(false)}
+                >
+                  <MaterialCommunityIcons name="close-circle" size={36} color="#FFFFFF" />
+                </TouchableOpacity>
+                <Text style={styles.videoPlayerTitle}>{selectedVideoTitle}</Text>
+                <View style={{ width: 36 }} />
+              </View>
+              <ScrollView 
+                style={styles.videoPlayerContent}
+                contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
+              >
+                <YouTubeVideoPlayer videoId={selectedVideoId} height={300} />
+              </ScrollView>
+            </View>
+          </Modal>
+        )}
       </ScrollView>
     </View>
   );
@@ -370,6 +403,34 @@ const styles = StyleSheet.create({
   tutorialItemSubtitle: {
     fontSize: 12,
     color: '#7F8C8D',
+  },
+  videoPlayerContainer: {
+    flex: 1,
+    backgroundColor: '#000000',
+  },
+  videoPlayerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingTop: isTablet ? 20 : 30,
+    paddingBottom: 15,
+    backgroundColor: '#1A1A1A',
+  },
+  videoPlayerCloseButton: {
+    padding: 8,
+  },
+  videoPlayerTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    flex: 1,
+    textAlign: 'center',
+    marginHorizontal: 10,
+  },
+  videoPlayerContent: {
+    flex: 1,
+    backgroundColor: '#000000',
   },
 });
 
