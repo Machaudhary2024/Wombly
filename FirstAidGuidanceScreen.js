@@ -40,44 +40,44 @@ const FirstAidGuidanceScreen = ({ navigation }) => {
     ).start();
   }, [pulseAnim]);
 
-  // Fetch videos from YouTube API for First Aid
+  // Fetch videos from MongoDB for First Aid
   useEffect(() => {
     const fetchAllVideos = async () => {
       try {
-        const categoryNames = ['CPR', 'allergies', 'wounds', 'burns', 'poison', 'fever'];
-        const categoryMap = {
-          CPR: 1,
-          allergies: 2,
-          wounds: 3,
-          burns: 4,
-          poison: 5,
-          fever: 6,
+        const topics = ['CPR & Choking', 'Allergies & Reactions', 'Minor Injuries', 'Burns & Scalds', 'Poisoning', 'Fever & Infection'];
+        const topicMap = {
+          'CPR & Choking': 1,
+          'Allergies & Reactions': 2,
+          'Minor Injuries': 3,
+          'Burns & Scalds': 4,
+          'Poisoning': 5,
+          'Fever & Infection': 6,
         };
 
         const newTutorialLinks = {};
 
-        for (const category of categoryNames) {
+        for (const topic of topics) {
           try {
             const response = await fetch(
-              `${API_BASE_URL}/api/videos-by-category/firstaid`
+              `${API_BASE_URL}/api/first-aid-videos/${encodeURIComponent(topic)}`
             );
             const result = await response.json();
 
             if (result.success && result.data && result.data.length > 0) {
-              newTutorialLinks[categoryMap[category]] = result.data
+              newTutorialLinks[topicMap[topic]] = result.data
                 .slice(0, 1)
                 .map((video) => ({
                   title: video.title,
-                  url: video.url,
+                  videoId: video.videoId,
                   thumbnail: video.thumbnail,
-                  id: video.id,
+                  id: video._id,
                 }));
             } else {
-              newTutorialLinks[categoryMap[category]] = [];
+              newTutorialLinks[topicMap[topic]] = [];
             }
           } catch (error) {
-            console.error(`Error fetching videos for ${category}:`, error);
-            newTutorialLinks[categoryMap[category]] = [];
+            console.error(`Error fetching videos for ${topic}:`, error);
+            newTutorialLinks[topicMap[topic]] = [];
           }
         }
 

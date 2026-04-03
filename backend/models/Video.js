@@ -4,12 +4,20 @@ const videoSchema = new mongoose.Schema(
   {
     type: {
       type: String,
-      enum: ["cartoon", "lullaby"],
+      enum: ["cartoon", "lullaby", "first_aid"],
       required: true,
     },
     channel: {
       type: String,
-      required: true,
+      required: function() {
+        return this.type !== "first_aid";
+      },
+    },
+    topic: {
+      type: String,
+      required: function() {
+        return this.type === "first_aid";
+      },
     },
     title: {
       type: String,
@@ -43,5 +51,6 @@ const videoSchema = new mongoose.Schema(
 
 // Index for faster queries
 videoSchema.index({ type: 1, channel: 1 });
+videoSchema.index({ type: 1, topic: 1 });
 
 module.exports = mongoose.model("Video", videoSchema);

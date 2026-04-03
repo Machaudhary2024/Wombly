@@ -818,21 +818,35 @@ function extractYouTubeVideoId(url) {
 // Add new video to MongoDB
 app.post("/api/videos/add", async (req, res) => {
   try {
-    const { type, channel, title, youtubeUrl, description } = req.body;
+    const { type, channel, topic, title, youtubeUrl, description } = req.body;
     
     // Validate required fields
-    if (!type || !channel || !title || !youtubeUrl) {
+    if (!type || !title || !youtubeUrl) {
       return res.status(400).json({
         success: false,
-        message: "Missing required fields: type, channel, title, youtubeUrl",
+        message: "Missing required fields: type, title, youtubeUrl",
       });
     }
     
-    // Validate type
-    if (!["cartoon", "lullaby"].includes(type)) {
+    // Validate type and required fields based on type
+    if (!["cartoon", "lullaby", "first_aid"].includes(type)) {
       return res.status(400).json({
         success: false,
-        message: "Type must be 'cartoon' or 'lullaby'",
+        message: "Type must be 'cartoon', 'lullaby', or 'first_aid'",
+      });
+    }
+    
+    if (type !== "first_aid" && !channel) {
+      return res.status(400).json({
+        success: false,
+        message: "Channel is required for cartoon and lullaby videos",
+      });
+    }
+    
+    if (type === "first_aid" && !topic) {
+      return res.status(400).json({
+        success: false,
+        message: "Topic is required for first aid videos",
       });
     }
     
@@ -858,7 +872,8 @@ app.post("/api/videos/add", async (req, res) => {
     // Create new video
     const newVideo = new Video({
       type,
-      channel,
+      channel: type !== "first_aid" ? channel : undefined,
+      topic: type === "first_aid" ? topic : undefined,
       title,
       youtubeUrl,
       videoId,
@@ -996,6 +1011,49 @@ app.get("/api/entertainment/cartoons/:cartoonKey", async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to fetch cartoon videos",
+    });
+  }
+});
+
+// ========== FIRST AID VIDEO ENDPOINTS ==========
+
+// Get all unique first aid topics
+app.get("/api/first-aid-videos/topics", async (req, res) => {
+  try {
+    const topics = await Video.distinct("topic", { type: "first_aid" });
+    
+    res.json({
+      success: true,
+      message: "First aid topics fetched successfully",
+      data: topics,
+    });
+  } catch (error) {
+    console.error("Get first aid topics error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch first aid topics",
+    });
+  }
+});
+
+// Get videos for a specific first aid topic
+app.get("/api/first-aid-videos/:topic", async (req, res) => {
+  try {
+    const { topic } = req.params;
+    const videos = await Video.find({ type: "first_aid", topic: topic }).lean();
+
+    res.json({
+      success: true,
+      message: `First aid videos for ${topic}`,
+      topic: topic,
+      data: videos,
+      count: videos.length,
+    });
+  } catch (error) {
+    console.error("Get first aid videos error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch first aid videos",
     });
   }
 });
