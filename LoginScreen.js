@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useCallback } from "react"
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import {
   Platform,
   Modal,
 } from "react-native"
+import { useFocusEffect } from "@react-navigation/native"
 import { MaterialCommunityIcons } from "@expo/vector-icons"
 import { LinearGradient } from "expo-linear-gradient"
 import { API_BASE_URL } from "./apiConfig"
@@ -31,6 +32,14 @@ const LoginScreen = ({ navigation }) => {
   const [errorMessage, setErrorMessage] = useState("")
   const [errorType, setErrorType] = useState("")
   const passwordInputRef = useRef(null)
+
+  useFocusEffect(
+    useCallback(() => {
+      setEmail("")
+      setPassword("")
+      setErrors({})
+    }, [])
+  )
 
   const validateForm = () => {
     const newErrors = {}

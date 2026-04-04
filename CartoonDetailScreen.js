@@ -4,7 +4,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { API_BASE_URL } from './apiConfig';
 import YouTubeVideoPlayer from './components/YouTubeVideoPlayer';
-import FloatingChatButton from './components/FloatingChatButton';
 
 const CartoonDetailScreen = ({ navigation, route }) => {
   const { cartoonKey, cartoonName } = route.params;
