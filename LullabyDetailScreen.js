@@ -161,7 +161,6 @@ const LullabyDetailScreen = ({ navigation, route }) => {
         </Modal>
       )}
 
-      <FloatingChatButton navigation={navigation} />
     </View>
   );
 };
