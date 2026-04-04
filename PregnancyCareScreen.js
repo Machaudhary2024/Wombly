@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert, Modal } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import FloatingChatButton from './components/FloatingChatButton';
 
 const PregnancyCareScreen = ({ navigation, route }) => {
   const pregnancyWeek = route.params?.pregnancyWeek;
@@ -168,7 +167,6 @@ const PregnancyCareScreen = ({ navigation, route }) => {
           </TouchableOpacity>
         ))}
       </ScrollView>
-      <FloatingChatButton navigation={navigation} userEmail={userEmail} />
     </View>
   );
 };

@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, Activi
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { API_BASE_URL } from './apiConfig';
-import FloatingChatButton from './components/FloatingChatButton';
 
 const categories = [
   { key: 'All', label: 'All' },
@@ -60,7 +59,6 @@ const DosDontsScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <FloatingChatButton navigation={navigation} />
       <LinearGradient
         colors={['#f0cfe3', '#de81fa']}
         start={{ x: 0, y: 0 }}
@@ -157,7 +155,6 @@ const DosDontsScreen = ({ navigation }) => {
           </TouchableOpacity>
         ))}
       </ScrollView>
-      <FloatingChatButton navigation={navigation} />
     </View>
   );
 };

@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import FloatingChatButton from './components/FloatingChatButton';
 
 const Week23To27Screen = ({ navigation }) => {
   console.log('Week23To27Screen rendered!', navigation ? 'Navigation available' : 'No navigation');
@@ -182,7 +181,6 @@ const Week23To27Screen = ({ navigation }) => {
 
         <View style={styles.bottomSpacer} />
       </ScrollView>
-      <FloatingChatButton navigation={navigation} />
     </View>
   );
 };

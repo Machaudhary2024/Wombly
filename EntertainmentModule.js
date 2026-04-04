@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, FlatList, Alert, 
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { API_BASE_URL } from './apiConfig';
-import FloatingChatButton from './components/FloatingChatButton';
 import YouTubeVideoPlayer from './components/YouTubeVideoPlayer';
 
 const EntertainmentModule = ({ navigation }) => {
@@ -508,7 +507,6 @@ const EntertainmentModule = ({ navigation }) => {
         </Modal>
       )}
 
-      <FloatingChatButton navigation={navigation} />
     </View>
   );
 };

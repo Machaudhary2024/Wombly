@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import FloatingChatButton from './components/FloatingChatButton';
 
 const ToddlerCareScreen = ({ navigation, route = {} }) => {
   const userName = route.params?.userName || '';
@@ -132,7 +131,6 @@ const ToddlerCareScreen = ({ navigation, route = {} }) => {
           </LinearGradient>
         </View>
       </ScrollView>
-      <FloatingChatButton navigation={navigation} userEmail={userEmail} userName={userName} />
     </View>
   );
 };

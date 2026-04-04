@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import FloatingChatButton from './components/FloatingChatButton';
 
 const buttons = [
   { title: 'Trimester Guide', icon: 'calendar-heart', color: '#9C27B0' },
@@ -17,7 +16,6 @@ const NutritionGuideScreen = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <FloatingChatButton navigation={navigation} />
       <LinearGradient
         colors={['#FFE5F1', '#FFFFFF']}
         start={{ x: 0, y: 0 }}
@@ -59,7 +57,6 @@ const NutritionGuideScreen = ({ navigation, route }) => {
           </TouchableOpacity>
         ))}
       </ScrollView>
-      <FloatingChatButton navigation={navigation} />
     </View>
   );
 };

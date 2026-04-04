@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, FlatList } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import FloatingChatButton from './components/FloatingChatButton';
 
 const TrimesterDetailsScreen = ({ navigation, route }) => {
   const { trimesterId, trimesterData, mealPlanData } = route.params;
@@ -145,7 +144,6 @@ const TrimesterDetailsScreen = ({ navigation, route }) => {
           </LinearGradient>
         </View>
       </ScrollView>
-      <FloatingChatButton navigation={navigation} />
     </View>
   );
 };

@@ -17,8 +17,10 @@ import { MaterialCommunityIcons } from "@expo/vector-icons"
 import { LinearGradient } from "expo-linear-gradient"
 import { API_BASE_URL } from "./apiConfig"
 import { validateField } from "./utils/validationSchema"
+import { useUser } from "./context/UserContext"
 
 const LoginScreen = ({ navigation }) => {
+  const { setUserInfo } = useUser()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [errors, setErrors] = useState({})
@@ -80,6 +82,7 @@ const LoginScreen = ({ navigation }) => {
         setErrorMessage("Login successful!")
         setErrorType("success")
         setShowErrorModal(true)
+        setUserInfo(data.user.email, data.user.name)
         setTimeout(() => {
           navigation.navigate("Home", {
             userEmail: data.user.email,

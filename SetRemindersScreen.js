@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, Switch
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import FloatingChatButton from './components/FloatingChatButton';
 import * as Notifications from 'expo-notifications';
 import AsyncStorageLib from '@react-native-async-storage/async-storage';
 
@@ -816,7 +815,6 @@ const SetRemindersScreen = ({ navigation }) => {
           </View>
         )}
       </ScrollView>
-      <FloatingChatButton navigation={navigation} />
     </View>
   );
 };
