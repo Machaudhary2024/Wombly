@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, FlatList, Alert, ActivityIndicator, TextInput, Image, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, FlatList, Alert, ActivityIndicator, TextInput, Image, Modal, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { API_BASE_URL } from './apiConfig';
@@ -107,12 +107,18 @@ const EntertainmentModule = ({ navigation }) => {
 
 
   const handlePlayLullaby = (lullaby) => {
-    if (!lullaby.videoId) {
-      Alert.alert('Error', 'Video ID not available');
+    if (!lullaby || !lullaby.videoId) {
+      Alert.alert('Error', 'Video ID not available. Please try another lullaby.');
       return;
     }
-    setSelectedVideoId(lullaby.videoId);
-    setSelectedVideoTitle(lullaby.title);
+    // Ensure videoId is a string and valid
+    const validVideoId = String(lullaby.videoId).trim();
+    if (!validVideoId) {
+      Alert.alert('Error', 'Invalid video ID');
+      return;
+    }
+    setSelectedVideoId(validVideoId);
+    setSelectedVideoTitle(lullaby.title || 'Untitled Lullaby');
     setShowPlayer(true);
   };
 
@@ -131,12 +137,18 @@ const EntertainmentModule = ({ navigation }) => {
   };
 
   const handlePlayCartoon = (video) => {
-    if (!video.videoId) {
-      Alert.alert('Error', 'Video ID not available');
+    if (!video || !video.videoId) {
+      Alert.alert('Error', 'Video ID not available. Please try another video.');
       return;
     }
-    setSelectedVideoId(video.videoId);
-    setSelectedVideoTitle(video.title);
+    // Ensure videoId is a string and valid
+    const validVideoId = String(video.videoId).trim();
+    if (!validVideoId) {
+      Alert.alert('Error', 'Invalid video ID');
+      return;
+    }
+    setSelectedVideoId(validVideoId);
+    setSelectedVideoTitle(video.title || 'Untitled Video');
     setShowPlayer(true);
   };
 
@@ -328,7 +340,7 @@ const EntertainmentModule = ({ navigation }) => {
               <FlatList
                 data={lullabyChannels}
                 renderItem={renderLullabyItem}
-                keyExtractor={(item) => item.key}
+                keyExtractor={(item) => `lullaby-${item.key}`}
                 scrollEnabled={false}
                 numColumns={2}
                 columnWrapperStyle={styles.gridContainer}
@@ -353,7 +365,7 @@ const EntertainmentModule = ({ navigation }) => {
               <FlatList
                 data={cartoons}
                 renderItem={renderCartoonItem}
-                keyExtractor={(item) => item.key}
+                keyExtractor={(item) => `cartoon-${item.key}`}
                 scrollEnabled={false}
                 numColumns={2}
                 columnWrapperStyle={styles.gridContainer}
@@ -456,7 +468,7 @@ const EntertainmentModule = ({ navigation }) => {
                     </LinearGradient>
                   </TouchableOpacity>
                 )}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => `search-video-${item._id || item.id || item.key || item.videoId}`}
                 scrollEnabled={false}
                 numColumns={2}
                 columnWrapperStyle={styles.videoGridContainer}
@@ -478,31 +490,36 @@ const EntertainmentModule = ({ navigation }) => {
           visible={showPlayer}
           transparent={false}
           animationType="slide"
-          onRequestClose={() => setShowPlayer(false)}
+          onRequestClose={() => {
+            setShowPlayer(false);
+            setSelectedVideoId(null);
+            setSelectedVideoTitle('');
+          }}
         >
           <View style={styles.playerModalContainer}>
             <TouchableOpacity
               style={styles.playerCloseTop}
-              onPress={() => setShowPlayer(false)}
+              onPress={() => {
+                setShowPlayer(false);
+                setSelectedVideoId(null);
+                setSelectedVideoTitle('');
+              }}
               activeOpacity={0.7}
             >
               <MaterialCommunityIcons name="close-circle" size={40} color="#FFFFFF" />
             </TouchableOpacity>
 
             <YouTubeVideoPlayer
+              key={selectedVideoId}
               videoId={selectedVideoId}
-              height={400}
+              height={Platform.OS === 'web' ? 400 : 300}
             />
 
-            <View style={styles.playerInfoContainer}>
-              <Text style={styles.playerTitle} numberOfLines={2}>{selectedVideoTitle}</Text>
-              <TouchableOpacity
-                style={styles.playerCloseButton}
-                onPress={() => setShowPlayer(false)}
-              >
-                <Text style={styles.playerCloseText}>Close Player</Text>
-              </TouchableOpacity>
-            </View>
+            {Platform.OS !== 'web' && (
+              <View style={styles.mobilePlayerInfo}>
+                <Text style={styles.mobilePlayerInfoText}>Tap the video to enter fullscreen mode</Text>
+              </View>
+            )}
           </View>
         </Modal>
       )}
@@ -895,31 +912,21 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     paddingBottom: 20,
   },
-  playerInfoContainer: {
-    alignItems: 'center',
-    paddingVertical: 20,
-    backgroundColor: '#1a1a1a',
-  },
-  playerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    textAlign: 'center',
-    marginBottom: 16,
-    paddingHorizontal: 20,
-  },
-  playerCloseButton: {
-    backgroundColor: '#FF6B9D',
-    paddingHorizontal: 24,
+
+  mobilePlayerInfo: {
     paddingVertical: 12,
-    borderRadius: 12,
-    minWidth: 140,
-    alignItems: 'center',
+    paddingHorizontal: 16,
+    backgroundColor: 'rgba(255, 107, 157, 0.2)',
+    borderRadius: 8,
+    marginTop: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: '#FF6B9D',
   },
-  playerCloseText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
+  mobilePlayerInfoText: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: '#FF6B9D',
+    textAlign: 'center',
   },
   channelBox: {
     flex: 0.48,

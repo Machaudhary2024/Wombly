@@ -80,13 +80,13 @@ const MEAL_IDEAS = [
 ];
 
 const CRAVING_VIDEOS = [
-  { id: 'REPLACE_WITH_VIDEO_ID_1', title: 'Pregnancy cravings – healthy tips' },
-  { id: 'REPLACE_WITH_VIDEO_ID_2', title: 'Pakistani pregnancy diet ideas' },
+  { id: 'LTlGwenhPlA', title: 'Pregnancy cravings – healthy tips' },
+  { id: 'eFEIYbccZNo', title: 'Pakistani pregnancy diet ideas' },
 ];
 
 function openYouTube(videoId) {
   if (!videoId || videoId.startsWith('REPLACE_')) return;
-  const url = `https://www.youtube.com/watch?v=${videoId}`;
+  const url = `https://www.youtube.com/shorts/${videoId}`;
   Linking.openURL(url).catch(() => {});
 }
 
@@ -170,7 +170,7 @@ const CravingsScreen = ({ navigation }) => {
             <Text style={styles.sectionTitle}>Videos</Text>
           </View>
           <Text style={styles.videoIntro}>
-            Tap a card to open the video on YouTube. Edit CRAVING_VIDEOS in CravingsScreen.js to add or change video IDs (e.g. from youtube.com/watch?v=VIDEO_ID).
+            Tap a card to open a video on YouTube. 
           </Text>
           {CRAVING_VIDEOS.map((v, i) => {
             const canOpen = v.id && !v.id.startsWith('REPLACE_');

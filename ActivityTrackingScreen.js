@@ -7,13 +7,14 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
-  Alert,
   Dimensions,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Sensors from 'expo-sensors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import StatusModal from './components/StatusModal';
+import ConfirmationModal from './components/ConfirmationModal';
 
 const ACTIVITY_STORAGE_KEY = 'activityTrackerData';
 
@@ -34,6 +35,11 @@ const ActivityTrackingScreen = ({ navigation, route }) => {
   const [encouragementMessage, setEncouragementMessage] = useState('');
   const [isTracking, setIsTracking] = useState(true);
   const [loaded, setLoaded] = useState(false);
+  const [statusModalVisible, setStatusModalVisible] = useState(false);
+  const [statusType, setStatusType] = useState('success');
+  const [statusTitle, setStatusTitle] = useState('');
+  const [statusMessage, setStatusMessage] = useState('');
+  const [resetConfirmVisible, setResetConfirmVisible] = useState(false);
 
   const accelerometerSubscription = useRef(null);
   const stepCountRef = useRef(0);
@@ -90,11 +96,10 @@ const ActivityTrackingScreen = ({ navigation, route }) => {
     try {
       const isAvailable = await Sensors.Accelerometer.isAvailableAsync();
       if (!isAvailable) {
-        Alert.alert(
-          'Sensor Unavailable',
-          'Your device does not support step tracking. Please use Google Fit or Apple Health integration.',
-          [{ text: 'OK' }]
-        );
+        setStatusType('warning');
+        setStatusTitle('Sensor Unavailable');
+        setStatusMessage('Your device does not support step tracking. Please use Google Fit or Apple Health integration.');
+        setStatusModalVisible(true);
         return;
       }
 
@@ -105,7 +110,10 @@ const ActivityTrackingScreen = ({ navigation, route }) => {
       );
     } catch (error) {
       console.error('Error starting step tracking:', error);
-      Alert.alert('Error', 'Could not start step tracking. Please check permissions.');
+      setStatusType('error');
+      setStatusTitle('Error');
+      setStatusMessage('Could not start step tracking. Please check permissions.');
+      setStatusModalVisible(true);
     }
   };
 
@@ -157,34 +165,34 @@ const ActivityTrackingScreen = ({ navigation, route }) => {
     if (percentage >= 100) {
       const messages = [
         'Amazing! You reached your goal today! 🌟',
-        'You\'re doing wonderfully! Keep it up! 💪',
+        'You are doing wonderfully! Keep it up! 💪',
         'Fantastic progress! Your body will thank you! ✨',
       ];
       message = messages[Math.floor(Math.random() * messages.length)];
     } else if (percentage >= 75) {
       const messages = [
-        'You\'re almost there! So close to your goal! 🌈',
+        'You are almost there! So close to your goal! 🌈',
         'Great job! Just a bit more to go! 💖',
-        'You\'re doing great! Keep moving gently! 🌸',
+        'You are doing great! Keep moving gently! 🌸',
       ];
       message = messages[Math.floor(Math.random() * messages.length)];
     } else if (percentage >= 50) {
       const messages = [
-        'You\'re halfway there! Every step counts! 🌺',
+        'You are halfway there! Every step counts! 🌺',
         'Nice progress! Listen to your body and rest when needed. 🌿',
-        'You\'re doing well! Take it at your own pace. 💕',
+        'You are doing well! Take it at your own pace. 💕',
       ];
       message = messages[Math.floor(Math.random() * messages.length)];
     } else if (percentage >= 25) {
       const messages = [
         'Good start! Remember, gentle movement is best. 🌷',
         'Every step matters! Take breaks when you need them. 🌻',
-        'You\'re on the right track! Listen to your body. 🌼',
+        'You are on the right track! Listen to your body. 🌼',
       ];
       message = messages[Math.floor(Math.random() * messages.length)];
     } else {
       const messages = [
-        'Getting started is the hardest part! You\'ve got this! 🌱',
+        'Getting started is the hardest part! You have got this! 🌱',
         'Remember: any movement is good movement during pregnancy. 🌿',
         'Take it easy and listen to what your body needs. 💚',
       ];
@@ -197,32 +205,34 @@ const ActivityTrackingScreen = ({ navigation, route }) => {
   const handleSetGoal = () => {
     const goal = parseInt(tempGoal);
     if (isNaN(goal) || goal < 1000 || goal > 15000) {
-      Alert.alert('Invalid Goal', 'Please enter a goal between 1,000 and 15,000 steps.');
+      setStatusType('error');
+      setStatusTitle('Invalid Goal');
+      setStatusMessage('Please enter a goal between 1,000 and 15,000 steps.');
+      setStatusModalVisible(true);
       return;
     }
     setDailyGoal(goal);
     setShowGoalModal(false);
-    Alert.alert('Goal Updated', `Your daily goal is now ${goal.toLocaleString()} steps.`);
+    setStatusType('success');
+    setStatusTitle('Goal Updated');
+    setStatusMessage(`Your daily goal is now ${goal.toLocaleString()} steps.`);
+    setStatusModalVisible(true);
   };
 
   const resetDailySteps = () => {
-    Alert.alert(
-      'Reset Steps',
-      'Are you sure you want to reset today\'s steps?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Reset',
-          style: 'destructive',
-          onPress: () => {
-            stepCountRef.current = 0;
-            setSteps(0);
-            setCalories(0);
-            setDistance(0);
-          },
-        },
-      ]
-    );
+    setResetConfirmVisible(true);
+  };
+
+  const confirmReset = () => {
+    stepCountRef.current = 0;
+    setSteps(0);
+    setCalories(0);
+    setDistance(0);
+    setResetConfirmVisible(false);
+    setStatusType('success');
+    setStatusTitle('Steps Reset');
+    setStatusMessage('Your daily steps have been reset.');
+    setStatusModalVisible(true);
   };
 
   const getProgressColor = () => {
@@ -468,6 +478,25 @@ const ActivityTrackingScreen = ({ navigation, route }) => {
             </View>
           </View>
         </Modal>
+
+        <StatusModal
+          visible={statusModalVisible}
+          type={statusType}
+          title={statusTitle}
+          message={statusMessage}
+          onClose={() => setStatusModalVisible(false)}
+        />
+
+        <ConfirmationModal
+          visible={resetConfirmVisible}
+          type="warning"
+          title="Reset Steps"
+          message="Are you sure you want to reset today's steps?"
+          confirmText="Reset"
+          cancelText="Cancel"
+          onConfirm={confirmReset}
+          onCancel={() => setResetConfirmVisible(false)}
+        />
       </LinearGradient>
     </View>
   );

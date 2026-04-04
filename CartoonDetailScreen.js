@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, FlatList, ActivityIndicator, Modal, Image, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, FlatList, ActivityIndicator, Modal, Image, Alert, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { API_BASE_URL } from './apiConfig';
@@ -124,7 +124,7 @@ const CartoonDetailScreen = ({ navigation, route }) => {
           <FlatList
             data={cartoonVideos}
             renderItem={renderCartoonVideoItem}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => `cartoon-detail-${item._id || item.id || item.videoId}`}
             scrollEnabled={false}
             numColumns={2}
             columnWrapperStyle={styles.videoGridContainer}
@@ -137,26 +137,44 @@ const CartoonDetailScreen = ({ navigation, route }) => {
       </ScrollView>
 
       {/* Video Player Modal */}
+      {/* Video Player Modal */}
       {showPlayer && selectedVideoId && (
         <Modal
           visible={showPlayer}
           transparent={false}
           animationType="slide"
-          onRequestClose={() => setShowPlayer(false)}
+          onRequestClose={() => {
+            setShowPlayer(false);
+            setSelectedVideoId(null);
+            setSelectedVideoTitle('');
+          }}
         >
           <View style={styles.playerModalContainer}>
             <TouchableOpacity
               style={styles.playerCloseTop}
-              onPress={() => setShowPlayer(false)}
+              onPress={() => {
+                setShowPlayer(false);
+                setSelectedVideoId(null);
+                setSelectedVideoTitle('');
+              }}
               activeOpacity={0.7}
             >
               <MaterialCommunityIcons name="close-circle" size={40} color="#FFFFFF" />
             </TouchableOpacity>
 
-            <YouTubeVideoPlayer
-              videoId={selectedVideoId}
-              height={400}
-            />
+            {Platform.OS === 'web' ? (
+              <YouTubeVideoPlayer
+                key={selectedVideoId}
+                videoId={selectedVideoId}
+                height={400}
+              />
+            ) : (
+              <YouTubeVideoPlayer
+                key={selectedVideoId}
+                videoId={selectedVideoId}
+                height={300}
+              />
+            )}
           </View>
         </Modal>
       )}
@@ -294,6 +312,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000',
     justifyContent: 'center',
+    paddingTop: 40,
   },
   playerCloseTop: {
     position: 'absolute',
@@ -302,6 +321,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
     padding: 10,
   },
+
 });
 
 export default CartoonDetailScreen;
