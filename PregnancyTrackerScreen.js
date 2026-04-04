@@ -2,7 +2,7 @@
 
 // ... existing imports and existing code ...
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   View,
   Text,
@@ -11,18 +11,48 @@ import {
   ScrollView,
   Modal,
   TextInput,
-  Alert,
 } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
 import { MaterialCommunityIcons } from "@expo/vector-icons"
 import { API_BASE_URL } from "./apiConfig"
+import StatusModal from "./components/StatusModal"
 
 const PregnancyTrackerScreen = ({ navigation, route }) => {
+  const userEmail = route.params?.userEmail
   const pregnancyWeekParam = route.params?.pregnancyWeek
   const [pregnancyWeek, setPregnancyWeek] = useState(pregnancyWeekParam ? Number.parseInt(pregnancyWeekParam) : null)
   const [modalVisible, setModalVisible] = useState(false)
   const [weekInput, setWeekInput] = useState(pregnancyWeek ? pregnancyWeek.toString() : "")
   const [weekError, setWeekError] = useState("")
+  const [statusModalVisible, setStatusModalVisible] = useState(false)
+  const [statusType, setStatusType] = useState("success")
+  const [statusTitle, setStatusTitle] = useState("")
+  const [statusMessage, setStatusMessage] = useState("")
+
+  // Fetch pregnancy week from server when screen comes into focus
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', async () => {
+      if (userEmail) {
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/user?email=${encodeURIComponent(userEmail)}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+          })
+          if (response.ok) {
+            const data = await response.json()
+            if (data.success && data.user.pregnancyWeek) {
+              const week = Number.parseInt(data.user.pregnancyWeek)
+              setPregnancyWeek(week)
+              setWeekInput(week.toString())
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching pregnancy week:', error)
+        }
+      }
+    })
+    return unsubscribe
+  }, [navigation, userEmail])
 
   const calculateCurrentStage = (week) => {
     if (!week || isNaN(week)) {
@@ -151,7 +181,10 @@ const PregnancyTrackerScreen = ({ navigation, route }) => {
 
       const contentType = response.headers.get("content-type")
       if (!contentType || !contentType.includes("application/json")) {
-        Alert.alert("Error", "Server returned invalid response.")
+        setStatusType("error")
+        setStatusTitle("Error")
+        setStatusMessage("Server returned invalid response.")
+        setStatusModalVisible(true)
         return
       }
 
@@ -161,7 +194,10 @@ const PregnancyTrackerScreen = ({ navigation, route }) => {
         setPregnancyWeek(weekNum)
         navigation.setParams({ pregnancyWeek: weekNum })
         setModalVisible(false)
-        Alert.alert("Success", "Pregnancy week updated successfully!")
+        setStatusType("success")
+        setStatusTitle("Success")
+        setStatusMessage("Pregnancy week updated successfully!")
+        setStatusModalVisible(true)
       } else {
         setWeekError(data.message || "Failed to update week")
       }
@@ -196,16 +232,7 @@ const PregnancyTrackerScreen = ({ navigation, route }) => {
           <MaterialCommunityIcons name="arrow-left" size={24} color="#961e46" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Pregnancy Tracker</Text>
-        <TouchableOpacity
-          onPress={() => {
-            setWeekInput(pregnancyWeek ? pregnancyWeek.toString() : "")
-            setWeekError("")
-            setModalVisible(true)
-          }}
-          style={styles.updateButton}
-        >
-          <MaterialCommunityIcons name="pencil" size={20} color="#FFFFFF" />
-        </TouchableOpacity>
+        <View style={{ width: 24 }} />
       </LinearGradient>
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
@@ -323,6 +350,14 @@ const PregnancyTrackerScreen = ({ navigation, route }) => {
           </View>
         </View>
       </Modal>
+
+      <StatusModal
+        visible={statusModalVisible}
+        type={statusType}
+        title={statusTitle}
+        message={statusMessage}
+        onClose={() => setStatusModalVisible(false)}
+      />
     </View>
   )
 }

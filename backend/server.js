@@ -907,7 +907,7 @@ const channelMetadata = {
   // Cartoons
   "tom_jerry": { name: "Tom & Jerry", icon: "paw", description: "Classic cartoon adventures" },
   "pink_panther": { name: "Pink Panther", icon: "cat", description: "Hilarious panther stories" },
-  "DeanTV": { name: "Dean TV", icon: "clapper-board", description: "Fun educational content" },
+  "DeanTV": { name: "Dean TV", icon: "filmstrip", description: "Fun educational content" },
   "MrBean": { name: "Mr. Bean", icon: "run", description: "Funny Mr. Bean episodes" },
   "Masha_bear": { name: "Masha and Bear", icon: "teddy-bear", description: "Adventure tales" },
   // Lullabies

@@ -82,8 +82,8 @@ const REMEDIES = [
 ];
 
 const CULTURAL_VIDEOS = [
-  { id: 'REPLACE_WITH_VIDEO_ID_1', title: 'Pakistani pregnancy remedies & tips' },
-  { id: 'REPLACE_WITH_VIDEO_ID_2', title: 'Traditional foods during pregnancy' },
+  { id: 'VL0jHTThHyQ', title: 'Diet Tips for Healthy Pregnancy' },
+  { id: 'OPv161ft2BI', title: 'Traditional foods during pregnancy' },
 ];
 
 function openYouTube(videoId) {
@@ -141,7 +141,7 @@ const CulturalRemediesScreen = ({ navigation }) => {
         <View style={styles.noteCard}>
           <MaterialCommunityIcons name="doctor" size={24} color="#6C5CE7" />
           <Text style={styles.noteText}>
-            These are shared for cultural context and general interest. They are not a replacement for your doctor\'s advice. If you\'re unsure about any remedy or supplement, ask your healthcare provider.
+            These are shared for cultural context and general interest. They are not a replacement for your doctor's advice. If you're unsure about any remedy or supplement, ask your healthcare provider.
           </Text>
         </View>
 
@@ -151,7 +151,7 @@ const CulturalRemediesScreen = ({ navigation }) => {
             <Text style={styles.sectionTitle}>Videos</Text>
           </View>
           <Text style={styles.videoIntro}>
-            Add your chosen YouTube video IDs in CulturalRemediesScreen.js (CULTURAL_VIDEOS) to show links here. Tap a card to open on YouTube.
+             Tap a card to open a video.
           </Text>
           {CULTURAL_VIDEOS.map((v, i) => {
             const canOpen = v.id && !v.id.startsWith('REPLACE_');
@@ -172,7 +172,7 @@ const CulturalRemediesScreen = ({ navigation }) => {
                 </View>
                 <Text style={styles.videoTitle}>{v.title}</Text>
                 <Text style={styles.videoSub}>
-                  {canOpen ? 'Tap to open on YouTube' : 'Add video ID in CulturalRemediesScreen.js'}
+                  {canOpen ? 'Tap to open on YouTube' : 'error'}
                 </Text>
               </TouchableOpacity>
             );

@@ -7,16 +7,17 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   ActivityIndicator,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Modal,
 } from "react-native"
 import { MaterialCommunityIcons } from "@expo/vector-icons"
 import { LinearGradient } from "expo-linear-gradient"
 import { API_BASE_URL } from "./apiConfig"
 import { validateField } from "./utils/validationSchema"
+import StatusModal from "./components/StatusModal"
 
 const OTPVerificationScreen = ({ navigation, route }) => {
   const emailFromRoute = route.params?.email || ""
@@ -26,6 +27,11 @@ const OTPVerificationScreen = ({ navigation, route }) => {
   const [loading, setLoading] = useState(false)
   const [timeLeft, setTimeLeft] = useState(300) // 5 minutes
   const [canResend, setCanResend] = useState(false)
+  const [statusModalVisible, setStatusModalVisible] = useState(false)
+  const [statusType, setStatusType] = useState("success")
+  const [statusTitle, setStatusTitle] = useState("")
+  const [statusMessage, setStatusMessage] = useState("")
+  const [pendingNavigation, setPendingNavigation] = useState(null)
 
   useEffect(() => {
     if (timeLeft <= 0) {
@@ -77,7 +83,10 @@ const OTPVerificationScreen = ({ navigation, route }) => {
 
       const contentType = response.headers.get("content-type")
       if (!contentType || !contentType.includes("application/json")) {
-        Alert.alert("Error", "Server returned invalid response.")
+        setStatusType("error")
+        setStatusTitle("Error")
+        setStatusMessage("Server returned invalid response.")
+        setStatusModalVisible(true)
         setLoading(false)
         return
       }
@@ -85,16 +94,35 @@ const OTPVerificationScreen = ({ navigation, route }) => {
       const data = await response.json()
 
       if (data.success) {
-        Alert.alert("Success", "Email verified successfully! You can now login.")
-        navigation.navigate("Login")
+        setStatusType("success")
+        setStatusTitle("Success")
+        setStatusMessage("Email verified successfully! You can now login.")
+        setPendingNavigation(() => () => navigation.navigate("Login"))
+        setStatusModalVisible(true)
       } else {
-        Alert.alert("Verification Failed", data.message)
+        setStatusType("error")
+        setStatusTitle("Verification Failed")
+        setStatusMessage(data.message)
+        setStatusModalVisible(true)
       }
     } catch (error) {
       console.error("OTP verification error:", error)
-      Alert.alert("Error", "Network error. Please try again.")
+      setStatusType("error")
+      setStatusTitle("Error")
+      setStatusMessage("Network error. Please try again.")
+      setStatusModalVisible(true)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleStatusModalClose = () => {
+    setStatusModalVisible(false)
+    if (pendingNavigation) {
+      setTimeout(() => {
+        pendingNavigation()
+        setPendingNavigation(null)
+      }, 300)
     }
   }
 
@@ -119,7 +147,10 @@ const OTPVerificationScreen = ({ navigation, route }) => {
 
       const contentType = response.headers.get("content-type")
       if (!contentType || !contentType.includes("application/json")) {
-        Alert.alert("Error", "Server returned invalid response.")
+        setStatusType("error")
+        setStatusTitle("Error")
+        setStatusMessage("Server returned invalid response.")
+        setStatusModalVisible(true)
         setLoading(false)
         return
       }
@@ -127,16 +158,25 @@ const OTPVerificationScreen = ({ navigation, route }) => {
       const data = await response.json()
 
       if (data.success) {
-        Alert.alert("Success", "OTP resent to your email!")
+        setStatusType("success")
+        setStatusTitle("Success")
+        setStatusMessage("OTP resent to your email!")
+        setStatusModalVisible(true)
         setTimeLeft(300) // Reset timer
         setCanResend(false)
         setOtp("")
       } else {
-        Alert.alert("Resend Failed", data.message)
+        setStatusType("error")
+        setStatusTitle("Resend Failed")
+        setStatusMessage(data.message)
+        setStatusModalVisible(true)
       }
     } catch (error) {
       console.error("Resend OTP error:", error)
-      Alert.alert("Error", "Network error. Please try again.")
+      setStatusType("error")
+      setStatusTitle("Error")
+      setStatusMessage("Network error. Please try again.")
+      setStatusModalVisible(true)
     } finally {
       setLoading(false)
     }
@@ -241,6 +281,14 @@ const OTPVerificationScreen = ({ navigation, route }) => {
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
+
+    <StatusModal
+      visible={statusModalVisible}
+      type={statusType}
+      title={statusTitle}
+      message={statusMessage}
+      onClose={handleStatusModalClose}
+    />
     </LinearGradient>
   )
 }
