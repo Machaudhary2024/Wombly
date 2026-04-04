@@ -5,13 +5,18 @@ const jwt = require("jsonwebtoken")
 const bcrypt = require("bcryptjs")
 require("dotenv").config()
 
+const Groq = require("groq-sdk")
 const User = require("./models/User")
 const Video = require("./models/Video")
 const otpService = require("./services/otpService")
+const conversationRoutes = require("./routes/conversations")
 
 const app = express()
 const PORT = process.env.PORT || 5000
 
+// Initialize Groq
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
+app.set("groq", groq)
 
 // Middleware
 app.use(cors())
@@ -1280,10 +1285,13 @@ app.get("/api/nutrition/dos-donts", (req, res) => {
   }
 });
 
+// Conversation routes
+app.use("/api/conversations", conversationRoutes)
+
 // Health check endpoint
 app.get("/api/health", (req, res) => {
-  res.json({ 
-    success: true, 
+  res.json({
+    success: true,
     message: "Server is healthy",
     mongoDBStatus: mongoose.connection.readyState === 1 ? "connected" : "disconnected",
     timestamp: new Date()
@@ -1298,16 +1306,6 @@ app.get("/api/test-signup", (req, res) => {
 // Root endpoint
 app.get("/", (req, res) => {
   res.json({ success: true, message: "Wombly Backend Server is running", timestamp: new Date() })
-})
-
-// Health check endpoint
-app.get("/api/health", (req, res) => {
-  res.json({ 
-    success: true, 
-    message: "Server is healthy",
-    mongoDBStatus: mongoose.connection.readyState === 1 ? "connected" : "disconnected",
-    timestamp: new Date()
-  })
 })
 
 // Start server after all routes are registered
