@@ -12,8 +12,6 @@ import ChangePasswordScreen from "./ChangePasswordScreen"
 import HomeScreen from "./HomeScreen"
 import PregnancyCareScreen from "./PregnancyCareScreen"
 import PregnancyTrackerScreen from "./PregnancyTrackerScreen"
-import PreconceptionScreen from "./PreconceptionScreen"
-import BirthScreen from "./BirthScreen"
 import Week0To7Screen from "./Week0To7Screen"
 import Week8To12Screen from "./Week8To12Screen"
 import Week13To18Screen from "./Week13To18Screen"
@@ -83,8 +81,6 @@ export default function App() {
           <Stack.Screen name="Myths" component={MythsScreen} options={{ headerShown: false }} />
           <Stack.Screen name="DosDonts" component={DosDontsScreen} options={{ headerShown: false }} />
           <Stack.Screen name="TrackPregnancy" component={PregnancyTrackerScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="Preconception" component={PreconceptionScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="Birth" component={BirthScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Week0To7" component={Week0To7Screen} options={{ headerShown: false }} />
           <Stack.Screen name="Week8To12" component={Week8To12Screen} options={{ headerShown: false }} />
           <Stack.Screen name="Week13To18" component={Week13To18Screen} options={{ headerShown: false }} />

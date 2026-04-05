@@ -26,7 +26,6 @@ const Week0To7Screen = ({ navigation }) => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Hero Section */}
         <View style={styles.heroSection}>
           <View style={styles.iconContainer}>
             <LinearGradient
@@ -36,13 +35,12 @@ const Week0To7Screen = ({ navigation }) => {
               <MaterialCommunityIcons name="calendar-start" size={50} color="#FF6B9D" />
             </LinearGradient>
           </View>
-          <Text style={styles.heroTitle}>Early Pregnancy</Text>
+          <Text style={styles.heroTitle}>Early pregnancy</Text>
           <Text style={styles.heroSubtitle}>
-            Weeks 0-7: Your journey begins
+            Weeks 1–7 (from your last period): your body is preparing and the pregnancy is very new. Care is usually counted from the first day of your last period, not the day you conceived.
           </Text>
         </View>
 
-        {/* Essentials Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View style={[styles.sectionIconBg, { backgroundColor: '#FFE5F1' }]}>
@@ -51,43 +49,40 @@ const Week0To7Screen = ({ navigation }) => {
             <Text style={styles.sectionTitle}>Essentials</Text>
           </View>
 
-          {/* High-Risk Group Card */}
           <View style={styles.highRiskCard}>
             <View style={styles.highRiskHeader}>
               <MaterialCommunityIcons name="alert-circle" size={28} color="#FF6B9D" />
-              <Text style={styles.highRiskTitle}>High-Risk Situations</Text>
+              <Text style={styles.highRiskTitle}>Book care early</Text>
             </View>
             <Text style={styles.highRiskText}>
-              If you have had a previous pregnancy that was severely affected, have lost a baby to HDFN, or if your titers are in the hundreds/thousands:
+              Arrange your first antenatal visit as soon as you can. Your doctor or midwife can confirm the pregnancy, talk about folic acid and any vaccines you may need, and plan routine tests.
             </Text>
             <View style={styles.recommendationCard}>
               <MaterialCommunityIcons name="hospital-box" size={24} color="#4CAF50" />
               <View style={styles.recommendationContent}>
-                <Text style={styles.recommendationTitle}>Early MFM Appointment Recommended</Text>
+                <Text style={styles.recommendationTitle}>Why early visits help</Text>
                 <Text style={styles.recommendationText}>
-                  It is recommended that you have your first appointment with your MFM as early as possible. Certain treatments such as{' '}
-                  <Text style={styles.boldText}>plasmapheresis</Text> and <Text style={styles.boldText}>IVIG</Text>, must be scheduled during this time period and can take weeks to be approved by insurance companies.
+                  Starting care early means questions about diet, medicines, nausea, and safety can be answered sooner. If you have pain, heavy bleeding, fever, or severe vomiting, seek advice the same day.
                 </Text>
                 <Text style={styles.recommendationSubtext}>
-                  Because these treatments are very time sensitive and are the most effective when started by a certain gestation, getting in to see your MFM early in the pregnancy is a great way to keep your baby safe.
+                  This app is for general education only. Always follow the plan from your own clinician.
                 </Text>
               </View>
             </View>
           </View>
 
-          {/* Everyone Section */}
           <View style={styles.everyoneCard}>
             <View style={styles.everyoneHeader}>
               <MaterialCommunityIcons name="account-group" size={28} color="#6C5CE7" />
-              <Text style={styles.everyoneTitle}>For Everyone</Text>
+              <Text style={styles.everyoneTitle}>For everyone</Text>
             </View>
             
             <View style={styles.checklistItem}>
               <MaterialCommunityIcons name="test-tube" size={24} color="#4CAF50" />
               <View style={styles.checklistContent}>
-                <Text style={styles.checklistTitle}>Antibody Screen and Titer Check</Text>
+                <Text style={styles.checklistTitle}>Routine tests</Text>
                 <Text style={styles.checklistText}>
-                  You should be given an antibody screen and your titers should be checked.
+                  Your clinic may offer blood and urine tests to check your health and screen for conditions that matter in pregnancy. What you are offered depends on where you live and your history.
                 </Text>
               </View>
             </View>
@@ -95,75 +90,72 @@ const Week0To7Screen = ({ navigation }) => {
             <View style={styles.checklistItem}>
               <MaterialCommunityIcons name="ultrasound" size={24} color="#2196F3" />
               <View style={styles.checklistContent}>
-                <Text style={styles.checklistTitle}>Dating Ultrasound</Text>
+                <Text style={styles.checklistTitle}>Dating scan</Text>
                 <Text style={styles.checklistText}>
-                  Early ultrasounds are the most accurate for dating purposes so it is helpful to have a dating ultrasound, especially if you aren't sure about the dates of conception or your last menstrual period.
+                  An early ultrasound can help confirm how far along you are, especially if your periods are irregular or you are unsure of dates.
                 </Text>
                 <Text style={styles.checklistSubtext}>
-                  Knowing the baby's accurate due date is very important during an alloimmunized pregnancy since many of the essential monitoring protocols and treatments are based on gestational age.
+                  A clear due date helps your team time future checks and scans.
                 </Text>
               </View>
             </View>
           </View>
         </View>
 
-        {/* Be Aware Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View style={[styles.sectionIconBg, { backgroundColor: '#F3E5F5' }]}>
               <MaterialCommunityIcons name="alert" size={24} color="#9C27B0" />
             </View>
-            <Text style={styles.sectionTitle}>Be Aware</Text>
+            <Text style={styles.sectionTitle}>Be aware</Text>
           </View>
           
           <View style={styles.warningCard}>
             <MaterialCommunityIcons name="information" size={28} color="#FF9800" />
             <View style={styles.warningContent}>
               <Text style={styles.warningText}>
-                <Text style={styles.boldText}>Miscarriages at this stage can sensitize a woman to develop alloantibodies.</Text>
+                <Text style={styles.boldText}>Common early signs</Text> include a missed period, nausea, sore breasts, tiredness, and needing to pass urine more often. Not everyone has all of these.
               </Text>
               <Text style={styles.warningSubtext}>
-                First trimester bleeding for any reason requires <Text style={styles.boldText}>Rh Immune Globulin (RhoGAM)</Text> if you are Rh negative, unless you already have anti-D antibodies.
+                Many pregnancies end in miscarriage in the first trimester; it is common and not your fault. If you have bleeding or cramping, contact your clinic or an urgent care service for advice. If you are Rh negative, your team may recommend an injection after some bleeds—ask them what applies to you.
               </Text>
             </View>
           </View>
         </View>
 
-        {/* Silver Lining Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View style={[styles.sectionIconBg, { backgroundColor: '#E8D5FF' }]}>
               <MaterialCommunityIcons name="weather-sunny" size={24} color="#6C5CE7" />
             </View>
-            <Text style={styles.sectionTitle}>Silver Lining</Text>
+            <Text style={styles.sectionTitle}>Silver lining</Text>
           </View>
           
           <View style={styles.positiveCard}>
             <MaterialCommunityIcons name="shield-check" size={40} color="#4CAF50" />
             <View style={styles.positiveContent}>
-              <Text style={styles.positiveTitle}>Your Baby is Safe</Text>
+              <Text style={styles.positiveTitle}>Tiny but busy</Text>
               <Text style={styles.positiveText}>
-                Your baby is completely safe from your antibodies at this point. Red cell antibodies cannot harm the baby during this time period so rest in the fact that your baby is safe from your antibodies right now.
+                In these weeks the fertilised egg implants, the placenta starts to form, and major organs begin to develop. Small steps in your body add up to big growth for your baby.
               </Text>
             </View>
           </View>
         </View>
 
-        {/* Visual Elements */}
         <View style={styles.visualSection}>
           <View style={styles.visualCard}>
             <MaterialCommunityIcons name="clock-fast" size={40} color="#FF6B9D" />
-            <Text style={styles.visualTitle}>Time Sensitive</Text>
+            <Text style={styles.visualTitle}>Start simple habits</Text>
             <Text style={styles.visualText}>
-              Early appointments and treatments are crucial for high-risk pregnancies
+              Folic acid as advised, balanced food, rest, and no smoking or alcohol unless your doctor says otherwise
             </Text>
           </View>
           
           <View style={styles.visualCard}>
             <MaterialCommunityIcons name="heart" size={40} color="#4CAF50" />
-            <Text style={styles.visualTitle}>Safe Period</Text>
+            <Text style={styles.visualTitle}>One step at a time</Text>
             <Text style={styles.visualText}>
-              Your baby is protected from antibodies during these early weeks
+              It is normal to feel excited or anxious; your care team is there to support you
             </Text>
           </View>
         </View>

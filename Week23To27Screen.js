@@ -26,7 +26,6 @@ const Week23To27Screen = ({ navigation }) => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Hero Section */}
         <View style={styles.heroSection}>
           <View style={styles.iconContainer}>
             <LinearGradient
@@ -36,13 +35,12 @@ const Week23To27Screen = ({ navigation }) => {
               <MaterialCommunityIcons name="baby-buggy" size={50} color="#FF9800" />
             </LinearGradient>
           </View>
-          <Text style={styles.heroTitle}>Viability Milestone</Text>
+          <Text style={styles.heroTitle}>Late second trimester</Text>
           <Text style={styles.heroSubtitle}>
-            Weeks 23-27: Baby is now viable
+            Weeks 23–27: your baby is gaining weight and fat. Lungs are still maturing, but many hospitals can support babies born around this time with specialist care if needed.
           </Text>
         </View>
 
-        {/* Essentials Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View style={[styles.sectionIconBg, { backgroundColor: '#E8F5E9' }]}>
@@ -51,78 +49,74 @@ const Week23To27Screen = ({ navigation }) => {
             <Text style={styles.sectionTitle}>Essentials</Text>
           </View>
 
-          {/* Non-Critical Titers Card */}
           <View style={styles.titerCard}>
             <View style={styles.titerHeader}>
               <MaterialCommunityIcons name="test-tube" size={28} color="#2196F3" />
-              <Text style={styles.titerTitle}>If Your Titers Are Not Critical</Text>
+              <Text style={styles.titerTitle}>Gestational diabetes screening</Text>
             </View>
             <View style={styles.titerContent}>
               <Text style={styles.titerText}>
-                Titer assessments should increase to <Text style={styles.boldText}>every 2 weeks</Text> starting at <Text style={styles.boldText}>24 weeks</Text>.
+                Between about <Text style={styles.boldText}>24 and 28 weeks</Text> many services test for diabetes that only appears in pregnancy. You may drink a sweet drink and have a blood test. If the result is high, diet changes or treatment can protect you and your baby.
               </Text>
             </View>
           </View>
 
-          {/* Critical Titers Card */}
           <View style={styles.criticalCard}>
             <View style={styles.criticalHeader}>
               <MaterialCommunityIcons name="alert-circle" size={28} color="#FF6B9D" />
-              <Text style={styles.criticalTitle}>If Your Titers Are Critical</Text>
+              <Text style={styles.criticalTitle}>Pelvic floor and posture</Text>
             </View>
             <View style={styles.mcaScanCard}>
               <MaterialCommunityIcons name="ultrasound" size={24} color="#2196F3" />
               <Text style={styles.mcaScanText}>
-                Continue having <Text style={styles.boldText}>weekly MCA scans</Text>.
+                Gentle pelvic floor squeezes (as taught by a physiotherapist) may help later recovery. Avoid standing for very long without a break; change position often and rest with feet up when you can.
               </Text>
             </View>
           </View>
 
-          {/* Everyone Section */}
           <View style={styles.everyoneCard}>
             <View style={styles.everyoneHeader}>
               <MaterialCommunityIcons name="account-group" size={28} color="#6C5CE7" />
-              <Text style={styles.everyoneTitle}>For Everyone</Text>
+              <Text style={styles.everyoneTitle}>For everyone</Text>
             </View>
             
             <View style={styles.nicuCard}>
               <MaterialCommunityIcons name="hospital-building" size={32} color="#FF9800" />
               <View style={styles.nicuContent}>
-                <Text style={styles.nicuTitle}>NICU Tour</Text>
+                <Text style={styles.nicuTitle}>Hospital tour (optional)</Text>
                 <Text style={styles.nicuText}>
-                  Consider setting up a tour of the NICU if you think one might help prepare you for your baby's possible NICU stay.
+                  Some hospitals offer birth suite tours or classes. Seeing where you might give birth can feel less scary. Neonatal units sometimes allow visits if your pregnancy is higher risk—ask your team.
                 </Text>
               </View>
             </View>
           </View>
         </View>
 
-        {/* Be Aware Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View style={[styles.sectionIconBg, { backgroundColor: '#FFF3E0' }]}>
               <MaterialCommunityIcons name="alert" size={24} color="#FF9800" />
             </View>
-            <Text style={styles.sectionTitle}>Be Aware</Text>
+            <Text style={styles.sectionTitle}>Be aware</Text>
           </View>
           
           <View style={styles.steroidsCard}>
             <MaterialCommunityIcons name="information" size={28} color="#FF9800" />
             <View style={styles.steroidsContent}>
-              <Text style={styles.steroidsTitle}>Steroids and MCA Scans</Text>
+              <Text style={styles.steroidsTitle}>Breathlessness</Text>
               <Text style={styles.steroidsText}>
-                Now that the baby is viable, your MFMs might be considering using <Text style={styles.boldText}>steroids</Text> to help develop the baby's lungs if the baby starts showing signs of fetal anemia or if an IUT is coming up.
+                Your womb pushes up under your ribs, so mild shortness of breath can be normal. Sit upright, slow down, and rest. If breathlessness is sudden or severe, or you have chest pain, seek urgent help.
               </Text>
               
               <View style={styles.warningBox}>
                 <MaterialCommunityIcons name="alert-circle" size={24} color="#F44336" />
                 <View style={styles.warningBoxContent}>
-                  <Text style={styles.warningBoxTitle}>Important Warning</Text>
+                  <Text style={styles.warningBoxTitle}>Medicines and steroids</Text>
                   <Text style={styles.warningBoxText}>
-                    Be aware that <Text style={styles.boldText}>steroids can artificially lower MCA scan results</Text>.
+                    If doctors think your baby might be born early, they may offer <Text style={styles.boldText}>steroid injections</Text> to help the baby’s lungs. Only take prescribed medicines; ask before any new tablet or cream.
                   </Text>
                   <Text style={styles.warningBoxRecommendation}>
-                    The best course of action is to only administer steroids <Text style={styles.boldText}>after the decision to have an IUT has been made</Text>.
+                    Always tell any doctor or dentist that you are pregnant.
                   </Text>
                 </View>
               </View>
@@ -130,21 +124,20 @@ const Week23To27Screen = ({ navigation }) => {
           </View>
         </View>
 
-        {/* Silver Lining Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View style={[styles.sectionIconBg, { backgroundColor: '#E1F5FE' }]}>
               <MaterialCommunityIcons name="weather-sunny" size={24} color="#03A9F4" />
             </View>
-            <Text style={styles.sectionTitle}>Silver Lining</Text>
+            <Text style={styles.sectionTitle}>Silver lining</Text>
           </View>
           
           <View style={styles.viabilityCard}>
             <MaterialCommunityIcons name="trophy" size={40} color="#FFC107" />
             <View style={styles.viabilityContent}>
-              <Text style={styles.viabilityTitle}>Viability Milestone Achieved!</Text>
+              <Text style={styles.viabilityTitle}>A big milestone</Text>
               <Text style={styles.viabilityText}>
-                Your baby is now considered <Text style={styles.boldText}>viable</Text> and could possibly survive outside of the womb if born now. This is a huge milestone to be celebrated!
+                Each week your baby’s lungs and brain mature. Staying pregnant longer usually means fewer breathing and feeding problems after birth.
               </Text>
             </View>
           </View>
@@ -152,29 +145,28 @@ const Week23To27Screen = ({ navigation }) => {
           <View style={styles.survivalCard}>
             <MaterialCommunityIcons name="chart-line" size={32} color="#4CAF50" />
             <View style={styles.survivalContent}>
-              <Text style={styles.survivalTitle}>Every Week Counts</Text>
+              <Text style={styles.survivalTitle}>Rhythm of movement</Text>
               <Text style={styles.survivalText}>
-                Every week longer in the womb means a <Text style={styles.boldText}>higher survival rate</Text> for the baby.
+                You may notice sleep–wake patterns. Many babies move more in the evening when you are resting.
               </Text>
             </View>
           </View>
         </View>
 
-        {/* Visual Elements */}
         <View style={styles.visualSection}>
           <View style={styles.visualCard}>
             <MaterialCommunityIcons name="calendar-clock" size={40} color="#FF9800" />
-            <Text style={styles.visualTitle}>More Frequent Tests</Text>
+            <Text style={styles.visualTitle}>More visits</Text>
             <Text style={styles.visualText}>
-              Titer tests increase to every 2 weeks at 24 weeks
+              Checkups may become a little more frequent as you approach the third trimester
             </Text>
           </View>
           
           <View style={styles.visualCard}>
             <MaterialCommunityIcons name="hospital-building" size={40} color="#2196F3" />
-            <Text style={styles.visualTitle}>NICU Prep</Text>
+            <Text style={styles.visualTitle}>Baby’s weight</Text>
             <Text style={styles.visualText}>
-              Consider touring the NICU to prepare
+              Around 1 kg or a bit more is typical by the end of this range for many babies
             </Text>
           </View>
         </View>

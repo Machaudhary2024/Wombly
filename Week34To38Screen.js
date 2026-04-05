@@ -26,7 +26,6 @@ const Week34To38Screen = ({ navigation }) => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Hero Section */}
         <View style={styles.heroSection}>
           <View style={styles.iconContainer}>
             <LinearGradient
@@ -36,13 +35,12 @@ const Week34To38Screen = ({ navigation }) => {
               <MaterialCommunityIcons name="baby-face-outline" size={50} color="#673AB7" />
             </LinearGradient>
           </View>
-          <Text style={styles.heroTitle}>Final Weeks</Text>
+          <Text style={styles.heroTitle}>Final weeks</Text>
           <Text style={styles.heroSubtitle}>
-            Weeks 34-38: Almost there!
+            Weeks 34–38: your baby is nearly full term. “Full term” is often counted from 37 weeks; many babies arrive between 37 and 42 weeks. You may feel very ready—or very tired. Both are normal.
           </Text>
         </View>
 
-        {/* Essentials Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View style={[styles.sectionIconBg, { backgroundColor: '#E8F5E9' }]}>
@@ -51,44 +49,41 @@ const Week34To38Screen = ({ navigation }) => {
             <Text style={styles.sectionTitle}>Essentials</Text>
           </View>
 
-          {/* Non-Critical Titers Card */}
           <View style={styles.titerCard}>
             <View style={styles.titerHeader}>
               <MaterialCommunityIcons name="test-tube" size={28} color="#2196F3" />
-              <Text style={styles.titerTitle}>If Your Titers Are Not Critical</Text>
+              <Text style={styles.titerTitle}>Closer monitoring</Text>
             </View>
             <Text style={styles.titerText}>
-              Beginning at <Text style={styles.boldText}>36 weeks</Text>, titers are drawn <Text style={styles.boldText}>every week</Text> until delivery.
+              From around <Text style={styles.boldText}>36 weeks</Text> some hospitals offer weekly visits or tests such as a monitor of the baby’s heart rate (<Text style={styles.boldText}>CTG</Text>) or a quick ultrasound check of fluid and movement. Your team will say what they recommend for you.
             </Text>
           </View>
 
-          {/* Critical Titers Card */}
           <View style={styles.criticalCard}>
             <View style={styles.criticalHeader}>
               <MaterialCommunityIcons name="alert-circle" size={28} color="#FF6B9D" />
-              <Text style={styles.criticalTitle}>If Your Titers Are Critical</Text>
+              <Text style={styles.criticalTitle}>Signs of labour</Text>
             </View>
             <View style={styles.mcaScanCard}>
               <MaterialCommunityIcons name="ultrasound" size={24} color="#2196F3" />
               <Text style={styles.mcaScanText}>
-                Continue having <Text style={styles.boldText}>weekly MCA scans</Text>.
+                Waters breaking (a trickle or gush), regular contractions, or bleeding like a period mean you should contact your maternity unit. A show (mucus plug) can happen days before labour—ask if you are unsure.
               </Text>
             </View>
           </View>
 
-          {/* Everyone Section */}
           <View style={styles.everyoneCard}>
             <View style={styles.everyoneHeader}>
               <MaterialCommunityIcons name="account-group" size={28} color="#6C5CE7" />
-              <Text style={styles.everyoneTitle}>For Everyone</Text>
+              <Text style={styles.everyoneTitle}>For everyone</Text>
             </View>
             
             <View style={styles.checklistItem}>
               <MaterialCommunityIcons name="heart" size={24} color="#4CAF50" />
               <View style={styles.checklistContent}>
-                <Text style={styles.checklistTitle}>Weekly Nonstress Tests (NST) and Biophysical Profiles (BPP)</Text>
+                <Text style={styles.checklistTitle}>Baby’s movements</Text>
                 <Text style={styles.checklistText}>
-                  Begin weekly nonstress tests (NST) and biophysical profiles (BPP).
+                  Keep paying attention every day. There is no set number of kicks that fits everyone, but you should notice your baby’s usual pattern. Any reduction needs a same-day check.
                 </Text>
               </View>
             </View>
@@ -96,9 +91,9 @@ const Week34To38Screen = ({ navigation }) => {
             <View style={styles.checklistItem}>
               <MaterialCommunityIcons name="calendar-check" size={24} color="#673AB7" />
               <View style={styles.checklistContent}>
-                <Text style={styles.checklistTitle}>Delivery Plan Discussion</Text>
+                <Text style={styles.checklistTitle}>Discuss timing of birth</Text>
                 <Text style={styles.checklistText}>
-                  Discuss your delivery plan with your MFM and OB.
+                  If labour has not started on its own, some pregnancies are offered a date to begin labour or a caesarean for medical reasons. Ask the benefits and risks in your situation.
                 </Text>
               </View>
             </View>
@@ -106,9 +101,9 @@ const Week34To38Screen = ({ navigation }) => {
             <View style={styles.checklistItem}>
               <MaterialCommunityIcons name="hospital-building" size={24} color="#FF9800" />
               <View style={styles.checklistContent}>
-                <Text style={styles.checklistTitle}>NICU Tour</Text>
+                <Text style={styles.checklistTitle}>After birth checks</Text>
                 <Text style={styles.checklistText}>
-                  Take a tour of the NICU if you haven't already.
+                  Newborn screening tests, hearing checks, and feeding support are routine in many places. Ask what happens in the first day and before you go home.
                 </Text>
               </View>
             </View>
@@ -116,9 +111,9 @@ const Week34To38Screen = ({ navigation }) => {
             <View style={styles.checklistItem}>
               <MaterialCommunityIcons name="bag-personal" size={24} color="#E91E63" />
               <View style={styles.checklistContent}>
-                <Text style={styles.checklistTitle}>Pack and Bring Your Bags</Text>
+                <Text style={styles.checklistTitle}>Bags and transport</Text>
                 <Text style={styles.checklistText}>
-                  Double check that your bags are all packed and ready to go. Bring your bag with you when you go to every appointment.
+                  Keep your hospital bag ready. Plan how you will get to hospital at any time of day or night.
                 </Text>
               </View>
             </View>
@@ -126,42 +121,41 @@ const Week34To38Screen = ({ navigation }) => {
             <View style={styles.checklistItem}>
               <MaterialCommunityIcons name="book-open-variant" size={24} color="#2196F3" />
               <View style={styles.checklistContent}>
-                <Text style={styles.checklistTitle}>Learn About Baby's Care</Text>
+                <Text style={styles.checklistTitle}>Recovery and support</Text>
                 <Text style={styles.checklistText}>
-                  Begin reading about the care and testing that baby will need after birth.
+                  Learn simple signs of infection, heavy bleeding, or blood clots in you after birth, and who to call. Rest, fluids, and accepting help from others all aid recovery.
                 </Text>
               </View>
             </View>
           </View>
         </View>
 
-        {/* Be Aware Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View style={[styles.sectionIconBg, { backgroundColor: '#FFF3E0' }]}>
               <MaterialCommunityIcons name="alert" size={24} color="#FF9800" />
             </View>
-            <Text style={styles.sectionTitle}>Be Aware</Text>
+            <Text style={styles.sectionTitle}>Be aware</Text>
           </View>
           
           <View style={styles.deliveryWarningCard}>
             <MaterialCommunityIcons name="information" size={28} color="#FF9800" />
             <View style={styles.deliveryWarningContent}>
-              <Text style={styles.deliveryWarningTitle}>MCA Scans and Delivery Timing</Text>
+              <Text style={styles.deliveryWarningTitle}>Overdue pregnancy</Text>
               
               <View style={styles.mcaReliabilityBox}>
                 <MaterialCommunityIcons name="alert-circle" size={24} color="#F44336" />
                 <Text style={styles.mcaReliabilityText}>
-                  MCA scans become <Text style={styles.boldText}>less reliable after 38 weeks</Text>.
+                  If you pass your due date, your team may offer extra monitoring. <Text style={styles.boldText}>Stillbirth risk rises slightly after 42 weeks</Text>, so induction is often discussed—ask what your hospital advises.
                 </Text>
               </View>
 
               <View style={styles.recommendationBox}>
                 <MaterialCommunityIcons name="hospital" size={28} color="#673AB7" />
                 <View style={styles.recommendationContent}>
-                  <Text style={styles.recommendationTitle}>Delivery Recommendation</Text>
+                  <Text style={styles.recommendationTitle}>Pain relief in labour</Text>
                   <Text style={styles.recommendationText}>
-                    <Text style={styles.boldText}>ACOG, RCOG, and SMFM</Text> recommend for all alloimmunized women regardless of titers, to deliver by <Text style={styles.boldText}>37-38 weeks</Text> unless baby is antigen negative.
+                    Options often include breathing techniques, water, gas and air, injections in the back (<Text style={styles.boldText}>epidural</Text>), or other medicines. There is no “best” choice for everyone—decide with your team as labour unfolds.
                   </Text>
                 </View>
               </View>
@@ -169,41 +163,39 @@ const Week34To38Screen = ({ navigation }) => {
           </View>
         </View>
 
-        {/* Silver Lining Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View style={[styles.sectionIconBg, { backgroundColor: '#E1F5FE' }]}>
               <MaterialCommunityIcons name="weather-sunny" size={24} color="#03A9F4" />
             </View>
-            <Text style={styles.sectionTitle}>Silver Lining</Text>
+            <Text style={styles.sectionTitle}>Silver lining</Text>
           </View>
           
           <View style={styles.successCard}>
             <MaterialCommunityIcons name="trophy" size={40} color="#FFC107" />
             <View style={styles.successContent}>
-              <Text style={styles.successTitle}>You Made It!</Text>
+              <Text style={styles.successTitle}>Almost there</Text>
               <Text style={styles.successText}>
-                Your baby can now be delivered with <Text style={styles.boldText}>little to no preemie issues</Text> to deal with. You made it!
+                A baby born from 37 weeks onward is usually well grown for life outside. You have come a long way—many parents feel proud and relieved reaching this stage.
               </Text>
             </View>
           </View>
         </View>
 
-        {/* Visual Elements */}
         <View style={styles.visualSection}>
           <View style={styles.visualCard}>
             <MaterialCommunityIcons name="heart" size={40} color="#4CAF50" />
-            <Text style={styles.visualTitle}>Weekly Tests</Text>
+            <Text style={styles.visualTitle}>Engaging</Text>
             <Text style={styles.visualText}>
-              NST and BPP begin this period
+              Your baby may “drop” lower into the pelvis as birth nears—breathing can feel easier
             </Text>
           </View>
           
           <View style={styles.visualCard}>
             <MaterialCommunityIcons name="hospital" size={40} color="#673AB7" />
-            <Text style={styles.visualTitle}>Delivery Ready</Text>
+            <Text style={styles.visualTitle}>Ready to meet you</Text>
             <Text style={styles.visualText}>
-              Recommended delivery by 37-38 weeks
+              Most babies are roughly 2.5–3.5 kg by full term—your scans and palpation give a rough guide
             </Text>
           </View>
         </View>

@@ -26,7 +26,6 @@ const Week8To12Screen = ({ navigation }) => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Hero Section */}
         <View style={styles.heroSection}>
           <View style={styles.iconContainer}>
             <LinearGradient
@@ -36,13 +35,12 @@ const Week8To12Screen = ({ navigation }) => {
               <MaterialCommunityIcons name="calendar-month" size={50} color="#2196F3" />
             </LinearGradient>
           </View>
-          <Text style={styles.heroTitle}>First Trimester</Text>
+          <Text style={styles.heroTitle}>First trimester</Text>
           <Text style={styles.heroSubtitle}>
-            Weeks 8-12: Important testing and monitoring
+            Weeks 8–12: your baby is growing quickly. The brain, heart, and other organs are forming. You may still feel sick or very tired—that is common.
           </Text>
         </View>
 
-        {/* Essentials Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View style={[styles.sectionIconBg, { backgroundColor: '#E8F5E9' }]}>
@@ -51,25 +49,23 @@ const Week8To12Screen = ({ navigation }) => {
             <Text style={styles.sectionTitle}>Essentials</Text>
           </View>
 
-          {/* Non-Critical Titers Card */}
           <View style={styles.titerCard}>
             <View style={styles.titerHeader}>
               <MaterialCommunityIcons name="test-tube" size={28} color="#2196F3" />
-              <Text style={styles.titerTitle}>If Your Titers Are Not Critical</Text>
+              <Text style={styles.titerTitle}>Routine visits</Text>
             </View>
             <Text style={styles.titerText}>
-              You should be having your first or second titer test now.
+              Keep your scheduled antenatal visits. Your team may repeat blood or urine tests and check your blood pressure and weight. Ask what screening tests are offered in your area around the end of the first trimester.
             </Text>
           </View>
 
-          {/* Critical Titers Card */}
           <View style={styles.criticalCard}>
             <View style={styles.criticalHeader}>
               <MaterialCommunityIcons name="alert-circle" size={28} color="#FF6B9D" />
-              <Text style={styles.criticalTitle}>If Your Titers Are Critical</Text>
+              <Text style={styles.criticalTitle}>Morning sickness and food</Text>
             </View>
             <Text style={styles.criticalText}>
-              For those having plasmapheresis and IVIG treatments:
+              Small, frequent meals, plenty of fluids, and rest can help nausea. If you cannot keep fluids down, lose weight, or feel faint, seek medical help—severe sickness can be treated.
             </Text>
             
             <View style={styles.treatmentTimeline}>
@@ -78,9 +74,9 @@ const Week8To12Screen = ({ navigation }) => {
                   <MaterialCommunityIcons name="water" size={24} color="#2196F3" />
                 </View>
                 <View style={styles.treatmentContent}>
-                  <Text style={styles.treatmentTitle}>Plasmapheresis</Text>
+                  <Text style={styles.treatmentTitle}>Fluids</Text>
                   <Text style={styles.treatmentText}>
-                    Recommended between <Text style={styles.boldText}>10-11 weeks</Text>
+                    Sip water or oral rehydration drinks through the day. Ice chips or clear soups can help if your stomach is sensitive.
                   </Text>
                 </View>
               </View>
@@ -90,9 +86,9 @@ const Week8To12Screen = ({ navigation }) => {
                   <MaterialCommunityIcons name="needle" size={24} color="#FF6B9D" />
                 </View>
                 <View style={styles.treatmentContent}>
-                  <Text style={styles.treatmentTitle}>IVIG</Text>
+                  <Text style={styles.treatmentTitle}>Gentle foods</Text>
                   <Text style={styles.treatmentText}>
-                    Should start immediately after plasmapheresis is finished (<Text style={styles.boldText}>11-12 weeks</Text>)
+                    Plain foods like crackers, rice, or toast are often easier. Avoid foods you are told to skip in pregnancy (for example undercooked meat or unpasteurised dairy).
                   </Text>
                 </View>
               </View>
@@ -101,30 +97,29 @@ const Week8To12Screen = ({ navigation }) => {
             <View style={styles.portInfoCard}>
               <MaterialCommunityIcons name="hospital-building" size={24} color="#6C5CE7" />
               <Text style={styles.portInfoText}>
-                Some women have a <Text style={styles.boldText}>port</Text> or a <Text style={styles.boldText}>permacath</Text> (or both) surgically implanted before starting treatments.
+                Your doctor can suggest safe medicines for nausea or heartburn if simple measures are not enough.
               </Text>
             </View>
           </View>
 
-          {/* Everyone Section */}
           <View style={styles.everyoneCard}>
             <View style={styles.everyoneHeader}>
               <MaterialCommunityIcons name="account-group" size={28} color="#6C5CE7" />
-              <Text style={styles.everyoneTitle}>For Everyone</Text>
+              <Text style={styles.everyoneTitle}>For everyone</Text>
             </View>
             
             <View style={styles.checklistItem}>
               <MaterialCommunityIcons name="account-heart" size={24} color="#FF6B9D" />
               <View style={styles.checklistContent}>
-                <Text style={styles.checklistTitle}>Partner's Blood Testing</Text>
+                <Text style={styles.checklistTitle}>Screening choices</Text>
                 <Text style={styles.checklistText}>
-                  If this is your first sensitized pregnancy, or first pregnancy with your partner, now is the time to have your partner's blood tested for the antigens.
+                  Many services offer optional screening for certain chromosome conditions, often using a blood test from you and sometimes an ultrasound. It is your choice whether to have these tests.
                 </Text>
                 <Text style={styles.checklistSubtext}>
-                  The baby's father should be <Text style={styles.boldText}>phenotyped</Text> for any of the matching antigens that you have antibodies to. For example, if you tested positive for anti-Kell antibodies, your partner needs to be tested for the Kell antigen.
+                  Ask what is available, what results can and cannot tell you, and what follow-up might be offered.
                 </Text>
                 <Text style={styles.checklistNote}>
-                  This test can be done by your MFM, regular OB or your partner's regular doctor.
+                  Information should be in a language you understand; ask for an interpreter if that helps.
                 </Text>
               </View>
             </View>
@@ -132,9 +127,9 @@ const Week8To12Screen = ({ navigation }) => {
             <View style={styles.checklistItem}>
               <MaterialCommunityIcons name="calendar-clock" size={24} color="#2196F3" />
               <View style={styles.checklistContent}>
-                <Text style={styles.checklistTitle}>First MFM Appointment</Text>
+                <Text style={styles.checklistTitle}>Dental and gum care</Text>
                 <Text style={styles.checklistText}>
-                  You should be arranging your first MFM appointment now.
+                  Hormone changes can make gums tender. Keep brushing, floss if you can, and see a dentist for routine care—tell them you are pregnant.
                 </Text>
               </View>
             </View>
@@ -142,82 +137,78 @@ const Week8To12Screen = ({ navigation }) => {
             <View style={styles.checklistItem}>
               <MaterialCommunityIcons name="dna" size={24} color="#4CAF50" />
               <View style={styles.checklistContent}>
-                <Text style={styles.checklistTitle}>Cell Free Fetal DNA Testing</Text>
+                <Text style={styles.checklistTitle}>Vitamins</Text>
                 <Text style={styles.checklistText}>
-                  You can have <Text style={styles.boldText}>cell free fetal DNA (cffDNA)</Text> testing to determine fetal antigen status.
+                  Continue folic acid and any supplements your clinician recommended. Do not start new tablets or herbal products without checking first.
                 </Text>
-                <Text style={styles.checklistLink}>More information here</Text>
               </View>
             </View>
           </View>
         </View>
 
-        {/* Be Aware Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View style={[styles.sectionIconBg, { backgroundColor: '#FFF3E0' }]}>
               <MaterialCommunityIcons name="alert" size={24} color="#FF9800" />
             </View>
-            <Text style={styles.sectionTitle}>Be Aware</Text>
+            <Text style={styles.sectionTitle}>Be aware</Text>
           </View>
           
           <View style={styles.warningCard}>
             <MaterialCommunityIcons name="information" size={28} color="#FF9800" />
             <View style={styles.warningContent}>
-              <Text style={styles.warningTitle}>Important: Antigen vs Antibody Testing</Text>
+              <Text style={styles.warningTitle}>When to get help quickly</Text>
               <Text style={styles.warningText}>
-                Sometimes even medical professionals get confused about the difference between antigens and antibodies.
+                Call your maternity service or emergency line if you have severe tummy pain, heavy bleeding, a high fever, bad headaches with vision changes, or think you may harm yourself.
               </Text>
               <View style={styles.importantBox}>
                 <Text style={styles.importantBoxText}>
-                  <Text style={styles.boldText}>MAKE SURE</Text> that the baby's father is tested for the <Text style={styles.boldText}>antigen</Text>, NOT the <Text style={styles.boldText}>antibody</Text>.
+                  <Text style={styles.boldText}>Stress matters too.</Text> It is okay to ask for mental health support at any stage.
                 </Text>
               </View>
               <Text style={styles.warningSubtext}>
-                The best practice is to ask for his test results either on paper or through an online patient portal so that you can see for certain that he was given the right test.
+                Miscarriage is still more common before 12 weeks. Light spotting can happen for other reasons, but always tell your clinic so they can advise you.
               </Text>
               <Text style={styles.warningNote}>
-                Future monitoring and treatment procedures are based on the results of the father's antigen test, so it is very important that he receives the correct test.
+                Sources such as public hospital week-by-week guides describe similar symptoms and checks; use them together with your own doctor’s advice.
               </Text>
             </View>
           </View>
         </View>
 
-        {/* Silver Lining Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View style={[styles.sectionIconBg, { backgroundColor: '#E1F5FE' }]}>
               <MaterialCommunityIcons name="weather-sunny" size={24} color="#03A9F4" />
             </View>
-            <Text style={styles.sectionTitle}>Silver Lining</Text>
+            <Text style={styles.sectionTitle}>Silver lining</Text>
           </View>
           
           <View style={styles.positiveCard}>
             <MaterialCommunityIcons name="shield-check" size={40} color="#4CAF50" />
             <View style={styles.positiveContent}>
-              <Text style={styles.positiveTitle}>Your Baby is Still Safe</Text>
+              <Text style={styles.positiveTitle}>Nausea often eases</Text>
               <Text style={styles.positiveText}>
-                It is still too early for your baby to be affected by your antibodies, so try not to worry about whether your antibodies are hurting baby or not.
+                For many women, morning sickness starts to improve toward the end of the first trimester, and energy slowly returns. Week 12 is a common time to share news with others if you wish.
               </Text>
             </View>
           </View>
         </View>
 
-        {/* Visual Elements */}
         <View style={styles.visualSection}>
           <View style={styles.visualCard}>
             <MaterialCommunityIcons name="test-tube" size={40} color="#2196F3" />
-            <Text style={styles.visualTitle}>Testing Time</Text>
+            <Text style={styles.visualTitle}>Stay in touch</Text>
             <Text style={styles.visualText}>
-              Critical period for titer tests and partner phenotyping
+              Write down questions before each visit so you do not forget them
             </Text>
           </View>
           
           <View style={styles.visualCard}>
             <MaterialCommunityIcons name="calendar-check" size={40} color="#4CAF50" />
-            <Text style={styles.visualTitle}>Schedule Now</Text>
+            <Text style={styles.visualTitle}>Growing fast</Text>
             <Text style={styles.visualText}>
-              Arrange your first MFM appointment during this period
+              Your baby is now roughly the size health sites compare to a small fruit—every week brings new milestones
             </Text>
           </View>
         </View>

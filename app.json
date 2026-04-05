@@ -26,6 +26,10 @@
     "web": {
       "favicon": "./assets/4.png"
     },
-    "scheme": "wombly"
+    "scheme": "wombly",
+    "plugins": [
+      "@react-native-community/datetimepicker",
+      "expo-web-browser"
+    ]
   }
 }

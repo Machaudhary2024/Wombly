@@ -84,14 +84,6 @@ const PregnancyTrackerScreen = ({ navigation, route }) => {
 
   const stages = [
     {
-      id: "preconception",
-      title: "Preconception",
-      description: "Preparing for pregnancy",
-      icon: "heart-outline",
-      iconColor: "#FF6B9D",
-      iconBg: "#FFE5F1",
-    },
-    {
       id: "week0-7",
       title: "Week 0-7",
       description: "Early pregnancy development",
@@ -147,14 +139,6 @@ const PregnancyTrackerScreen = ({ navigation, route }) => {
       iconColor: "#03A9F4",
       iconBg: "#E1F5FE",
     },
-    {
-      id: "birth",
-      title: "Birth",
-      description: "Labor and delivery guidance",
-      icon: "gift-outline",
-      iconColor: "#F44336",
-      iconBg: "#FFEBEE",
-    },
   ]
 
   const handleUpdateWeek = async () => {
@@ -209,7 +193,6 @@ const PregnancyTrackerScreen = ({ navigation, route }) => {
 
   const handleStagePress = (stage) => {
     const stageRoutes = {
-      preconception: "Preconception",
       "week0-7": "Week0To7",
       "week8-12": "Week8To12",
       "week13-18": "Week13To18",
@@ -217,7 +200,6 @@ const PregnancyTrackerScreen = ({ navigation, route }) => {
       "week23-27": "Week23To27",
       "week28-33": "Week28To33",
       "week34-38": "Week34To38",
-      birth: "Birth",
     }
 
     if (stageRoutes[stage.id]) {
