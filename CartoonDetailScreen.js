@@ -161,7 +161,6 @@ const CartoonDetailScreen = ({ navigation, route }) => {
         </Modal>
       )}
 
-      <FloatingChatButton navigation={navigation} />
     </View>
   );
 };
