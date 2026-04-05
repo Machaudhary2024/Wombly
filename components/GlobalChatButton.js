@@ -11,7 +11,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useUser } from '../context/UserContext';
 
 // Screens where the FAB should NOT appear
-const HIDDEN_SCREENS = ['Login', 'SignUp', 'OTPVerification', 'ForgotPassword', 'ResetPassword', 'ChangePassword', 'AIChat'];
+const HIDDEN_SCREENS = ['Login', 'SignUp', 'OTPVerification', 'ForgotPassword', 'ResetPassword', 'ChangePassword', 'AIChat', 'AccountInfo', 'Home'];
 
 const GlobalChatButton = () => {
   const navigation = useNavigation();

@@ -7,13 +7,14 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
-  Alert,
   Dimensions,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Sensors from 'expo-sensors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import StatusModal from './components/StatusModal';
+import ConfirmationModal from './components/ConfirmationModal';
 
 const ACTIVITY_STORAGE_KEY = 'activityTrackerData';
 
@@ -34,11 +35,19 @@ const ActivityTrackingScreen = ({ navigation, route }) => {
   const [encouragementMessage, setEncouragementMessage] = useState('');
   const [isTracking, setIsTracking] = useState(true);
   const [loaded, setLoaded] = useState(false);
+  const [statusModalVisible, setStatusModalVisible] = useState(false);
+  const [statusType, setStatusType] = useState('success');
+  const [statusTitle, setStatusTitle] = useState('');
+  const [statusMessage, setStatusMessage] = useState('');
+  const [resetConfirmVisible, setResetConfirmVisible] = useState(false);
 
   const accelerometerSubscription = useRef(null);
   const stepCountRef = useRef(0);
   const lastStepTime = useRef(Date.now());
   const accelerationHistory = useRef([]);
+  const emaAdjusted = useRef(0);
+  const prevSmoothed = useRef(0);
+  const prev2Smoothed = useRef(0);
 
   useEffect(() => {
     (async () => {
@@ -90,22 +99,24 @@ const ActivityTrackingScreen = ({ navigation, route }) => {
     try {
       const isAvailable = await Sensors.Accelerometer.isAvailableAsync();
       if (!isAvailable) {
-        Alert.alert(
-          'Sensor Unavailable',
-          'Your device does not support step tracking. Please use Google Fit or Apple Health integration.',
-          [{ text: 'OK' }]
-        );
+        setStatusType('warning');
+        setStatusTitle('Sensor Unavailable');
+        setStatusMessage('Your device does not support step tracking. Please use Google Fit or Apple Health integration.');
+        setStatusModalVisible(true);
         return;
       }
 
-      Sensors.Accelerometer.setUpdateInterval(80);
+      Sensors.Accelerometer.setUpdateInterval(100);
 
       accelerometerSubscription.current = Sensors.Accelerometer.addListener(
         handleAccelerometerData
       );
     } catch (error) {
       console.error('Error starting step tracking:', error);
-      Alert.alert('Error', 'Could not start step tracking. Please check permissions.');
+      setStatusType('error');
+      setStatusTitle('Error');
+      setStatusMessage('Could not start step tracking. Please check permissions.');
+      setStatusModalVisible(true);
     }
   };
 
@@ -114,6 +125,10 @@ const ActivityTrackingScreen = ({ navigation, route }) => {
       accelerometerSubscription.current.remove();
       accelerometerSubscription.current = null;
     }
+    emaAdjusted.current = 0;
+    prevSmoothed.current = 0;
+    prev2Smoothed.current = 0;
+    accelerationHistory.current = [];
   };
 
   const handleAccelerometerData = ({ x, y, z }) => {
@@ -121,22 +136,55 @@ const ActivityTrackingScreen = ({ navigation, route }) => {
     const adjusted = Math.abs(magnitude - 1);
     const now = Date.now();
 
-    accelerationHistory.current.push(adjusted);
-    if (accelerationHistory.current.length > 25) {
+    const EMA_ALPHA = 0.2;
+    if (emaAdjusted.current === 0) {
+      emaAdjusted.current = adjusted;
+    } else {
+      emaAdjusted.current = EMA_ALPHA * adjusted + (1 - EMA_ALPHA) * emaAdjusted.current;
+    }
+    const smoothed = emaAdjusted.current;
+
+    accelerationHistory.current.push(smoothed);
+    if (accelerationHistory.current.length > 32) {
       accelerationHistory.current.shift();
     }
-    if (accelerationHistory.current.length < 12) return;
+    if (accelerationHistory.current.length < 18) {
+      prev2Smoothed.current = prevSmoothed.current;
+      prevSmoothed.current = smoothed;
+      return;
+    }
 
-    const avg = accelerationHistory.current.reduce((sum, v) => sum + v, 0) / accelerationHistory.current.length;
-    const variance = accelerationHistory.current.reduce((sum, v) => sum + Math.pow(v - avg, 2), 0) / accelerationHistory.current.length;
-    const dynamicThreshold = Math.max(0.12, Math.min(0.25, avg + Math.sqrt(variance) * 1.8));
+    const hist = accelerationHistory.current;
+    const avg = hist.reduce((sum, v) => sum + v, 0) / hist.length;
+    const variance = hist.reduce((sum, v) => sum + Math.pow(v - avg, 2), 0) / hist.length;
+    const std = Math.sqrt(variance);
+
+    const MIN_PEAK = 0.26;
+    const MAX_PEAK = 0.42;
+    const peakThreshold = Math.max(MIN_PEAK, Math.min(MAX_PEAK, avg + std * 0.85));
+
+    const SHAKE_STD = 0.18;
+    if (std > SHAKE_STD && avg > 0.12) {
+      prev2Smoothed.current = prevSmoothed.current;
+      prevSmoothed.current = smoothed;
+      return;
+    }
+
+    const MIN_STEP_MS = 760;
     const timeSinceLastStep = now - lastStepTime.current;
 
-    if (adjusted > dynamicThreshold && timeSinceLastStep > 480) {
+    const p2 = prev2Smoothed.current;
+    const p1 = prevSmoothed.current;
+    const isLocalPeak = p2 < p1 && smoothed < p1 && p1 >= peakThreshold;
+
+    if (isLocalPeak && timeSinceLastStep >= MIN_STEP_MS) {
       stepCountRef.current += 1;
       lastStepTime.current = now;
       setSteps(stepCountRef.current);
     }
+
+    prev2Smoothed.current = p1;
+    prevSmoothed.current = smoothed;
   };
 
   const updateMetrics = () => {
@@ -157,34 +205,34 @@ const ActivityTrackingScreen = ({ navigation, route }) => {
     if (percentage >= 100) {
       const messages = [
         'Amazing! You reached your goal today! 🌟',
-        'You\'re doing wonderfully! Keep it up! 💪',
+        'You are doing wonderfully! Keep it up! 💪',
         'Fantastic progress! Your body will thank you! ✨',
       ];
       message = messages[Math.floor(Math.random() * messages.length)];
     } else if (percentage >= 75) {
       const messages = [
-        'You\'re almost there! So close to your goal! 🌈',
+        'You are almost there! So close to your goal! 🌈',
         'Great job! Just a bit more to go! 💖',
-        'You\'re doing great! Keep moving gently! 🌸',
+        'You are doing great! Keep moving gently! 🌸',
       ];
       message = messages[Math.floor(Math.random() * messages.length)];
     } else if (percentage >= 50) {
       const messages = [
-        'You\'re halfway there! Every step counts! 🌺',
+        'You are halfway there! Every step counts! 🌺',
         'Nice progress! Listen to your body and rest when needed. 🌿',
-        'You\'re doing well! Take it at your own pace. 💕',
+        'You are doing well! Take it at your own pace. 💕',
       ];
       message = messages[Math.floor(Math.random() * messages.length)];
     } else if (percentage >= 25) {
       const messages = [
         'Good start! Remember, gentle movement is best. 🌷',
         'Every step matters! Take breaks when you need them. 🌻',
-        'You\'re on the right track! Listen to your body. 🌼',
+        'You are on the right track! Listen to your body. 🌼',
       ];
       message = messages[Math.floor(Math.random() * messages.length)];
     } else {
       const messages = [
-        'Getting started is the hardest part! You\'ve got this! 🌱',
+        'Getting started is the hardest part! You have got this! 🌱',
         'Remember: any movement is good movement during pregnancy. 🌿',
         'Take it easy and listen to what your body needs. 💚',
       ];
@@ -197,32 +245,34 @@ const ActivityTrackingScreen = ({ navigation, route }) => {
   const handleSetGoal = () => {
     const goal = parseInt(tempGoal);
     if (isNaN(goal) || goal < 1000 || goal > 15000) {
-      Alert.alert('Invalid Goal', 'Please enter a goal between 1,000 and 15,000 steps.');
+      setStatusType('error');
+      setStatusTitle('Invalid Goal');
+      setStatusMessage('Please enter a goal between 1,000 and 15,000 steps.');
+      setStatusModalVisible(true);
       return;
     }
     setDailyGoal(goal);
     setShowGoalModal(false);
-    Alert.alert('Goal Updated', `Your daily goal is now ${goal.toLocaleString()} steps.`);
+    setStatusType('success');
+    setStatusTitle('Goal Updated');
+    setStatusMessage(`Your daily goal is now ${goal.toLocaleString()} steps.`);
+    setStatusModalVisible(true);
   };
 
   const resetDailySteps = () => {
-    Alert.alert(
-      'Reset Steps',
-      'Are you sure you want to reset today\'s steps?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Reset',
-          style: 'destructive',
-          onPress: () => {
-            stepCountRef.current = 0;
-            setSteps(0);
-            setCalories(0);
-            setDistance(0);
-          },
-        },
-      ]
-    );
+    setResetConfirmVisible(true);
+  };
+
+  const confirmReset = () => {
+    stepCountRef.current = 0;
+    setSteps(0);
+    setCalories(0);
+    setDistance(0);
+    setResetConfirmVisible(false);
+    setStatusType('success');
+    setStatusTitle('Steps Reset');
+    setStatusMessage('Your daily steps have been reset.');
+    setStatusModalVisible(true);
   };
 
   const getProgressColor = () => {
@@ -396,7 +446,17 @@ const ActivityTrackingScreen = ({ navigation, route }) => {
         >
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Today's Summary</Text>
+              <View style={styles.disclaimerModalHeader}>
+                <Text style={styles.disclaimerTitle}>{`Today's Summary`}</Text>
+                <TouchableOpacity
+                  style={styles.disclaimerCloseButton}
+                  onPress={() => setShowSummary(false)}
+                  hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                  accessibilityLabel="Close"
+                >
+                  <MaterialCommunityIcons name="close" size={26} color="#2D3436" />
+                </TouchableOpacity>
+              </View>
               <View style={styles.summaryStats}>
                 <View style={styles.summaryStat}>
                   <MaterialCommunityIcons name="walk" size={40} color="#6C5CE7" />
@@ -414,12 +474,6 @@ const ActivityTrackingScreen = ({ navigation, route }) => {
                   <Text style={styles.summaryLabel}>Calories</Text>
                 </View>
               </View>
-              <TouchableOpacity
-                style={[styles.modalButton, styles.saveButton]}
-                onPress={() => setShowSummary(false)}
-              >
-                <Text style={styles.saveButtonText}>Close</Text>
-              </TouchableOpacity>
             </View>
           </View>
         </Modal>
@@ -432,8 +486,18 @@ const ActivityTrackingScreen = ({ navigation, route }) => {
         >
           <View style={styles.modalOverlay}>
             <View style={styles.disclaimerModal}>
-              <Text style={styles.disclaimerTitle}>Health & Safety Information</Text>
-              <ScrollView style={styles.disclaimerContent}>
+              <View style={styles.disclaimerModalHeader}>
+                <Text style={styles.disclaimerTitle}>Health & Safety Information</Text>
+                <TouchableOpacity
+                  style={styles.disclaimerCloseButton}
+                  onPress={() => setShowDisclaimer(false)}
+                  hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                  accessibilityLabel="Close"
+                >
+                  <MaterialCommunityIcons name="close" size={26} color="#2D3436" />
+                </TouchableOpacity>
+              </View>
+              <ScrollView style={styles.disclaimerContent} showsVerticalScrollIndicator={false}>
                 <Text style={styles.disclaimerText}>
                   <Text style={styles.disclaimerBold}>Important:</Text> Always consult with your
                   healthcare provider before starting or continuing any exercise routine during
@@ -459,15 +523,28 @@ const ActivityTrackingScreen = ({ navigation, route }) => {
                   medical monitoring.
                 </Text>
               </ScrollView>
-              <TouchableOpacity
-                style={[styles.modalButton, styles.saveButton]}
-                onPress={() => setShowDisclaimer(false)}
-              >
-                <Text style={styles.saveButtonText}>I Understand</Text>
-              </TouchableOpacity>
             </View>
           </View>
         </Modal>
+
+        <StatusModal
+          visible={statusModalVisible}
+          type={statusType}
+          title={statusTitle}
+          message={statusMessage}
+          onClose={() => setStatusModalVisible(false)}
+        />
+
+        <ConfirmationModal
+          visible={resetConfirmVisible}
+          type="warning"
+          title="Reset Steps"
+          message="Are you sure you want to reset today's steps?"
+          confirmText="Reset"
+          cancelText="Cancel"
+          onConfirm={confirmReset}
+          onCancel={() => setResetConfirmVisible(false)}
+        />
       </LinearGradient>
     </View>
   );
@@ -731,20 +808,31 @@ const styles = StyleSheet.create({
   disclaimerModal: {
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
-    padding: 25,
+    padding: 20,
+    paddingTop: 16,
     width: '90%',
     maxHeight: '80%',
   },
+  disclaimerModalHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
   disclaimerTitle: {
-    fontSize: 22,
+    flex: 1,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#2D3436',
-    marginBottom: 20,
-    textAlign: 'center',
+    paddingRight: 8,
+    paddingTop: 4,
+  },
+  disclaimerCloseButton: {
+    padding: 4,
   },
   disclaimerContent: {
-    maxHeight: 400,
-    marginBottom: 20,
+    flexGrow: 0,
+    maxHeight: 420,
   },
   disclaimerText: {
     fontSize: 14,

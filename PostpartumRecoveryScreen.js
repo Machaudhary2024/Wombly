@@ -111,62 +111,6 @@ const PostpartumRecoveryScreen = ({ navigation }) => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.progressContainer}>
-          <View style={styles.progressHeader}>
-            <Text style={styles.progressTitle}>Your Recovery Progress</Text>
-            <Text style={styles.progressPercentage}>{completionPercentage}%</Text>
-          </View>
-          <View style={styles.progressBarBg}>
-            <Animated.View
-              style={[
-                styles.progressBar,
-                {
-                  width: progressAnimation.interpolate({
-                    inputRange: [0, 100],
-                    outputRange: ["0%", "100%"],
-                  }),
-                },
-              ]}
-            />
-          </View>
-          <View style={styles.milestonesContainer}>
-            {RECOVERY_MILESTONES.map((milestone) => {
-              const isLocked = !canToggleMilestone(milestone.id) && !milestoneProgress[milestone.id]
-              return (
-                <TouchableOpacity
-                  key={milestone.id}
-                  style={[
-                    styles.milestoneItem,
-                    milestoneProgress[milestone.id] && styles.milestoneItemCompleted,
-                    isLocked && styles.milestoneItemLocked,
-                  ]}
-                  onPress={() => toggleMilestone(milestone.id)}
-                  hitSlop={{ top: 14, bottom: 14, left: 12, right: 12 }}
-                  activeOpacity={0.7}
-                  disabled={isLocked}
-                >
-                  <View style={[styles.milestoneCheckbox, isLocked && styles.milestoneCheckboxLocked]}>
-                    {milestoneProgress[milestone.id] ? (
-                      <MaterialCommunityIcons name="check" size={20} color="#FF6B9D" />
-                    ) : isLocked ? (
-                      <MaterialCommunityIcons name="lock" size={18} color="#BDBDBD" />
-                    ) : null}
-                  </View>
-                  <View style={styles.milestoneContent}>
-                    <Text style={[styles.milestoneCategory, isLocked && styles.milestoneTextLocked]}>{milestone.category}</Text>
-                    <Text style={[styles.milestoneTitle, isLocked && styles.milestoneTextLocked]}>{milestone.title}</Text>
-                  </View>
-                </TouchableOpacity>
-              )
-            })}
-          </View>
-          {completionPercentage > 0 && (
-            <TouchableOpacity style={styles.resetButton} onPress={resetProgress}>
-              <Text style={styles.resetButtonText}>Reset Progress</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-
         <View style={styles.heroSection}>
           <View style={styles.iconContainer}>
             <LinearGradient colors={["#FFE5F1", "#F3E5F5"]} style={styles.heroIconBg}>
@@ -341,6 +285,62 @@ const PostpartumRecoveryScreen = ({ navigation }) => {
           />
         </TimelineSection>
 
+        <View style={styles.progressContainer}>
+          <View style={styles.progressHeader}>
+            <Text style={styles.progressTitle}>Your Recovery Progress</Text>
+            <Text style={styles.progressPercentage}>{completionPercentage}%</Text>
+          </View>
+          <View style={styles.progressBarBg}>
+            <Animated.View
+              style={[
+                styles.progressBar,
+                {
+                  width: progressAnimation.interpolate({
+                    inputRange: [0, 100],
+                    outputRange: ["0%", "100%"],
+                  }),
+                },
+              ]}
+            />
+          </View>
+          <View style={styles.milestonesContainer}>
+            {RECOVERY_MILESTONES.map((milestone) => {
+              const isLocked = !canToggleMilestone(milestone.id) && !milestoneProgress[milestone.id]
+              return (
+                <TouchableOpacity
+                  key={milestone.id}
+                  style={[
+                    styles.milestoneItem,
+                    milestoneProgress[milestone.id] && styles.milestoneItemCompleted,
+                    isLocked && styles.milestoneItemLocked,
+                  ]}
+                  onPress={() => toggleMilestone(milestone.id)}
+                  hitSlop={{ top: 14, bottom: 14, left: 12, right: 12 }}
+                  activeOpacity={0.7}
+                  disabled={isLocked}
+                >
+                  <View style={[styles.milestoneCheckbox, isLocked && styles.milestoneCheckboxLocked]}>
+                    {milestoneProgress[milestone.id] ? (
+                      <MaterialCommunityIcons name="check" size={20} color="#FF6B9D" />
+                    ) : isLocked ? (
+                      <MaterialCommunityIcons name="lock" size={18} color="#BDBDBD" />
+                    ) : null}
+                  </View>
+                  <View style={styles.milestoneContent}>
+                    <Text style={[styles.milestoneCategory, isLocked && styles.milestoneTextLocked]}>{milestone.category}</Text>
+                    <Text style={[styles.milestoneTitle, isLocked && styles.milestoneTextLocked]}>{milestone.title}</Text>
+                  </View>
+                </TouchableOpacity>
+              )
+            })}
+          </View>
+          {completionPercentage > 0 && (
+            <TouchableOpacity style={styles.resetButton} onPress={resetProgress}>
+              <Text style={styles.resetButtonText}>Reset Progress</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+
         <View style={styles.bottomSpacer} />
       </ScrollView>
     </View>
@@ -437,6 +437,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 16,
     padding: 20,
+    marginTop: 8,
     marginBottom: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },

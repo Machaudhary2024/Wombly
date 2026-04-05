@@ -26,7 +26,6 @@ const Week13To18Screen = ({ navigation }) => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Hero Section */}
         <View style={styles.heroSection}>
           <View style={styles.iconContainer}>
             <LinearGradient
@@ -36,13 +35,12 @@ const Week13To18Screen = ({ navigation }) => {
               <MaterialCommunityIcons name="baby-face-outline" size={50} color="#9C27B0" />
             </LinearGradient>
           </View>
-          <Text style={styles.heroTitle}>Second Trimester</Text>
+          <Text style={styles.heroTitle}>Second trimester</Text>
           <Text style={styles.heroSubtitle}>
-            Weeks 13-18: Monitoring and MCA scans begin
+            Weeks 13–18: welcome to the “middle” part of pregnancy. Many people feel more energetic and less sick. Your baby is moving more, even before you can feel it.
           </Text>
         </View>
 
-        {/* Essentials Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View style={[styles.sectionIconBg, { backgroundColor: '#E8F5E9' }]}>
@@ -51,79 +49,74 @@ const Week13To18Screen = ({ navigation }) => {
             <Text style={styles.sectionTitle}>Essentials</Text>
           </View>
 
-          {/* Non-Critical Titers Card */}
           <View style={styles.titerCard}>
             <View style={styles.titerHeader}>
               <MaterialCommunityIcons name="test-tube" size={28} color="#2196F3" />
-              <Text style={styles.titerTitle}>If Your Titers Are Not Critical</Text>
+              <Text style={styles.titerTitle}>Healthy weight gain</Text>
             </View>
             <Text style={styles.titerText}>
-              Continue having your titers drawn every 4 weeks.
+              Steady, gradual weight gain is normal. Your team will guide you—gaining some weight supports your baby, but very fast gain can be worth discussing. Gentle daily activity is usually fine if your doctor agrees.
             </Text>
           </View>
 
-          {/* Critical Titers Card */}
           <View style={styles.criticalCard}>
             <View style={styles.criticalHeader}>
               <MaterialCommunityIcons name="alert-circle" size={28} color="#FF6B9D" />
-              <Text style={styles.criticalTitle}>If Your Titers Are Critical</Text>
+              <Text style={styles.criticalTitle}>The detailed ultrasound</Text>
             </View>
             <Text style={styles.criticalText}>
-              You should be having weekly MCA scans starting by 18 weeks at the latest.
+              Between about 18 and 20 weeks many hospitals offer a morphology (anatomy) scan. It looks at how your baby’s body is developing. You may be told the baby’s sex if you want to know and if it can be seen.
             </Text>
           </View>
 
-          {/* First MFM Appointment */}
           <View style={styles.appointmentCard}>
             <MaterialCommunityIcons name="calendar-check" size={28} color="#9C27B0" />
             <View style={styles.appointmentContent}>
-              <Text style={styles.appointmentTitle}>First MFM Appointment</Text>
+              <Text style={styles.appointmentTitle}>Regular checkups</Text>
               <Text style={styles.appointmentText}>
-                By the end of this time period you should have already had your first appointment with your MFM.
+                Visits may include listening to the baby’s heart, measuring your bump, and checking blood pressure and urine. These simple checks help spot issues early.
               </Text>
             </View>
           </View>
 
-          {/* MCA Scans Card */}
           <View style={styles.mcaCard}>
             <View style={styles.mcaHeader}>
               <MaterialCommunityIcons name="ultrasound" size={32} color="#2196F3" />
-              <Text style={styles.mcaTitle}>First MCA Scan</Text>
+              <Text style={styles.mcaTitle}>Baby’s growth</Text>
             </View>
             <Text style={styles.mcaSubtitle}>
-              Probably the most important essential for this gestation is the start of MCA scans.
+              Your baby is gaining weight and fat. Eyelids stay closed for a while, then begin to open later in pregnancy. Fingerprints are forming.
             </Text>
             
             <View style={styles.mcaInfoBox}>
               <MaterialCommunityIcons name="information" size={24} color="#2196F3" />
               <View style={styles.mcaInfoContent}>
                 <Text style={styles.mcaInfoText}>
-                  If you have a <Text style={styles.boldText}>critical titer</Text> you should start weekly MCA scans by <Text style={styles.boldText}>16-18 weeks</Text>.
+                  You might start to feel light flutters (<Text style={styles.boldText}>quickening</Text>) toward the end of this range, especially if this is not your first baby.
                 </Text>
                 <Text style={styles.mcaInfoSubtext}>
-                  If you have <Text style={styles.boldText}>anti-Kell</Text> it is a good idea to still have MCA scans even without a critical titer since Kell has been known to affect the fetus even with low titers.
+                  If you feel nothing yet, that can still be normal—every pregnancy is different.
                 </Text>
               </View>
             </View>
           </View>
 
-          {/* Everyone Section */}
           <View style={styles.everyoneCard}>
             <View style={styles.everyoneHeader}>
               <MaterialCommunityIcons name="account-group" size={28} color="#6C5CE7" />
-              <Text style={styles.everyoneTitle}>For Everyone</Text>
+              <Text style={styles.everyoneTitle}>For everyone</Text>
             </View>
             
             <View style={styles.checklistItem}>
               <MaterialCommunityIcons name="account-heart" size={24} color="#FF6B9D" />
               <View style={styles.checklistContent}>
-                <Text style={styles.checklistTitle}>Father's Antigen Status</Text>
+                <Text style={styles.checklistTitle}>Skin and body changes</Text>
                 <Text style={styles.checklistText}>
-                  You should know or find out baby's father's antigen status.
+                  A “baby bump” often shows more now. Stretch marks, darker skin on the face, or a line on the tummy are common and harmless for most people.
                 </Text>
                 <View style={styles.statusQuestions}>
-                  <Text style={styles.statusQuestion}>• Is he positive or negative for the antigen?</Text>
-                  <Text style={styles.statusQuestion}>• Homozygous or heterozygous for the antigen?</Text>
+                  <Text style={styles.statusQuestion}>• Use sunscreen and moisturiser if your skin is sensitive.</Text>
+                  <Text style={styles.statusQuestion}>• Supportive bras and comfortable shoes can help as your shape changes.</Text>
                 </View>
               </View>
             </View>
@@ -131,21 +124,21 @@ const Week13To18Screen = ({ navigation }) => {
             <View style={styles.checklistItem}>
               <MaterialCommunityIcons name="dna" size={24} color="#4CAF50" />
               <View style={styles.checklistContent}>
-                <Text style={styles.checklistTitle}>Cell Free Fetal DNA Testing (cffDNA)</Text>
+                <Text style={styles.checklistTitle}>Heartburn and digestion</Text>
                 <Text style={styles.checklistText}>
-                  Can be done as early as <Text style={styles.boldText}>10 weeks</Text>. It is a reliable, non-invasive way to find out your baby's antigen status.
+                  Smaller meals, sitting up after eating, and avoiding very spicy or greasy foods can ease reflux. Your clinician can suggest safe antacids if needed.
                 </Text>
                 <View style={styles.cffDNAInfo}>
                   <View style={styles.cffDNAItem}>
                     <MaterialCommunityIcons name="check-circle" size={20} color="#4CAF50" />
                     <Text style={styles.cffDNAText}>
-                      If baby is <Text style={styles.boldText}>antigen negative</Text>, then your antibodies cannot harm your baby.
+                      Drink water and include fibre (fruit, vegetables, whole grains) to help <Text style={styles.boldText}>constipation</Text>, which is common in pregnancy.
                     </Text>
                   </View>
                   <View style={styles.cffDNAItem}>
                     <MaterialCommunityIcons name="alert-circle" size={20} color="#FF9800" />
                     <Text style={styles.cffDNAText}>
-                      If baby is <Text style={styles.boldText}>antigen positive</Text>, you and your MFM will know to keep a closer eye on baby throughout the pregnancy.
+                      Do not take laxatives or herbal remedies without checking—they are not all safe in pregnancy.
                     </Text>
                   </View>
                 </View>
@@ -154,47 +147,46 @@ const Week13To18Screen = ({ navigation }) => {
           </View>
         </View>
 
-        {/* Be Aware Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View style={[styles.sectionIconBg, { backgroundColor: '#FFF3E0' }]}>
               <MaterialCommunityIcons name="alert" size={24} color="#FF9800" />
             </View>
-            <Text style={styles.sectionTitle}>Be Aware</Text>
+            <Text style={styles.sectionTitle}>Be aware</Text>
           </View>
           
           <View style={styles.warningCard}>
             <MaterialCommunityIcons name="information" size={28} color="#FF9800" />
             <View style={styles.warningContent}>
-              <Text style={styles.warningTitle}>Critical Period Begins</Text>
+              <Text style={styles.warningTitle}>Blood pressure and headaches</Text>
               <Text style={styles.warningText}>
-                This is when the baby could become affected by maternal antibodies in the most extreme cases. Be aware that babies who become severely anemic at this gestation rarely show signs of fetal hydrops. This is why MCA scans are so important.
+                High blood pressure in pregnancy needs attention. Seek urgent advice for severe headache, vision changes, upper tummy pain, or sudden swelling of face, hands, or feet—these can be signs of pre-eclampsia, which is usually checked for at visits.
               </Text>
               
               <View style={styles.misconceptionsBox}>
-                <Text style={styles.misconceptionsTitle}>Common Misconceptions:</Text>
+                <Text style={styles.misconceptionsTitle}>Simple facts</Text>
                 <View style={styles.misconceptionItem}>
                   <MaterialCommunityIcons name="close-circle" size={20} color="#F44336" />
                   <Text style={styles.misconceptionText}>
-                    "Babies can't be affected by the antibodies before 19/20 weeks."
+                    Myth: “If I feel fine, I can skip a visit.” Care is partly about tests you cannot feel—keep scheduled appointments.
                   </Text>
                 </View>
                 <View style={styles.misconceptionItem}>
                   <MaterialCommunityIcons name="close-circle" size={20} color="#F44336" />
                   <Text style={styles.misconceptionText}>
-                    "Nothing can be done to help anemic babies before 19/20 weeks anyway so there's no point in scanning that early."
+                    Myth: “I should eat for two full adults.” Most people need only a modest extra amount of healthy food in later pregnancy.
                   </Text>
                 </View>
                 <View style={styles.misconceptionItem}>
                   <MaterialCommunityIcons name="close-circle" size={20} color="#F44336" />
                   <Text style={styles.misconceptionText}>
-                    "Scans before 18 weeks are not accurate or are too difficult to perform."
+                    Myth: “Exercise is dangerous.” Gentle activity is usually encouraged unless your doctor has told you otherwise.
                   </Text>
                 </View>
                 <View style={styles.misconceptionItem}>
                   <MaterialCommunityIcons name="close-circle" size={20} color="#F44336" />
                   <Text style={styles.misconceptionText}>
-                    "The MCA-PSV calculator only starts at 18 weeks, therefore no need to start MCA scans earlier."
+                    Trust your team over general advice online—including this screen—when they disagree.
                   </Text>
                 </View>
               </View>
@@ -202,21 +194,20 @@ const Week13To18Screen = ({ navigation }) => {
           </View>
         </View>
 
-        {/* Silver Lining Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View style={[styles.sectionIconBg, { backgroundColor: '#E1F5FE' }]}>
               <MaterialCommunityIcons name="weather-sunny" size={24} color="#03A9F4" />
             </View>
-            <Text style={styles.sectionTitle}>Silver Lining</Text>
+            <Text style={styles.sectionTitle}>Silver lining</Text>
           </View>
           
           <View style={styles.positiveCard}>
             <MaterialCommunityIcons name="trophy" size={40} color="#FFC107" />
             <View style={styles.positiveContent}>
-              <Text style={styles.positiveTitle}>Second Trimester Milestone!</Text>
+              <Text style={styles.positiveTitle}>Second trimester milestone</Text>
               <Text style={styles.positiveText}>
-                You have made it to the second trimester! This is a big milestone to celebrate! The risk of having a miscarriage (unrelated to the antibodies) is much lower now that you are out of the first trimester.
+                The chance of miscarriage drops a lot after the first trimester. Many parents relax a little and enjoy planning for the baby.
               </Text>
             </View>
           </View>
@@ -224,9 +215,9 @@ const Week13To18Screen = ({ navigation }) => {
           <View style={styles.treatmentCard}>
             <MaterialCommunityIcons name="medical-bag" size={32} color="#4CAF50" />
             <View style={styles.treatmentContent}>
-              <Text style={styles.treatmentTitle}>Treatment Options Available</Text>
+              <Text style={styles.treatmentTitle}>Bonding</Text>
               <Text style={styles.treatmentText}>
-                By the time you reach <Text style={styles.boldText}>15 or 16 weeks</Text>, there are treatment options for babies who become anemic in utero. Even though the risks are higher at such early gestations, <Text style={styles.boldText}>IPTs (intraperitoneal transfusions)</Text> can be performed by experienced professionals as early as 15 weeks.
+                Talking, reading, or playing music to your bump is optional but many families enjoy it. Your baby can start to hear muffled sounds from the outside world around the middle of pregnancy.
               </Text>
             </View>
           </View>
@@ -234,29 +225,28 @@ const Week13To18Screen = ({ navigation }) => {
           <View style={styles.reliefCard}>
             <MaterialCommunityIcons name="heart" size={32} color="#2196F3" />
             <View style={styles.reliefContent}>
-              <Text style={styles.reliefTitle}>MCA Scans Provide Clarity</Text>
+              <Text style={styles.reliefTitle}>Energy and appetite</Text>
               <Text style={styles.reliefText}>
-                MCA Scans can now be performed so you and your doctor can now know whether baby is being affected by the antibodies or not. It is a relief to know exactly how your baby is doing and whether he is anemic or not.
+                Nausea often fades and hunger may return. Choose nutritious snacks and meals to support you both.
               </Text>
             </View>
           </View>
         </View>
 
-        {/* Visual Elements */}
         <View style={styles.visualSection}>
           <View style={styles.visualCard}>
             <MaterialCommunityIcons name="ultrasound" size={40} color="#2196F3" />
-            <Text style={styles.visualTitle}>MCA Scans</Text>
+            <Text style={styles.visualTitle}>Anatomy scan</Text>
             <Text style={styles.visualText}>
-              Weekly scans start during this period for critical titers
+              A detailed look at your baby’s structure, usually in mid-pregnancy
             </Text>
           </View>
           
           <View style={styles.visualCard}>
             <MaterialCommunityIcons name="medical-bag" size={40} color="#4CAF50" />
-            <Text style={styles.visualTitle}>Treatment Ready</Text>
+            <Text style={styles.visualTitle}>Growing bump</Text>
             <Text style={styles.visualText}>
-              IPT options available from 15-16 weeks
+              Your uterus rises above the pelvis—maternity clothes may fit better now
             </Text>
           </View>
         </View>

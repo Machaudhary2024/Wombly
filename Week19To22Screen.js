@@ -26,7 +26,6 @@ const Week19To22Screen = ({ navigation }) => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Hero Section */}
         <View style={styles.heroSection}>
           <View style={styles.iconContainer}>
             <LinearGradient
@@ -36,13 +35,12 @@ const Week19To22Screen = ({ navigation }) => {
               <MaterialCommunityIcons name="human-pregnant" size={50} color="#FF6B9D" />
             </LinearGradient>
           </View>
-          <Text style={styles.heroTitle}>Mid-Pregnancy</Text>
+          <Text style={styles.heroTitle}>Mid-pregnancy</Text>
           <Text style={styles.heroSubtitle}>
-            Weeks 19-22: IUT discussions and viability planning
+            Weeks 19–22: your baby is about the length of a small banana to a carrot in many guides. You may feel clear kicks and rolls now, especially when you rest.
           </Text>
         </View>
 
-        {/* Essentials Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View style={[styles.sectionIconBg, { backgroundColor: '#E8F5E9' }]}>
@@ -51,67 +49,65 @@ const Week19To22Screen = ({ navigation }) => {
             <Text style={styles.sectionTitle}>Essentials</Text>
           </View>
 
-          {/* Non-Critical Titers Card */}
           <View style={styles.titerCard}>
             <View style={styles.titerHeader}>
               <MaterialCommunityIcons name="test-tube" size={28} color="#2196F3" />
-              <Text style={styles.titerTitle}>If Your Titers Are Not Critical</Text>
+              <Text style={styles.titerTitle}>Feeling movement</Text>
             </View>
             <Text style={styles.titerText}>
-              Continue having your titers drawn every 4 weeks.
+              Most people feel regular movement by now. Get to know your baby’s usual pattern. If movements slow down a lot or stop, contact your maternity unit the same day—do not wait until your next routine visit.
             </Text>
           </View>
 
-          {/* Critical Titers Card */}
           <View style={styles.criticalCard}>
             <View style={styles.criticalHeader}>
               <MaterialCommunityIcons name="alert-circle" size={28} color="#FF6B9D" />
-              <Text style={styles.criticalTitle}>If Your Titers Are Critical</Text>
+              <Text style={styles.criticalTitle}>Gums, teeth, and falls</Text>
             </View>
             
             <View style={styles.mcaScanCard}>
               <MaterialCommunityIcons name="ultrasound" size={24} color="#2196F3" />
               <Text style={styles.mcaScanText}>
-                You should now be having <Text style={styles.boldText}>weekly MCA scans</Text>.
+                Hormones can make gums bleed more easily—keep brushing and see a dentist. <Text style={styles.boldText}>Wear flat, supportive shoes</Text> to reduce the risk of slips as your balance changes.
               </Text>
             </View>
 
             <View style={styles.iutDiscussionCard}>
               <MaterialCommunityIcons name="chat-question" size={28} color="#6C5CE7" />
-              <Text style={styles.iutDiscussionTitle}>IUT Discussion with Your MFM</Text>
+              <Text style={styles.iutDiscussionTitle}>Questions worth asking your team</Text>
               <Text style={styles.iutDiscussionSubtitle}>
-                You should also talk to your MFM about IUTs (Intrauterine Transfusions). Important questions to ask:
+                Simple prompts you can use at your next visit:
               </Text>
               
               <View style={styles.questionsList}>
                 <View style={styles.questionItem}>
                   <MaterialCommunityIcons name="help-circle" size={20} color="#6C5CE7" />
                   <Text style={styles.questionText}>
-                    What is their protocol if the MCA scan reaches <Text style={styles.boldText}>1.5 or over</Text>?
+                    When should I have the <Text style={styles.boldText}>glucose (sugar) test</Text> for diabetes in pregnancy?
                   </Text>
                 </View>
                 <View style={styles.questionItem}>
                   <MaterialCommunityIcons name="doctor" size={20} color="#6C5CE7" />
                   <Text style={styles.questionText}>
-                    Who would perform the IUT?
+                    What symptoms should make me call you between visits?
                   </Text>
                 </View>
                 <View style={styles.questionItem}>
                   <MaterialCommunityIcons name="hospital-building" size={20} color="#6C5CE7" />
                   <Text style={styles.questionText}>
-                    Would you be referred to another facility for IUTs?
+                    Where do I go if I think labour has started or I have bleeding?
                   </Text>
                 </View>
                 <View style={styles.questionItem}>
                   <MaterialCommunityIcons name="chart-line" size={20} color="#6C5CE7" />
                   <Text style={styles.questionText}>
-                    How many IUTs has the provider performed in the past year?
+                    Are my vaccines up to date (for example whooping cough later in pregnancy)?
                   </Text>
                 </View>
                 <View style={styles.questionItem}>
                   <MaterialCommunityIcons name="trophy" size={20} color="#6C5CE7" />
                   <Text style={styles.questionText}>
-                    What is their success rate?
+                    Can I keep my usual exercise, work, and travel plans?
                   </Text>
                 </View>
               </View>
@@ -119,32 +115,31 @@ const Week19To22Screen = ({ navigation }) => {
           </View>
         </View>
 
-        {/* Be Aware Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View style={[styles.sectionIconBg, { backgroundColor: '#FFF3E0' }]}>
               <MaterialCommunityIcons name="alert" size={24} color="#FF9800" />
             </View>
-            <Text style={styles.sectionTitle}>Be Aware</Text>
+            <Text style={styles.sectionTitle}>Be aware</Text>
           </View>
           
           <View style={styles.viabilityCard}>
             <MaterialCommunityIcons name="information" size={28} color="#FF9800" />
             <View style={styles.viabilityContent}>
-              <Text style={styles.viabilityTitle}>Viability Considerations</Text>
+              <Text style={styles.viabilityTitle}>Premature birth</Text>
               <Text style={styles.viabilityText}>
-                Some care providers consider <Text style={styles.boldText}>22 weeks</Text> to be the point of viability. Other care providers consider <Text style={styles.boldText}>23 or 24 weeks</Text> to be the cut off for viability.
+                Babies born very early need specialist hospital care. Survival and health outcomes improve with each extra week in the womb. That is why teams work hard to prevent early birth when it is safe to do so.
               </Text>
               
               <View style={styles.planningBox}>
                 <MaterialCommunityIcons name="clipboard-text" size={24} color="#FF6B9D" />
                 <View style={styles.planningContent}>
-                  <Text style={styles.planningTitle}>Plan Ahead</Text>
+                  <Text style={styles.planningTitle}>Know your hospital</Text>
                   <Text style={styles.planningText}>
-                    This is important to discuss with your MFM ahead of time so that you can have a plan in place in the rare instance that the baby would need to be delivered at 22-24 weeks.
+                    Save the phone number for labour ward or triage in your phone. If you have tightening pains, fluid leaking, or bleeding before 37 weeks, call straight away.
                   </Text>
                   <Text style={styles.planningExample}>
-                    For example, if the baby went into distress during an IUT.
+                    It helps to know the route to hospital and what to bring in your bag.
                   </Text>
                 </View>
               </View>
@@ -152,21 +147,20 @@ const Week19To22Screen = ({ navigation }) => {
           </View>
         </View>
 
-        {/* Silver Lining Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View style={[styles.sectionIconBg, { backgroundColor: '#E1F5FE' }]}>
               <MaterialCommunityIcons name="weather-sunny" size={24} color="#03A9F4" />
             </View>
-            <Text style={styles.sectionTitle}>Silver Lining</Text>
+            <Text style={styles.sectionTitle}>Silver lining</Text>
           </View>
           
           <View style={styles.positiveCard}>
             <MaterialCommunityIcons name="trending-up" size={32} color="#4CAF50" />
             <View style={styles.positiveContent}>
-              <Text style={styles.positiveTitle}>IUTs Get Easier and Safer</Text>
+              <Text style={styles.positiveTitle}>Stronger movements</Text>
               <Text style={styles.positiveText}>
-                IUTs get easier and safer as the baby grows. By now, physicians performing an IUT are usually able to do an <Text style={styles.boldText}>IVT (intravenous transfusion)</Text> instead of only relying on <Text style={styles.boldText}>IPTs (intraperitoneal transfusions)</Text>.
+                Kicks and rolls are a reassuring sign for many parents. Partners and family can sometimes feel the baby from the outside now too.
               </Text>
             </View>
           </View>
@@ -174,29 +168,28 @@ const Week19To22Screen = ({ navigation }) => {
           <View style={styles.survivalCard}>
             <MaterialCommunityIcons name="heart" size={32} color="#FF6B9D" />
             <View style={styles.survivalContent}>
-              <Text style={styles.survivalTitle}>Higher Survival Rates</Text>
+              <Text style={styles.survivalTitle}>“Pregnancy glow”</Text>
               <Text style={styles.survivalText}>
-                Babies who have their first IUT after <Text style={styles.boldText}>20 weeks</Text> have higher survival rates.
+                Extra blood flow can give warmer skin or fuller hair for some people. If you do not feel glowing, that is also completely normal.
               </Text>
             </View>
           </View>
         </View>
 
-        {/* Visual Elements */}
         <View style={styles.visualSection}>
           <View style={styles.visualCard}>
             <MaterialCommunityIcons name="ultrasound" size={40} color="#2196F3" />
-            <Text style={styles.visualTitle}>Weekly MCA</Text>
+            <Text style={styles.visualTitle}>Baby’s senses</Text>
             <Text style={styles.visualText}>
-              Regular monitoring continues for critical titers
+              Your baby can hear sounds from outside and may respond to voices or music
             </Text>
           </View>
           
           <View style={styles.visualCard}>
             <MaterialCommunityIcons name="medical-bag" size={40} color="#FF6B9D" />
-            <Text style={styles.visualTitle}>IUT Ready</Text>
+            <Text style={styles.visualTitle}>Halfway there</Text>
             <Text style={styles.visualText}>
-              IVT options available as baby grows
+              Around 20 weeks is often called the midpoint of a full-term pregnancy
             </Text>
           </View>
         </View>

@@ -26,7 +26,6 @@ const Week28To33Screen = ({ navigation }) => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Hero Section */}
         <View style={styles.heroSection}>
           <View style={styles.iconContainer}>
             <LinearGradient
@@ -36,13 +35,12 @@ const Week28To33Screen = ({ navigation }) => {
               <MaterialCommunityIcons name="baby" size={50} color="#E91E63" />
             </LinearGradient>
           </View>
-          <Text style={styles.heroTitle}>Third Trimester</Text>
+          <Text style={styles.heroTitle}>Third trimester</Text>
           <Text style={styles.heroSubtitle}>
-            Weeks 28-33: Final preparations and continued monitoring
+            Weeks 28–33: welcome to the home stretch. Your baby is plumper, brain and lungs are still maturing, and you may feel more tired, heavy, or breathless at times.
           </Text>
         </View>
 
-        {/* Essentials Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View style={[styles.sectionIconBg, { backgroundColor: '#E8F5E9' }]}>
@@ -51,44 +49,41 @@ const Week28To33Screen = ({ navigation }) => {
             <Text style={styles.sectionTitle}>Essentials</Text>
           </View>
 
-          {/* Non-Critical Titers Card */}
           <View style={styles.titerCard}>
             <View style={styles.titerHeader}>
               <MaterialCommunityIcons name="test-tube" size={28} color="#2196F3" />
-              <Text style={styles.titerTitle}>If Your Titers Are Not Critical</Text>
+              <Text style={styles.titerTitle}>Regular checkups</Text>
             </View>
             <Text style={styles.titerText}>
-              Continue having titers drawn <Text style={styles.boldText}>every 2 weeks</Text>.
+              Visits often include blood pressure, urine, measuring your bump, and listening to the baby. From around 28 weeks your team may suggest extra growth scans if needed. Always ask what is planned for you.
             </Text>
           </View>
 
-          {/* Critical Titers Card */}
           <View style={styles.criticalCard}>
             <View style={styles.criticalHeader}>
               <MaterialCommunityIcons name="alert-circle" size={28} color="#FF6B9D" />
-              <Text style={styles.criticalTitle}>If Your Titers Are Critical</Text>
+              <Text style={styles.criticalTitle}>Braxton Hicks vs labour</Text>
             </View>
             <View style={styles.mcaScanCard}>
               <MaterialCommunityIcons name="ultrasound" size={24} color="#2196F3" />
               <Text style={styles.mcaScanText}>
-                Continue having <Text style={styles.boldText}>weekly MCA scans</Text>.
+                Practice tightenings (<Text style={styles.boldText}>Braxton Hicks</Text>) are irregular and often ease if you move or rest. True labour contractions get stronger, longer, and closer together. If unsure, call your maternity line.
               </Text>
             </View>
           </View>
 
-          {/* Everyone Section */}
           <View style={styles.everyoneCard}>
             <View style={styles.everyoneHeader}>
               <MaterialCommunityIcons name="account-group" size={28} color="#6C5CE7" />
-              <Text style={styles.everyoneTitle}>For Everyone</Text>
+              <Text style={styles.everyoneTitle}>For everyone</Text>
             </View>
             
             <View style={styles.deliveryCard}>
               <MaterialCommunityIcons name="calendar-check" size={28} color="#E91E63" />
               <View style={styles.deliveryContent}>
-                <Text style={styles.deliveryTitle}>Delivery Plan Discussion</Text>
+                <Text style={styles.deliveryTitle}>Birth preferences</Text>
                 <Text style={styles.deliveryText}>
-                  If you haven't already, discuss your delivery plan with your MFM or OB.
+                  Talk through pain relief options, who you want with you, and any cultural or religious wishes. Plans can change for safety—flexibility helps.
                 </Text>
               </View>
             </View>
@@ -96,38 +91,37 @@ const Week28To33Screen = ({ navigation }) => {
             <View style={styles.bagCard}>
               <MaterialCommunityIcons name="bag-personal" size={28} color="#FF9800" />
               <View style={styles.bagContent}>
-                <Text style={styles.bagTitle}>Pack Your Hospital Bags</Text>
+                <Text style={styles.bagTitle}>Hospital bag</Text>
                 <Text style={styles.bagText}>
-                  Get ready for your baby's arrival by packing your hospital bags.
+                  Pack clothes for you and baby, toiletries, chargers, snacks, and important documents. Keep the bag somewhere easy to grab.
                 </Text>
               </View>
             </View>
           </View>
         </View>
 
-        {/* Be Aware Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View style={[styles.sectionIconBg, { backgroundColor: '#FFF3E0' }]}>
               <MaterialCommunityIcons name="alert" size={24} color="#FF9800" />
             </View>
-            <Text style={styles.sectionTitle}>Be Aware</Text>
+            <Text style={styles.sectionTitle}>Be aware</Text>
           </View>
           
           <View style={styles.mcaWarningCard}>
             <MaterialCommunityIcons name="information" size={28} color="#FF9800" />
             <View style={styles.mcaWarningContent}>
-              <Text style={styles.mcaWarningTitle}>Weekly MCA Scans Are Essential</Text>
+              <Text style={styles.mcaWarningTitle}>Baby’s position</Text>
               <Text style={styles.mcaWarningText}>
-                Weekly MCA scans continue to be the <Text style={styles.boldText}>best way to monitor your baby for anemia</Text>.
+                Many babies lie head down by now, but some are bottom or feet first. Your team will check; most who stay breech near full term are offered a plan (sometimes turning the baby or a caesarean birth).
               </Text>
               
               <View style={styles.misconceptionBox}>
                 <MaterialCommunityIcons name="alert-circle" size={24} color="#F44336" />
                 <View style={styles.misconceptionContent}>
-                  <Text style={styles.misconceptionTitle}>Important to Know</Text>
+                  <Text style={styles.misconceptionTitle}>Reduced movements</Text>
                   <Text style={styles.misconceptionText}>
-                    Some doctors might suggest scanning every two weeks or every month and only moving to weekly scans once MoMs get to 1.3.
+                    Do not wait until tomorrow if movements feel less than usual. Lie on your left side, have a cold drink, and if still not normal, get checked the same day.
                   </Text>
                 </View>
               </View>
@@ -135,12 +129,12 @@ const Week28To33Screen = ({ navigation }) => {
               <View style={styles.criticalInfoBox}>
                 <MaterialCommunityIcons name="clock-alert" size={24} color="#E91E63" />
                 <View style={styles.criticalInfoContent}>
-                  <Text style={styles.criticalInfoTitle}>Why Weekly Scans Matter</Text>
+                  <Text style={styles.criticalInfoTitle}>Pre-eclampsia reminder</Text>
                   <Text style={styles.criticalInfoText}>
-                    Unfortunately, <Text style={styles.boldText}>fetal anemia can develop within a matter of days</Text> so it is important to continue weekly MCA scans if your titers are critical.
+                    Watch for bad headache, vision changes, sudden swelling, or pain under the ribs. These need urgent review even if your last visit was fine.
                   </Text>
                   <Text style={styles.criticalInfoReminder}>
-                    Remember, <Text style={styles.boldText}>fetal anemia can only be treated if it is detected in time</Text>.
+                    Sleep on your side if you can—current advice favours side lying for blood flow in late pregnancy.
                   </Text>
                 </View>
               </View>
@@ -148,21 +142,20 @@ const Week28To33Screen = ({ navigation }) => {
           </View>
         </View>
 
-        {/* Silver Lining Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View style={[styles.sectionIconBg, { backgroundColor: '#E1F5FE' }]}>
               <MaterialCommunityIcons name="weather-sunny" size={24} color="#03A9F4" />
             </View>
-            <Text style={styles.sectionTitle}>Silver Lining</Text>
+            <Text style={styles.sectionTitle}>Silver lining</Text>
           </View>
           
           <View style={styles.trimesterCard}>
             <MaterialCommunityIcons name="trophy" size={40} color="#FFC107" />
             <View style={styles.trimesterContent}>
-              <Text style={styles.trimesterTitle}>Third Trimester Milestone!</Text>
+              <Text style={styles.trimesterTitle}>Third trimester milestone</Text>
               <Text style={styles.trimesterText}>
-                You have now reached the <Text style={styles.boldText}>third trimester</Text>! Congratulations! Another huge milestone.
+                If born from around 28 weeks onward, babies have a much better chance with modern neonatal care—but every extra week inside still helps.
               </Text>
             </View>
           </View>
@@ -170,29 +163,28 @@ const Week28To33Screen = ({ navigation }) => {
           <View style={styles.reliefCard}>
             <MaterialCommunityIcons name="heart" size={32} color="#E91E63" />
             <View style={styles.reliefContent}>
-              <Text style={styles.reliefTitle}>Delivery Option Available</Text>
+              <Text style={styles.reliefTitle}>Nesting and planning</Text>
               <Text style={styles.reliefText}>
-                It is a huge relief to know that it is possible to deliver the baby now if there was a problem in utero.
+                Many people enjoy preparing the nursery, washing baby clothes, or freezing simple meals. Rest when you need to—growing a full-term baby is hard work.
               </Text>
             </View>
           </View>
         </View>
 
-        {/* Visual Elements */}
         <View style={styles.visualSection}>
           <View style={styles.visualCard}>
             <MaterialCommunityIcons name="calendar-check" size={40} color="#E91E63" />
-            <Text style={styles.visualTitle}>Delivery Prep</Text>
+            <Text style={styles.visualTitle}>Whooping cough vaccine</Text>
             <Text style={styles.visualText}>
-              Discuss delivery plan and pack hospital bags
+              Many countries offer a booster in the third trimester to protect newborns—ask if it is due for you
             </Text>
           </View>
           
           <View style={styles.visualCard}>
             <MaterialCommunityIcons name="ultrasound" size={40} color="#2196F3" />
-            <Text style={styles.visualTitle}>Weekly Monitoring</Text>
+            <Text style={styles.visualTitle}>Baby’s sleep</Text>
             <Text style={styles.visualText}>
-              Continue weekly MCA scans for critical titers
+              Your baby may dream, blink, and respond to light through your tummy
             </Text>
           </View>
         </View>
