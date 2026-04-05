@@ -126,9 +126,16 @@ const OTPVerificationScreen = ({ navigation, route }) => {
     }
   }
 
+  const showNotificationModal = (title, message, type = 'error') => {
+    setStatusType(type === 'success' ? 'success' : 'error')
+    setStatusTitle(title)
+    setStatusMessage(message)
+    setStatusModalVisible(true)
+  }
+
   const handleResendOTP = async () => {
     if (!canResend) {
-      Alert.alert("Wait", "Please wait before requesting a new OTP.")
+      showNotificationModal("Wait", "Please wait before requesting a new OTP.", "error")
       return
     }
 

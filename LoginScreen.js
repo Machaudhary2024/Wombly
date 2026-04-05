@@ -87,19 +87,14 @@ const LoginScreen = ({ navigation }) => {
       console.log('Response data:', data)
 
       if (data.success) {
-        setErrorTitle("Success")
-        setErrorMessage("Login successful!")
-        setErrorType("success")
-        setShowErrorModal(true)
         setUserInfo(data.user.email, data.user.name)
-        setTimeout(() => {
-          navigation.navigate("Home", {
-            userEmail: data.user.email,
-            userName: data.user.name,
-            token: data.token,
-            pregnancyWeek: data.user.pregnancyWeek,
-          })
-        }, 500)
+        navigation.navigate("Home", {
+          userEmail: data.user.email,
+          userName: data.user.name,
+          token: data.token,
+          pregnancyWeek: data.user.pregnancyWeek,
+          showLoginSuccess: true,
+        })
       } else {
         if (data.isVerified === false) {
           setErrorTitle("Verification Required")

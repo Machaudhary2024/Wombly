@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, FlatList, ActivityIndicator, Modal, Image, Alert, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, FlatList, ActivityIndicator, Modal, Image, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { API_BASE_URL } from './apiConfig';
@@ -14,6 +14,23 @@ const CartoonDetailScreen = ({ navigation, route }) => {
   const [selectedVideoId, setSelectedVideoId] = useState(null);
   const [selectedVideoTitle, setSelectedVideoTitle] = useState('');
   const [showPlayer, setShowPlayer] = useState(false);
+
+  // Modal state
+  const [showModal, setShowModal] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalType, setModalType] = useState('error');
+
+  const showNotificationModal = (title, message, type = 'error') => {
+    setModalTitle(title);
+    setModalMessage(message);
+    setModalType(type);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
 
   const API_URL = `${API_BASE_URL}/api/entertainment`;
 
@@ -48,7 +65,7 @@ const CartoonDetailScreen = ({ navigation, route }) => {
 
   const handlePlayCartoon = (video) => {
     if (!video.videoId) {
-      Alert.alert('Error', 'Video ID not available');
+      showNotificationModal('Error', 'Video ID not available', 'error');
       return;
     }
     setSelectedVideoId(video.videoId);
@@ -178,6 +195,32 @@ const CartoonDetailScreen = ({ navigation, route }) => {
           </View>
         </Modal>
       )}
+
+      {/* Success/Error Modal */}
+      <Modal
+        transparent={true}
+        visible={showModal}
+        animationType="fade"
+        onRequestClose={closeModal}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <MaterialCommunityIcons
+              name={modalType === 'success' ? 'check-circle' : 'alert-circle'}
+              size={50}
+              color={modalType === 'success' ? '#00B894' : '#F5B7B1'}
+            />
+            <Text style={styles.modalTitle}>{modalTitle}</Text>
+            <Text style={styles.modalMessage}>{modalMessage}</Text>
+            <TouchableOpacity
+              style={[styles.modalButton, styles.modalButtonYes]}
+              onPress={closeModal}
+            >
+              <Text style={styles.modalButtonYesText}>OK</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
     </View>
   );
@@ -320,6 +363,55 @@ const styles = StyleSheet.create({
     right: 20,
     zIndex: 10,
     padding: 10,
+  },
+  // Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalBox: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 30,
+    width: '80%',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 10,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2D3436',
+    marginTop: 12,
+    marginBottom: 8,
+  },
+  modalMessage: {
+    fontSize: 14,
+    color: '#636E72',
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 24,
+  },
+  modalButton: {
+    width: '100%',
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  modalButtonYes: {
+    backgroundColor: '#FF6B9D',
+  },
+  modalButtonYesText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+    fontSize: 15,
+    textAlign: 'center',
   },
 
 });

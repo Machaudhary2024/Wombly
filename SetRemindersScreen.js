@@ -29,8 +29,26 @@ const SetRemindersScreen = ({ navigation }) => {
   const [editingId, setEditingId] = useState(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
+  // Modal state for success/error messages
+  const [showModal, setShowModal] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalType, setModalType] = useState('success'); // 'success' or 'error'
+
   const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const repeatOptions = ['Never', 'Daily', 'Weekly', 'Monthly'];
+
+  // Helper function to show modal
+  const showNotificationModal = (title, message, type = 'success') => {
+    setModalTitle(title);
+    setModalMessage(message);
+    setModalType(type);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
 
   // Load reminders from AsyncStorage when component mounts
   useEffect(() => {
@@ -224,7 +242,7 @@ const SetRemindersScreen = ({ navigation }) => {
 
       // Check if the date/time is in the past
       if (notificationDate <= now) {
-        Alert.alert('Invalid Date', 'Please select a future date and time.');
+        throw new Error('Please select a future date and time.');
         return false;
       }
 
@@ -354,8 +372,7 @@ const SetRemindersScreen = ({ navigation }) => {
       return notificationId;
     } catch (error) {
       console.error('Error scheduling notification:', error);
-      Alert.alert('Error', 'Failed to schedule reminder. Please try again.');
-      return null;
+      throw error;
     }
   };
 
@@ -436,19 +453,45 @@ const SetRemindersScreen = ({ navigation }) => {
 
   const handleAddReminder = async () => {
     if (!description.trim()) {
-      Alert.alert('Required Field', 'Please enter a reminder description.');
+      showNotificationModal('Required Field', 'Please enter a reminder description.', 'error');
       return;
     }
 
-    // If editing an existing reminder, cancel old and reschedule
-    if (editingId) {
-      try {
-        await Notifications.cancelScheduledNotificationAsync(editingId);
-      } catch (err) {
-        console.warn('Could not cancel old scheduled notification during edit:', err);
+    try {
+      // If editing an existing reminder, cancel old and reschedule
+      if (editingId) {
+        try {
+          await Notifications.cancelScheduledNotificationAsync(editingId);
+        } catch (err) {
+          console.warn('Could not cancel old scheduled notification during edit:', err);
+        }
+
+        const newId = await scheduleNotification(
+          selectedDate,
+          selectedTime,
+          description,
+          reminderType,
+          repeatFrequency,
+          selectedDays
+        );
+
+        if (newId) {
+          setReminders(prev => prev.map(r => r.id === editingId ? ({ id: newId, description, date: selectedDate, time: selectedTime, type: reminderType, repeatFrequency, selectedDays }) : r));
+          setEditingId(null);
+          setDescription('');
+          setSelectedDate(new Date());
+          setSelectedTime(new Date());
+          setReminderType('Reminder');
+          setRepeatFrequency('Never');
+          setSelectedDays([]);
+          const freqStr = repeatFrequency === 'Never' ? '' : ` and repeating ${repeatFrequency.toLowerCase()}`;
+          showNotificationModal('Updated', `Reminder updated successfully${freqStr}.`, 'success');
+        }
+        return;
       }
 
-      const newId = await scheduleNotification(
+      // Normal add flow
+      const notificationId = await scheduleNotification(
         selectedDate,
         selectedTime,
         description,
@@ -457,53 +500,33 @@ const SetRemindersScreen = ({ navigation }) => {
         selectedDays
       );
 
-      if (newId) {
-        setReminders(prev => prev.map(r => r.id === editingId ? ({ id: newId, description, date: selectedDate, time: selectedTime, type: reminderType, repeatFrequency, selectedDays }) : r));
-        setEditingId(null);
+      if (notificationId) {
+        const newReminder = {
+          id: notificationId,
+          description,
+          date: selectedDate,
+          time: selectedTime,
+          type: reminderType,
+          repeatFrequency,
+          selectedDays,
+        };
+        setReminders(prev => [...prev, newReminder]);
+        // Reset form
         setDescription('');
         setSelectedDate(new Date());
         setSelectedTime(new Date());
         setReminderType('Reminder');
         setRepeatFrequency('Never');
         setSelectedDays([]);
-        const freqStr = repeatFrequency === 'Never' ? '' : ` and repeating ${repeatFrequency.toLowerCase()}`;
-        Alert.alert('Updated', `Reminder updated successfully${freqStr}.`);
+        const timeStr = formatTime(selectedTime);
+        const dateStr = formatDate(selectedDate);
+        const freqStr = repeatFrequency === 'Never' ? '' : ` and will repeat ${repeatFrequency.toLowerCase()}`;
+        showNotificationModal('Success', `Reminder set successfully!\n\nIt will beep/ring on:\n${dateStr} at ${timeStr}${freqStr}`, 'success');
       }
-      return;
-    }
-
-    // Normal add flow
-    const notificationId = await scheduleNotification(
-      selectedDate,
-      selectedTime,
-      description,
-      reminderType,
-      repeatFrequency,
-      selectedDays
-    );
-
-    if (notificationId) {
-      const newReminder = {
-        id: notificationId,
-        description,
-        date: selectedDate,
-        time: selectedTime,
-        type: reminderType,
-        repeatFrequency,
-        selectedDays,
-      };
-      setReminders(prev => [...prev, newReminder]);
-      // Reset form
-      setDescription('');
-      setSelectedDate(new Date());
-      setSelectedTime(new Date());
-      setReminderType('Reminder');
-      setRepeatFrequency('Never');
-      setSelectedDays([]);
-      const timeStr = formatTime(selectedTime);
-      const dateStr = formatDate(selectedDate);
-      const freqStr = repeatFrequency === 'Never' ? '' : ` and will repeat ${repeatFrequency.toLowerCase()}`;
-      Alert.alert('Success! ✅', `Reminder set successfully!\n\nIt will beep/ring on:\n${dateStr} at ${timeStr}${freqStr}`);
+    } catch (error) {
+      console.error('Error in handleAddReminder:', error);
+      const errorMessage = error.message || 'Failed to set reminder. Please try again.';
+      showNotificationModal('Error', errorMessage, 'error');
     }
   };
 
@@ -815,6 +838,32 @@ const SetRemindersScreen = ({ navigation }) => {
           </View>
         )}
       </ScrollView>
+
+      {/* Success/Error Modal */}
+      <Modal
+        transparent={true}
+        visible={showModal}
+        animationType="fade"
+        onRequestClose={closeModal}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <MaterialCommunityIcons
+              name={modalType === 'success' ? 'check-circle' : 'alert-circle'}
+              size={50}
+              color={modalType === 'success' ? '#00B894' : '#FF6B9D'}
+            />
+            <Text style={styles.modalTitle}>{modalTitle}</Text>
+            <Text style={styles.modalMessage}>{modalMessage}</Text>
+            <TouchableOpacity
+              style={[styles.modalButton, styles.modalButtonYes]}
+              onPress={closeModal}
+            >
+              <Text style={styles.modalButtonYesText}>OK</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -1106,6 +1155,55 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '700',
     color: '#FF6B9D',
+  },
+  // Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalBox: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 30,
+    width: '80%',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 10,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2D3436',
+    marginTop: 12,
+    marginBottom: 8,
+  },
+  modalMessage: {
+    fontSize: 14,
+    color: '#636E72',
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 24,
+  },
+  modalButton: {
+    width: '100%',
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  modalButtonYes: {
+    backgroundColor: '#FF6B9D',
+  },
+  modalButtonYesText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+    fontSize: 15,
+    textAlign: 'center',
   },
 });
 

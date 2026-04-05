@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   View, 
   Text, 
@@ -8,7 +8,6 @@ import {
   Dimensions,
   Linking,
   Modal,
-  Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -18,6 +17,22 @@ const { width, height } = Dimensions.get('window');
 const isTablet = width > 600;
 
 const HygieneGuidanceScreen = ({ navigation }) => {
+  // Modal state
+  const [showModal, setShowModal] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalType, setModalType] = useState('error');
+
+  const showNotificationModal = (title, message, type = 'error') => {
+    setModalTitle(title);
+    setModalMessage(message);
+    setModalType(type);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
 
   const categories = [
     {
@@ -651,11 +666,11 @@ const HygieneGuidanceScreen = ({ navigation }) => {
 
   const handleTutorialPress = (url) => {
     if (!url) {
-      Alert.alert('No Video', 'This tutorial is loading or currently unavailable. Please try again shortly.');
+      showNotificationModal('No Video', 'This tutorial is loading or currently unavailable. Please try again shortly.', 'error');
       return;
     }
     Linking.openURL(url).catch(() => {
-      Alert.alert('Error', 'Unable to open the tutorial. Please check your internet connection.');
+      showNotificationModal('Error', 'Unable to open the tutorial. Please check your internet connection.', 'error');
     });
   };
 
@@ -792,6 +807,32 @@ const HygieneGuidanceScreen = ({ navigation }) => {
       </LinearGradient>
 
       {renderCategoryList()}
+
+      {/* Success/Error Modal */}
+      <Modal
+        transparent={true}
+        visible={showModal}
+        animationType="fade"
+        onRequestClose={closeModal}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <MaterialCommunityIcons
+              name={modalType === 'success' ? 'check-circle' : 'alert-circle'}
+              size={50}
+              color={modalType === 'success' ? '#00B894' : '#2ECC71'}
+            />
+            <Text style={styles.modalTitle}>{modalTitle}</Text>
+            <Text style={styles.modalMessage}>{modalMessage}</Text>
+            <TouchableOpacity
+              style={[styles.modalButton, styles.modalButtonYes]}
+              onPress={closeModal}
+            >
+              <Text style={styles.modalButtonYesText}>OK</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -1171,6 +1212,55 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#7F8C8D',
     marginTop: 4,
+  },
+  // Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalBox: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 30,
+    width: '80%',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 10,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2D3436',
+    marginTop: 12,
+    marginBottom: 8,
+  },
+  modalMessage: {
+    fontSize: 14,
+    color: '#636E72',
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 24,
+  },
+  modalButton: {
+    width: '100%',
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  modalButtonYes: {
+    backgroundColor: '#2ECC71',
+  },
+  modalButtonYesText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+    fontSize: 15,
+    textAlign: 'center',
   },
 });
 

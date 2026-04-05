@@ -91,12 +91,6 @@ const TrimesterDetailsScreen = ({ navigation, route }) => {
 
         {/* Meal Plans Section */}
         <View style={styles.mealsSection}>
-          <View style={styles.sectionHeader}>
-            <MaterialCommunityIcons name="food-fork-drink" size={24} color="#FF6B9D" />
-            <Text style={styles.planTitle}>{mealPlanData.title}</Text>
-          </View>
-          <Text style={styles.planSubtitle}>{mealPlanData.subtitle}</Text>
-
           <FlatList
             data={mealPlanData.meals}
             renderItem={renderMealItem}
@@ -128,21 +122,6 @@ const TrimesterDetailsScreen = ({ navigation, route }) => {
           </LinearGradient>
         </View>
 
-        {/* Nutrition Guide */}
-        <View style={styles.nutritionGuideSection}>
-          <LinearGradient
-            colors={['#E8D5FF', '#F3E5F5']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.nutritionGradient}
-          >
-            <MaterialCommunityIcons name="heart-outline" size={28} color="#FF6B9D" />
-            <Text style={styles.nutritionTitle}>Nutrition Guidelines</Text>
-            <Text style={styles.nutritionText}>
-              Every baby is unique. Watch for your baby's hunger and fullness cues. Consult with your pediatrician before introducing new foods, especially if there's a family history of allergies.
-            </Text>
-          </LinearGradient>
-        </View>
       </ScrollView>
     </View>
   );
@@ -224,24 +203,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginTop: 10,
     marginBottom: 20,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  planTitle: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#2D3436',
-    marginLeft: 12,
-  },
-  planSubtitle: {
-    fontSize: 14,
-    color: '#FF6B9D',
-    marginBottom: 16,
-    fontWeight: '500',
-    paddingHorizontal: 5,
   },
   mealCard: {
     marginBottom: 14,
@@ -390,34 +351,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#2D3436',
     flex: 1,
-    lineHeight: 18,
-  },
-  nutritionGuideSection: {
-    marginHorizontal: 15,
-    marginBottom: 20,
-    borderRadius: 12,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  nutritionGradient: {
-    padding: 16,
-    alignItems: 'center',
-  },
-  nutritionTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#FF6B9D',
-    marginTop: 10,
-    marginBottom: 8,
-  },
-  nutritionText: {
-    fontSize: 13,
-    color: '#6C5CE7',
-    textAlign: 'center',
     lineHeight: 18,
   },
 });

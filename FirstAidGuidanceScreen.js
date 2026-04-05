@@ -64,7 +64,6 @@ const FirstAidGuidanceScreen = ({ navigation }) => {
 
             if (result.success && result.data && result.data.length > 0) {
               newTutorialLinks[topicMap[topic]] = result.data
-                .slice(0, 1)
                 .map((video) => ({
                   title: video.title,
                   videoId: video.videoId,
@@ -286,22 +285,15 @@ const FirstAidGuidanceScreen = ({ navigation }) => {
         },
         {
           number: 2,
-          title: 'Call Poison Control',
-          description: 'Call Poison Control Center (1-800-222-1222) immediately with substance info',
-          icon: 'phone-classic',
-          tips: ['Have the container/substance name', 'Know approximate amount', 'Note child\'s age & weight'],
-        },
-        {
-          number: 3,
           title: 'Initial Response',
           description: 'DO NOT induce vomiting. Keep child warm and comfortable. Monitor breathing',
           icon: 'lung',
           tips: ['Never force vomiting', 'If unconscious, turn on side', 'Note any symptoms'],
         },
         {
-          number: 4,
+          number: 3,
           title: 'Hospital Transport',
-          description: 'Keep the poison container. Transport to hospital as directed by Poison Control',
+          description: 'Keep the poison container. Transport to hospital as directed by emergency services',
           icon: 'ambulance',
           tips: ['Bring container with you', 'List all symptoms', 'Continue monitoring during travel'],
         },

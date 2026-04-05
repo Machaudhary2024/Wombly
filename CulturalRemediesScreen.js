@@ -150,9 +150,6 @@ const CulturalRemediesScreen = ({ navigation }) => {
             <MaterialCommunityIcons name="youtube" size={24} color="#FF0000" />
             <Text style={styles.sectionTitle}>Videos</Text>
           </View>
-          <Text style={styles.videoIntro}>
-             Tap a card to open a video.
-          </Text>
           {CULTURAL_VIDEOS.map((v, i) => {
             const canOpen = v.id && !v.id.startsWith('REPLACE_');
             return (

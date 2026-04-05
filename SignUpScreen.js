@@ -7,7 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
+  Modal,
   ActivityIndicator,
   ScrollView,
   KeyboardAvoidingView,
@@ -41,6 +41,30 @@ const SignUpScreen = ({ navigation }) => {
     hasAlphabet: false,
     hasSpecialChar: false,
   })
+  
+  const [showModal, setShowModal] = useState(false)
+  const [modalTitle, setModalTitle] = useState('')
+  const [modalMessage, setModalMessage] = useState('')
+  const [modalType, setModalType] = useState('error')
+  const [pendingNavigation, setPendingNavigation] = useState(null)
+  
+  const showNotificationModal = (title, message, type = 'error', callback = null) => {
+    setModalTitle(title)
+    setModalMessage(message)
+    setModalType(type)
+    setPendingNavigation(callback)
+    setShowModal(true)
+  }
+  
+  const closeModal = () => {
+    setShowModal(false)
+    if (pendingNavigation) {
+      setTimeout(() => {
+        pendingNavigation()
+        setPendingNavigation(null)
+      }, 300)
+    }
+  }
 
   // Check password strength in real-time
   const checkPasswordStrength = (password) => {
@@ -111,7 +135,7 @@ const SignUpScreen = ({ navigation }) => {
 
       const contentType = response.headers.get("content-type")
       if (!contentType || !contentType.includes("application/json")) {
-        Alert.alert("Error", "Server returned invalid response.")
+        showNotificationModal("Error", "Server returned invalid response.", "error")
         setLoading(false)
         return
       }
@@ -119,16 +143,17 @@ const SignUpScreen = ({ navigation }) => {
       const data = await response.json()
 
       if (data.success) {
-        Alert.alert("Success", "Account created! Please verify your email.")
-        navigation.navigate("OTPVerification", {
-          email: formData.email.toLowerCase().trim(),
+        showNotificationModal("Success", "Account created! Please verify your email.", "success", () => {
+          navigation.navigate("OTPVerification", {
+            email: formData.email.toLowerCase().trim(),
+          })
         })
       } else {
-        Alert.alert("Sign Up Failed", data.message)
+        showNotificationModal("Sign Up Failed", data.message, "error")
       }
     } catch (error) {
-      console.error("Sign up error:", error)
-      Alert.alert("Error", "Network error. Please try again.")
+      console.error("Sign up error", error)
+      showNotificationModal("Error", "Network error. Please try again.", "error")
     } finally {
       setLoading(false)
     }
@@ -458,6 +483,32 @@ const SignUpScreen = ({ navigation }) => {
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
+
+      {/* Success/Error Modal */}
+      <Modal
+        transparent={true}
+        visible={showModal}
+        animationType="fade"
+        onRequestClose={closeModal}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <MaterialCommunityIcons
+              name={modalType === "success" ? "check-circle" : "alert-circle"}
+              size={50}
+              color={modalType === "success" ? "#00B894" : "#FF6B9D"}
+            />
+            <Text style={styles.modalTitle}>{modalTitle}</Text>
+            <Text style={styles.modalMessage}>{modalMessage}</Text>
+            <TouchableOpacity
+              style={[styles.modalButton, styles.modalButtonYes]}
+              onPress={closeModal}
+            >
+              <Text style={styles.modalButtonYesText}>OK</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </LinearGradient>
   )
 }
@@ -616,6 +667,55 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: "#eb4a7a",
     fontWeight: "600",
+  },
+  // Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalBox: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 20,
+    padding: 30,
+    width: "80%",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 10,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#2D3436",
+    marginTop: 12,
+    marginBottom: 8,
+  },
+  modalMessage: {
+    fontSize: 14,
+    color: "#636E72",
+    textAlign: "center",
+    lineHeight: 20,
+    marginBottom: 24,
+  },
+  modalButton: {
+    width: "100%",
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  modalButtonYes: {
+    backgroundColor: "#eb4a7a",
+  },
+  modalButtonYesText: {
+    color: "#FFFFFF",
+    fontWeight: "600",
+    fontSize: 15,
+    textAlign: "center",
   },
 })
 

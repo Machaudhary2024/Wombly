@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Modal } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -7,6 +7,23 @@ const PregnancyCareScreen = ({ navigation, route }) => {
   const pregnancyWeek = route.params?.pregnancyWeek;
   const userEmail = route.params?.userEmail;
   const userName = route.params?.userName || '';
+  const [showModal, setShowModal] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalType, setModalType] = useState('');
+
+  const showNotificationModal = (title, message, type) => {
+    setModalTitle(title);
+    setModalMessage(message);
+    setModalType(type);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
   const modules = [
     {
       id: 1,
@@ -92,23 +109,18 @@ const PregnancyCareScreen = ({ navigation, route }) => {
   };
 
   const handleLogout = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Logout',
-          style: 'destructive',
-          onPress: () => {
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'Login' }],
-            });
-          },
-        },
-      ]
-    );
+    setShowLogoutConfirm(true);
+  };
+
+  const confirmLogout = () => {
+    setShowLogoutConfirm(false);
+    showNotificationModal('Logout Successful', 'You have been logged out successfully.', 'success');
+    setTimeout(() => {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
+    }, 1500);
   };
 
   return (
@@ -167,6 +179,65 @@ const PregnancyCareScreen = ({ navigation, route }) => {
           </TouchableOpacity>
         ))}
       </ScrollView>
+
+      {/* Logout Confirmation Modal */}
+      <Modal
+        transparent
+        visible={showLogoutConfirm}
+        animationType="fade"
+        onRequestClose={() => setShowLogoutConfirm(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.confirmModalBox}>
+            <Text style={styles.confirmTitle}>Confirm Logout</Text>
+            <Text style={styles.confirmMessage}>Are you sure you want to logout?</Text>
+            <View style={styles.confirmButtonContainer}>
+              <TouchableOpacity
+                style={[styles.confirmButton, styles.cancelButton]}
+                onPress={() => setShowLogoutConfirm(false)}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.confirmButton, styles.logoutButton]}
+                onPress={confirmLogout}
+              >
+                <Text style={styles.logoutButtonText}>Logout</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Success/Error Notification Modal */}
+      <Modal
+        transparent
+        visible={showModal}
+        animationType="fade"
+        onRequestClose={closeModal}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <MaterialCommunityIcons
+              name={modalType === 'success' ? 'check-circle' : 'alert-circle'}
+              size={50}
+              color={modalType === 'success' ? '#00B894' : '#FF6B9D'}
+              style={styles.modalIcon}
+            />
+            <Text style={styles.modalTitle}>{modalTitle}</Text>
+            <Text style={styles.modalMessage}>{modalMessage}</Text>
+            <TouchableOpacity
+              style={[
+                styles.modalButton,
+                modalType === 'success' ? styles.successButton : styles.errorButton,
+              ]}
+              onPress={closeModal}
+            >
+              <Text style={styles.modalButtonText}>OK</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -262,6 +333,110 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#636E72',
     lineHeight: 20,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  confirmModalBox: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 30,
+    width: '80%',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 10,
+  },
+  confirmTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2D3436',
+    marginBottom: 12,
+  },
+  confirmMessage: {
+    fontSize: 14,
+    color: '#636E72',
+    textAlign: 'center',
+    marginBottom: 24,
+    lineHeight: 20,
+  },
+  confirmButtonContainer: {
+    flexDirection: 'row',
+    gap: 12,
+    width: '100%',
+  },
+  confirmButton: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  cancelButton: {
+    backgroundColor: '#E8E8E8',
+  },
+  cancelButtonText: {
+    color: '#2D3436',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  logoutButton: {
+    backgroundColor: '#FF6B9D',
+  },
+  logoutButtonText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  modalBox: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 30,
+    width: '80%',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 10,
+  },
+  modalIcon: {
+    marginBottom: 16,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2D3436',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  modalMessage: {
+    fontSize: 14,
+    color: '#636E72',
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 24,
+  },
+  modalButton: {
+    width: '100%',
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  successButton: {
+    backgroundColor: '#00B894',
+  },
+  errorButton: {
+    backgroundColor: '#FF6B9D',
+  },
+  modalButtonText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
 

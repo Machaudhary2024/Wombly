@@ -9,8 +9,10 @@ const { width, height } = Dimensions.get('window');
 const HomeScreen = ({ navigation, route }) => {
   const userName = route.params?.userName || 'User';
   const userEmail = route.params?.userEmail;
+  const showLoginSuccess = route.params?.showLoginSuccess || false;
 
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showLoginSuccessModal, setShowLoginSuccessModal] = useState(false);
 
   // Animation refs for floating elements
   const floatAnim1 = useRef(new Animated.Value(0)).current;
@@ -68,6 +70,17 @@ const HomeScreen = ({ navigation, route }) => {
       ])
     ).start();
   }, [floatAnim1, floatAnim2, floatAnim3]);
+
+  // Show login success modal on first load
+  useEffect(() => {
+    if (showLoginSuccess) {
+      setShowLoginSuccessModal(true);
+      const timer = setTimeout(() => {
+        setShowLoginSuccessModal(false);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [showLoginSuccess]);
 
   const translateY1 = floatAnim1.interpolate({
     inputRange: [0, 1],
@@ -313,6 +326,24 @@ const HomeScreen = ({ navigation, route }) => {
                 <Text style={styles.modalButtonYesText}>Logout</Text>
               </TouchableOpacity>
             </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Login Success Modal */}
+      <Modal
+        transparent={true}
+        visible={showLoginSuccessModal}
+        animationType="fade"
+        onRequestClose={() => setShowLoginSuccessModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <MaterialCommunityIcons name="check-circle" size={50} color="#00B894" />
+            <Text style={styles.modalTitle}>Login Successful!</Text>
+            <Text style={styles.modalMessage}>
+              Welcome to Wombly. You're all set to start your journey.
+            </Text>
           </View>
         </View>
       </Modal>

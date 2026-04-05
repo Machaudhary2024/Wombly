@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, FlatList, Alert, ActivityIndicator, TextInput, Image, Modal, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, FlatList, ActivityIndicator, Image, Modal, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { API_BASE_URL } from './apiConfig';
@@ -11,18 +11,28 @@ const EntertainmentModule = ({ navigation }) => {
   const [lullabyChannels, setLullabyChannels] = useState([]);
   const [cartoons, setCartoons] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showSearch, setShowSearch] = useState(false);
-  const [searchResults, setSearchResults] = useState([]);
-  const [searchLoading, setSearchLoading] = useState(false);
 
   // Video player state
   const [selectedVideoId, setSelectedVideoId] = useState(null);
   const [selectedVideoTitle, setSelectedVideoTitle] = useState('');
   const [showPlayer, setShowPlayer] = useState(false);
 
-  // Cartoon search state
-  const [showCartoonSearch, setShowCartoonSearch] = useState(false);
+  // Modal state
+  const [showModal, setShowModal] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalType, setModalType] = useState('error');
+
+  const showNotificationModal = (title, message, type = 'error') => {
+    setModalTitle(title);
+    setModalMessage(message);
+    setModalType(type);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
 
 
 
@@ -108,13 +118,13 @@ const EntertainmentModule = ({ navigation }) => {
 
   const handlePlayLullaby = (lullaby) => {
     if (!lullaby || !lullaby.videoId) {
-      Alert.alert('Error', 'Video ID not available. Please try another lullaby.');
+      showNotificationModal('Error', 'Video ID not available. Please try another lullaby.', 'error');
       return;
     }
     // Ensure videoId is a string and valid
     const validVideoId = String(lullaby.videoId).trim();
     if (!validVideoId) {
-      Alert.alert('Error', 'Invalid video ID');
+      showNotificationModal('Error', 'Invalid video ID', 'error');
       return;
     }
     setSelectedVideoId(validVideoId);
@@ -138,13 +148,13 @@ const EntertainmentModule = ({ navigation }) => {
 
   const handlePlayCartoon = (video) => {
     if (!video || !video.videoId) {
-      Alert.alert('Error', 'Video ID not available. Please try another video.');
+      showNotificationModal('Error', 'Video ID not available. Please try another video.', 'error');
       return;
     }
     // Ensure videoId is a string and valid
     const validVideoId = String(video.videoId).trim();
     if (!validVideoId) {
-      Alert.alert('Error', 'Invalid video ID');
+      showNotificationModal('Error', 'Invalid video ID', 'error');
       return;
     }
     setSelectedVideoId(validVideoId);
@@ -152,32 +162,7 @@ const EntertainmentModule = ({ navigation }) => {
     setShowPlayer(true);
   };
 
-  // Dynamic cartoon search function
-  const searchCartoonsHandler = async () => {
-    if (!searchQuery.trim()) {
-      Alert.alert('Error', 'Please enter a cartoon name or keyword');
-      return;
-    }
-    
-    try {
-      setSearchLoading(true);
-      const encodedQuery = encodeURIComponent(searchQuery);
-      const response = await fetch(`${API_URL}/cartoons/search/${encodedQuery}?maxResults=10`);
-      const result = await response.json();
-      
-      if (result.success && result.data) {
-        setSearchResults(result.data);
-      } else {
-        Alert.alert('No Results', `No cartoons found for "${searchQuery}"`);
-        setSearchResults([]);
-      }
-    } catch (error) {
-      console.log('Error searching cartoons:', error);
-      Alert.alert('Error', 'Failed to search for cartoons');
-    } finally {
-      setSearchLoading(false);
-    }
-  };
+
 
   const categories = [
     { id: 1, name: 'Lullabies', icon: 'moon-waning-crescent', color: '#E8D5FF' },
@@ -270,8 +255,7 @@ const EntertainmentModule = ({ navigation }) => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Category Selector - Only show when not viewing cartoon search */}
-        {!showCartoonSearch && (
+        {/* Category Selector */}
         <View style={styles.selectorContainer}>
           <Text style={styles.selectorLabel}>Choose Entertainment Type</Text>
           
@@ -321,7 +305,6 @@ const EntertainmentModule = ({ navigation }) => {
             </View>
           )}
         </View>
-        )}
 
         {/* Content Display */}
         {selectedCategory === 'Lullabies' && (
@@ -353,7 +336,7 @@ const EntertainmentModule = ({ navigation }) => {
           </View>
         )}
 
-        {selectedCategory === 'Cartoons' && !showCartoonSearch && (
+        {selectedCategory === 'Cartoons' && (
           <View style={styles.contentContainer}>
             <View style={styles.categoryHeader}>
               <MaterialCommunityIcons name="television-play" size={32} color="#FF6B9D" />
@@ -375,110 +358,6 @@ const EntertainmentModule = ({ navigation }) => {
                 <Text style={styles.emptyText}>No cartoons available</Text>
               </View>
             )}
-          </View>
-        )}
-
-        {selectedCategory === 'Cartoons' && showCartoonSearch && (
-          <View style={styles.contentContainer}>
-            <TouchableOpacity
-              style={styles.backToCartoons}
-              onPress={() => {
-                setShowCartoonSearch(false);
-                setSearchQuery('');
-                setSearchResults([]);
-              }}
-            >
-              <MaterialCommunityIcons name="arrow-left" size={24} color="#9C27B0" />
-              <Text style={styles.backText}>Back</Text>
-            </TouchableOpacity>
-            
-            <View style={styles.categoryHeader}>
-              <MaterialCommunityIcons name="magnify" size={32} color="#FF6B9D" />
-              <Text style={styles.categoryTitle}>Search Cartoons</Text>
-            </View>
-            <Text style={styles.categorySubtitle}>Find your favorite cartoon shows</Text>
-
-            {/* Search Input */}
-            <View style={styles.searchInputContainer}>
-              <MaterialCommunityIcons name="magnify" size={20} color="#9C27B0" />
-              <TextInput
-                style={styles.searchInput}
-                placeholder="Enter cartoon name..."
-                placeholderTextColor="#B0BEC5"
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-                onSubmitEditing={searchCartoonsHandler}
-              />
-              {searchQuery.length > 0 && (
-                <TouchableOpacity onPress={() => setSearchQuery('')}>
-                  <MaterialCommunityIcons name="close" size={20} color="#9C27B0" />
-                </TouchableOpacity>
-              )}
-            </View>
-
-            <TouchableOpacity
-              style={styles.searchButton}
-              onPress={searchCartoonsHandler}
-              disabled={searchLoading || !searchQuery.trim()}
-            >
-              {searchLoading ? (
-                <ActivityIndicator size="small" color="#FFFFFF" />
-              ) : (
-                <Text style={styles.searchButtonText}>Search</Text>
-              )}
-            </TouchableOpacity>
-
-            {searchLoading ? (
-              <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#9C27B0" />
-                <Text style={styles.loadingText}>Searching for cartoons...</Text>
-              </View>
-            ) : searchResults.length > 0 ? (
-              <FlatList
-                data={searchResults}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    style={styles.videoCard}
-                    activeOpacity={0.8}
-                    onPress={() => handlePlayCartoon(item)}
-                  >
-                    <LinearGradient
-                      colors={['#FFE5F1', '#F3E5F5']}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 1, y: 1 }}
-                      style={styles.videoGradient}
-                    >
-                      <View style={styles.videoContent}>
-                        {item.thumbnail && (
-                          <Image
-                            source={{ uri: item.thumbnail }}
-                            style={styles.videoThumbnail}
-                            resizeMode="cover"
-                          />
-                        )}
-                        <View style={styles.videoOverlay}>
-                          <MaterialCommunityIcons name="play-circle" size={50} color="#FFFFFF" />
-                        </View>
-                        <View style={styles.videoInfo}>
-                          <Text style={styles.videoTitle} numberOfLines={2}>
-                            {item.title}
-                          </Text>
-                        </View>
-                      </View>
-                    </LinearGradient>
-                  </TouchableOpacity>
-                )}
-                keyExtractor={(item) => `search-video-${item._id || item.id || item.key || item.videoId}`}
-                scrollEnabled={false}
-                numColumns={2}
-                columnWrapperStyle={styles.videoGridContainer}
-              />
-            ) : searchQuery && !searchLoading ? (
-              <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>No results found</Text>
-                <Text style={styles.emptySubtext}>Try searching for a different cartoon</Text>
-              </View>
-            ) : null}
           </View>
         )}
 
@@ -523,6 +402,32 @@ const EntertainmentModule = ({ navigation }) => {
           </View>
         </Modal>
       )}
+
+      {/* Success/Error Modal */}
+      <Modal
+        transparent={true}
+        visible={showModal}
+        animationType="fade"
+        onRequestClose={closeModal}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <MaterialCommunityIcons
+              name={modalType === 'success' ? 'check-circle' : 'alert-circle'}
+              size={50}
+              color={modalType === 'success' ? '#00B894' : '#FF6B9D'}
+            />
+            <Text style={styles.modalTitle}>{modalTitle}</Text>
+            <Text style={styles.modalMessage}>{modalMessage}</Text>
+            <TouchableOpacity
+              style={[styles.modalButton, styles.modalButtonYes]}
+              onPress={closeModal}
+            >
+              <Text style={styles.modalButtonYesText}>OK</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
     </View>
   );
@@ -778,19 +683,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 40,
   },
-  backToCartoons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  backText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#9C27B0',
-    marginLeft: 8,
-  },
   videoCard: {
     borderRadius: 12,
     overflow: 'hidden',
@@ -832,72 +724,6 @@ const styles = StyleSheet.create({
   },
   videoTitle: {
     fontSize: 12,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  videoGridContainer: {
-    justifyContent: 'space-between',
-    marginBottom: 12,
-  },
-  searchCartoonButton: {
-    backgroundColor: '#FF6B9D',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  searchCartoonButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    marginLeft: 8,
-  },
-  searchInputContainer: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-    borderWidth: 2,
-    borderColor: '#E8D5FF',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 16,
-    color: '#2D3436',
-    paddingHorizontal: 10,
-    paddingVertical: 0,
-  },
-  searchButton: {
-    backgroundColor: '#9C27B0',
-    borderRadius: 12,
-    paddingVertical: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  searchButtonText: {
-    fontSize: 16,
     fontWeight: '600',
     color: '#FFFFFF',
   },
@@ -977,6 +803,55 @@ const styles = StyleSheet.create({
     color: '#9C27B0',
     fontWeight: '600',
     marginLeft: 8,
+  },
+  // Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalBox: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 30,
+    width: '80%',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 10,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2D3436',
+    marginTop: 12,
+    marginBottom: 8,
+  },
+  modalMessage: {
+    fontSize: 14,
+    color: '#636E72',
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 24,
+  },
+  modalButton: {
+    width: '100%',
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  modalButtonYes: {
+    backgroundColor: '#FF6B9D',
+  },
+  modalButtonYesText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+    fontSize: 15,
+    textAlign: 'center',
   },
 });
 
