@@ -21,7 +21,11 @@
         "foregroundImage": "./assets/4.png",
         "backgroundColor": "#de81fa"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE"
+      ]
     },
     "web": {
       "favicon": "./assets/4.png"

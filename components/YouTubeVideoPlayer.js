@@ -1,8 +1,10 @@
-import React from 'react';
-import { View, StyleSheet, Platform } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, Platform, ActivityIndicator } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 const YouTubeVideoPlayer = ({ videoId, height = 400 }) => {
+  const [loading, setLoading] = useState(true);
+  const [webViewLoaded, setWebViewLoaded] = useState(false);
 
   if (!videoId) {
     return (
@@ -36,14 +38,14 @@ const YouTubeVideoPlayer = ({ videoId, height = 400 }) => {
   }
 
   // For native mobile platforms, use WebView with direct YouTube embed URL
-  const youtubeEmbedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&modestbranding=1&rel=0`;
+  const youtubeEmbedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=0&controls=1&modestbranding=1&rel=0&playsinline=1`;
   
   const youtubeHTML = `
     <!DOCTYPE html>
     <html lang="en">
     <head>
       <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover, maximum-scale=5.0">
       <title>YouTube Video</title>
       <style>
         * {
@@ -66,6 +68,7 @@ const YouTubeVideoPlayer = ({ videoId, height = 400 }) => {
           width: 100%;
           height: 100%;
           position: relative;
+          background-color: #000;
         }
         iframe {
           position: absolute;
@@ -76,46 +79,80 @@ const YouTubeVideoPlayer = ({ videoId, height = 400 }) => {
           border: none;
           border-radius: 8px;
         }
+        .loading {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          color: white;
+          font-size: 16px;
+        }
       </style>
     </head>
     <body>
       <div class="video-container">
+        <div class="loading">Loading video...</div>
         <iframe
+          id="youtube-iframe"
           src="${youtubeEmbedUrl}"
           title="YouTube video player"
           frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           referrerpolicy="strict-origin-when-cross-origin"
           allowfullscreen
+          allow="autoplay"
           loading="lazy"
+          webkit-playsinline="webkit-playsinline"
+          playsinline
         ></iframe>
       </div>
+      <script>
+        window.onload = function() {
+          document.querySelector('.loading').style.display = 'none';
+        };
+      </script>
     </body>
     </html>
   `;
 
   return (
     <View style={[styles.mobileContainer, { height }]}>
+      {loading && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color="#fff" />
+        </View>
+      )}
       <WebView
         cacheEnabled={true}
         source={{ html: youtubeHTML }}
         scalesPageToFit={false}
-        scrollEnabled={true}
+        scrollEnabled={false}
         scrollEventThrottle={16}
         javaScriptEnabled={true}
         domStorageEnabled={true}
         mediaPlaybackRequiresUserAction={false}
         allowsFullscreenVideo={true}
         allowsInlineMediaPlayback={true}
+        allowFileAccess={true}
         mixedContentMode="always"
         useWebKit={true}
+        startInLoadingState={true}
+        onLoadEnd={() => {
+          setLoading(false);
+          setWebViewLoaded(true);
+        }}
+        onLoad={() => {
+          setWebViewLoaded(true);
+        }}
         onError={(syntheticEvent) => {
           const { nativeEvent } = syntheticEvent;
           console.log('WebView error:', nativeEvent);
+          setLoading(false);
         }}
         onHttpError={(syntheticEvent) => {
           const { nativeEvent } = syntheticEvent;
           console.log('WebView HTTP error:', nativeEvent);
+          setLoading(false);
         }}
         style={{
           width: '100%',
