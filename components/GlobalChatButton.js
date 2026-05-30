@@ -1,6 +1,6 @@
 // components/GlobalChatButton.js
 // Single global floating chat button rendered once in App.js.
-// Reads user info from UserContext (set at login) — works on every screen.
+// Reads user info from UserContext (set at login) - works on every screen.
 // Hidden on auth screens and on the AIChat screen itself.
 
 import React, { useEffect, useRef } from 'react';

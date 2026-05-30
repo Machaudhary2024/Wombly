@@ -18,6 +18,9 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { API_BASE_URL } from './apiConfig';
+import CrisisSheet from './components/CrisisSheet';
+import { sendTelemetry } from './services/safetyApi';
+import { useLocation } from './contexts/LocationContext';
 
 const BACKEND_URL = API_BASE_URL;
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -86,6 +89,7 @@ const WELCOME_MSG = (name, mode) => ({
 const AIChatScreen = ({ navigation, route }) => {
   const userEmail = route.params?.userEmail;
   const userName = route.params?.userName || 'User';
+  const { location: appLocation } = useLocation();
 
   const [activeConvId, setActiveConvId] = useState(route.params?.conversationId || null);
   const [activeMode, setActiveMode] = useState(route.params?.conversationMode || null);
@@ -118,6 +122,12 @@ const AIChatScreen = ({ navigation, route }) => {
   const [showRenameModal, setShowRenameModal] = useState(false);
   const [renameTarget, setRenameTarget] = useState(null);
   const [renameText, setRenameText] = useState('');
+
+  // Crisis Sheet - only opens when backend `safety.action_recommended` is one of:
+  //   "confirm_then_offer_call" | "immediate_offer_call"
+  const [crisisOpen, setCrisisOpen] = useState(false);
+  const [crisisAction, setCrisisAction] = useState(null);
+  const [crisisCategory, setCrisisCategory] = useState(null);
 
   const [menuOpenId, setMenuOpenId] = useState(null);
   const [kavKey, setKavKey] = useState(0);
@@ -255,7 +265,12 @@ const AIChatScreen = ({ navigation, route }) => {
     const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: userEmail, message: userMessage }),
+      body: JSON.stringify({
+        email: userEmail,
+        message: userMessage,
+        // Coarse country only - gives the bot location awareness without exposing precise coords.
+        client_country: appLocation?.country || undefined,
+      }),
     });
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -263,7 +278,8 @@ const AIChatScreen = ({ navigation, route }) => {
     }
     const data = await response.json();
     if (!data.success) throw new Error(data.message || 'Failed to get AI response');
-    return data.reply;
+    // Return reply AND the safety verdict (may be null)
+    return { reply: data.reply, safety: data.safety || null };
   };
 
   const handleSendMessage = async () => {
@@ -282,8 +298,25 @@ const AIChatScreen = ({ navigation, route }) => {
 
     try {
       if (!userEmail) throw new Error('User email is missing. Please log in again.');
-      const botResponse = await sendMessageMultiConv(messageText);
-      setMessages((prev) => [...prev, { id: `bot-${Date.now()}`, text: botResponse, sender: 'bot', timestamp: new Date() }]);
+      const { reply, safety } = await sendMessageMultiConv(messageText);
+      setMessages((prev) => [...prev, { id: `bot-${Date.now()}`, text: reply, sender: 'bot', timestamp: new Date() }]);
+
+      // Safety hook - show Crisis Sheet only on confirm/immediate actions.
+      if (safety && (safety.action_recommended === 'confirm_then_offer_call'
+                  || safety.action_recommended === 'immediate_offer_call')) {
+        sendTelemetry(
+          [{ name: 'safety.detection.fired', attrs: {
+              severity: safety.severity,
+              category: safety.category,
+              language: safety.language || undefined,
+              country: safety.client_country || undefined,
+          }}],
+          activeConvId,
+        );
+        setCrisisAction(safety.action_recommended);
+        setCrisisCategory(safety.category);
+        setCrisisOpen(true);
+      }
     } catch (error) {
       let errorText = error.message;
       if (!errorText || errorText.includes('HTTP')) {
@@ -743,6 +776,15 @@ const AIChatScreen = ({ navigation, route }) => {
             </View>
           </View>
         </Modal>
+
+        {/* ===== CRISIS SHEET ===== */}
+        <CrisisSheet
+          visible={crisisOpen}
+          action={crisisAction}
+          category={crisisCategory}
+          sessionId={activeConvId}
+          onClose={() => setCrisisOpen(false)}
+        />
       </LinearGradient>
     </View>
   );

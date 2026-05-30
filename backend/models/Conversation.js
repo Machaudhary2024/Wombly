@@ -26,7 +26,7 @@ const conversationSchema = new mongoose.Schema(
       required: true,
       enum: VALID_MODES,
     },
-    // Intake metadata — persisted at conversation creation, never repeated
+    // Intake metadata - persisted at conversation creation, never repeated
     intake: {
       pregnancyWeek: { type: Number, min: 1, max: 42, default: null },
       trimester: { type: Number, min: 1, max: 3, default: null },

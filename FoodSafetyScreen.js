@@ -19,7 +19,7 @@ const SECTIONS = [
     icon: 'coffee',
     color: '#8D6E63',
     limit: ['Limit to about 200 mg per day. That\'s roughly: 1–2 cups of espresso, 2–3 cups of instant coffee, or 3–5 cups of tea (depending on strength). Too much may increase the risk of miscarriage or low birth weight.'],
-    avoid: ['Energy drinks (e.g. Red Bull, V) that contain caffeine or guarana—best avoided when pregnant.'],
+    avoid: ['Energy drinks (e.g. Red Bull, V) that contain caffeine or guarana-best avoided when pregnant.'],
     eat: [],
   },
   {
@@ -38,7 +38,7 @@ const SECTIONS = [
     color: '#FF9800',
     eat: ['Other foods with vitamin A are safe. Pregnancy multivitamins use a safe form (e.g. beta carotene).'],
     avoid: [],
-    limit: ['Liver has high retinol (vitamin A), which can harm the baby. Limit liver to no more than 50 g per week. Check non-pregnancy multivitamins for retinol—ask your pharmacist.'],
+    limit: ['Liver has high retinol (vitamin A), which can harm the baby. Limit liver to no more than 50 g per week. Check non-pregnancy multivitamins for retinol-ask your pharmacist.'],
   },
   {
     id: 'listeria',
@@ -46,7 +46,7 @@ const SECTIONS = [
     icon: 'bacteria',
     color: '#7B1FA2',
     eat: ['Freshly prepared foods.', 'Cooked or reheated food until it\'s steaming hot.', 'Soft cheeses only when cooked in a dish (e.g. in a hot sauce).', 'Pâté and meat pastes in cans or jars are safe until opened; then refrigerate.'],
-    avoid: ['Refrigerated ready-to-eat foods stored a long time.', 'Cold deli meats (ham, salami), cold cooked chicken—unless reheated until steaming hot (e.g. on a pizza).', 'Pre-prepared salads, coleslaws, fruit salads unless you know they\'re fresh.', 'Soft cheeses (brie, camembert, ricotta, feta, blue) unless cooked.', 'Soft-serve ice cream; unpasteurised dairy.', 'Raw or smoked seafood; pre-cooked prawns.'],
+    avoid: ['Refrigerated ready-to-eat foods stored a long time.', 'Cold deli meats (ham, salami), cold cooked chicken-unless reheated until steaming hot (e.g. on a pizza).', 'Pre-prepared salads, coleslaws, fruit salads unless you know they\'re fresh.', 'Soft cheeses (brie, camembert, ricotta, feta, blue) unless cooked.', 'Soft-serve ice cream; unpasteurised dairy.', 'Raw or smoked seafood; pre-cooked prawns.'],
     limit: [],
   },
   {
@@ -64,7 +64,7 @@ const SECTIONS = [
     icon: 'cat',
     color: '#43A047',
     eat: ['Meat cooked thoroughly.', 'Washed fruit and vegetables.'],
-    avoid: ['Handling cat litter if possible—or wear gloves and wash hands well after.', 'Unwashed produce; raw or undercooked meat.'],
+    avoid: ['Handling cat litter if possible-or wear gloves and wash hands well after.', 'Unwashed produce; raw or undercooked meat.'],
     limit: [],
   },
   {

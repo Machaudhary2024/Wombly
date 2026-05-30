@@ -1,0 +1,61 @@
+{
+  "schema_version": "1.1",
+  "last_updated": "2026-05-18",
+  "_comment": "Add a new country by appending to `countries` (ISO-3166 alpha-2 key). `default_country` is used when reverse-geocode + locale both fail - change to the primary audience's country. `category_routes` decides which number to call AND what kind of place to search for, per detected crisis category. Each new country only needs to fill these four routes; no code change required.",
+
+  "default_country": "PK",
+  "default": {
+    "primary": { "number": "112", "label": "Emergency (GSM universal)" }
+  },
+
+  "countries": {
+
+    "PK": {
+      "primary":   { "number": "1122", "label": "Rescue 1122" },
+      "police":    { "number": "15" },
+      "ambulance": { "number": "115", "label": "Edhi Ambulance" },
+      "category_routes": {
+        "self_harm":           { "primary": { "number": "03117786264", "name": "Umang Helpline",  "label": "Mental health support" }, "place_category": "mental_health" },
+        "obstetric_emergency": { "primary": { "number": "1122",        "name": "Rescue 1122",     "label": "Emergency" },             "place_category": "maternity" },
+        "infant_distress":     { "primary": { "number": "1122",        "name": "Rescue 1122",     "label": "Emergency" },             "place_category": "pediatric" },
+        "domestic_violence":   { "primary": { "number": "15",          "name": "Police",          "label": "Police" },                "place_category": "police" }
+      },
+      "crisis_lines": [
+        { "name": "Umang Helpline",    "number": "03117786264", "hours": "24/7",         "languages": ["ur", "en"], "topic": "general" },
+        { "name": "Rozan Counselling", "number": "03041111741", "hours": "Mon-Sat 9-17", "languages": ["ur", "en"], "topic": "dv" }
+      ]
+    },
+
+    "US": {
+      "primary": { "number": "911" },
+      "category_routes": {
+        "self_harm":           { "primary": { "number": "988",         "name": "988 Suicide & Crisis Lifeline", "label": "Mental health support" }, "place_category": "mental_health" },
+        "obstetric_emergency": { "primary": { "number": "911",         "name": "Emergency",                     "label": "Emergency" },             "place_category": "maternity" },
+        "infant_distress":     { "primary": { "number": "911",         "name": "Emergency",                     "label": "Emergency" },             "place_category": "pediatric" },
+        "domestic_violence":   { "primary": { "number": "911",         "name": "Emergency",                     "label": "Emergency" },             "place_category": "police" }
+      },
+      "crisis_lines": [
+        { "name": "988 Suicide & Crisis Lifeline", "number": "988",         "hours": "24/7", "languages": ["en", "es"], "topic": "general" },
+        { "name": "Postpartum Support Intl.",      "number": "18009444773", "hours": "24/7", "languages": ["en", "es"], "topic": "postpartum" },
+        { "name": "National DV Hotline",           "number": "18007997233", "hours": "24/7", "languages": ["en", "es"], "topic": "dv" },
+        { "name": "Crisis Text Line",              "number": "741741",      "hours": "24/7", "languages": ["en"],       "topic": "general" }
+      ]
+    },
+
+    "GB": {
+      "primary":       { "number": "999" },
+      "non_emergency": { "number": "111", "label": "NHS 111" },
+      "category_routes": {
+        "self_harm":           { "primary": { "number": "116123", "name": "Samaritans", "label": "Mental health support" }, "place_category": "mental_health" },
+        "obstetric_emergency": { "primary": { "number": "999",    "name": "Emergency",  "label": "Emergency" },             "place_category": "maternity" },
+        "infant_distress":     { "primary": { "number": "999",    "name": "Emergency",  "label": "Emergency" },             "place_category": "pediatric" },
+        "domestic_violence":   { "primary": { "number": "999",    "name": "Emergency",  "label": "Emergency" },             "place_category": "police" }
+      },
+      "crisis_lines": [
+        { "name": "Samaritans",        "number": "116123",      "hours": "24/7",  "languages": ["en"], "topic": "general" },
+        { "name": "PANDAS Foundation", "number": "08081961776", "hours": "11-22", "languages": ["en"], "topic": "postpartum" },
+        { "name": "Refuge (DV)",       "number": "08082000247", "hours": "24/7",  "languages": ["en"], "topic": "dv" }
+      ]
+    }
+  }
+}

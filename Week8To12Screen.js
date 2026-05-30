@@ -37,7 +37,7 @@ const Week8To12Screen = ({ navigation }) => {
           </View>
           <Text style={styles.heroTitle}>First trimester</Text>
           <Text style={styles.heroSubtitle}>
-            Weeks 8–12: your baby is growing quickly. The brain, heart, and other organs are forming. You may still feel sick or very tired—that is common.
+            Weeks 8–12: your baby is growing quickly. The brain, heart, and other organs are forming. You may still feel sick or very tired-that is common.
           </Text>
         </View>
 
@@ -65,7 +65,7 @@ const Week8To12Screen = ({ navigation }) => {
               <Text style={styles.criticalTitle}>Morning sickness and food</Text>
             </View>
             <Text style={styles.criticalText}>
-              Small, frequent meals, plenty of fluids, and rest can help nausea. If you cannot keep fluids down, lose weight, or feel faint, seek medical help—severe sickness can be treated.
+              Small, frequent meals, plenty of fluids, and rest can help nausea. If you cannot keep fluids down, lose weight, or feel faint, seek medical help-severe sickness can be treated.
             </Text>
             
             <View style={styles.treatmentTimeline}>
@@ -129,7 +129,7 @@ const Week8To12Screen = ({ navigation }) => {
               <View style={styles.checklistContent}>
                 <Text style={styles.checklistTitle}>Dental and gum care</Text>
                 <Text style={styles.checklistText}>
-                  Hormone changes can make gums tender. Keep brushing, floss if you can, and see a dentist for routine care—tell them you are pregnant.
+                  Hormone changes can make gums tender. Keep brushing, floss if you can, and see a dentist for routine care-tell them you are pregnant.
                 </Text>
               </View>
             </View>
@@ -208,7 +208,7 @@ const Week8To12Screen = ({ navigation }) => {
             <MaterialCommunityIcons name="calendar-check" size={40} color="#4CAF50" />
             <Text style={styles.visualTitle}>Growing fast</Text>
             <Text style={styles.visualText}>
-              Your baby is now roughly the size health sites compare to a small fruit—every week brings new milestones
+              Your baby is now roughly the size health sites compare to a small fruit-every week brings new milestones
             </Text>
           </View>
         </View>

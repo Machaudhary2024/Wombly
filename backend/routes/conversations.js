@@ -1,6 +1,6 @@
 // routes/conversations.js
 // Express router for multi-conversation chat system.
-// All endpoints require email for user scoping (no JWT auth yet — assumption A1).
+// All endpoints require email for user scoping (no JWT auth yet - assumption A1).
 
 const express = require("express");
 const router = express.Router();
@@ -142,7 +142,7 @@ router.get("/:id/messages", requireEmail, async (req, res) => {
 // ---------------------------------------------------------------------------
 router.post("/:id/messages", requireEmail, async (req, res) => {
   try {
-    const { message, idempotencyKey } = req.body;
+    const { message, idempotencyKey, client_country, client_city } = req.body;
     if (!message || typeof message !== "string" || message.trim().length === 0) {
       return res.status(400).json({ success: false, message: "Message is required" });
     }
@@ -156,12 +156,19 @@ router.post("/:id/messages", requireEmail, async (req, res) => {
       return res.status(503).json({ success: false, message: "AI service not configured" });
     }
 
+    // Coarse location only - never lat/lng. Backend never persists either.
+    const clientContext = {
+      client_country: typeof client_country === "string" && /^[A-Za-z]{2}$/.test(client_country) ? client_country.toUpperCase() : undefined,
+      client_city: typeof client_city === "string" ? client_city.slice(0, 80) : undefined,
+    };
+
     const result = await chatService.sendMessage(
       groq,
       req.params.id,
       req.userEmail,
       message,
-      idempotencyKey || null
+      idempotencyKey || null,
+      clientContext
     );
 
     res.json({
@@ -170,6 +177,7 @@ router.post("/:id/messages", requireEmail, async (req, res) => {
       userMessage: result.userMsg,
       assistantMessage: result.assistantMsg,
       deduplicated: result.deduplicated || false,
+      safety: result.safety || null,
     });
   } catch (err) {
     console.error("[POST /conversations/:id/messages]", err.message);

@@ -83,7 +83,7 @@ const Week28To33Screen = ({ navigation }) => {
               <View style={styles.deliveryContent}>
                 <Text style={styles.deliveryTitle}>Birth preferences</Text>
                 <Text style={styles.deliveryText}>
-                  Talk through pain relief options, who you want with you, and any cultural or religious wishes. Plans can change for safety—flexibility helps.
+                  Talk through pain relief options, who you want with you, and any cultural or religious wishes. Plans can change for safety-flexibility helps.
                 </Text>
               </View>
             </View>
@@ -134,7 +134,7 @@ const Week28To33Screen = ({ navigation }) => {
                     Watch for bad headache, vision changes, sudden swelling, or pain under the ribs. These need urgent review even if your last visit was fine.
                   </Text>
                   <Text style={styles.criticalInfoReminder}>
-                    Sleep on your side if you can—current advice favours side lying for blood flow in late pregnancy.
+                    Sleep on your side if you can-current advice favours side lying for blood flow in late pregnancy.
                   </Text>
                 </View>
               </View>
@@ -155,7 +155,7 @@ const Week28To33Screen = ({ navigation }) => {
             <View style={styles.trimesterContent}>
               <Text style={styles.trimesterTitle}>Third trimester milestone</Text>
               <Text style={styles.trimesterText}>
-                If born from around 28 weeks onward, babies have a much better chance with modern neonatal care—but every extra week inside still helps.
+                If born from around 28 weeks onward, babies have a much better chance with modern neonatal care-but every extra week inside still helps.
               </Text>
             </View>
           </View>
@@ -165,7 +165,7 @@ const Week28To33Screen = ({ navigation }) => {
             <View style={styles.reliefContent}>
               <Text style={styles.reliefTitle}>Nesting and planning</Text>
               <Text style={styles.reliefText}>
-                Many people enjoy preparing the nursery, washing baby clothes, or freezing simple meals. Rest when you need to—growing a full-term baby is hard work.
+                Many people enjoy preparing the nursery, washing baby clothes, or freezing simple meals. Rest when you need to-growing a full-term baby is hard work.
               </Text>
             </View>
           </View>
@@ -176,7 +176,7 @@ const Week28To33Screen = ({ navigation }) => {
             <MaterialCommunityIcons name="calendar-check" size={40} color="#E91E63" />
             <Text style={styles.visualTitle}>Whooping cough vaccine</Text>
             <Text style={styles.visualText}>
-              Many countries offer a booster in the third trimester to protect newborns—ask if it is due for you
+              Many countries offer a booster in the third trimester to protect newborns-ask if it is due for you
             </Text>
           </View>
           

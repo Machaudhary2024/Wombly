@@ -5,14 +5,14 @@
 
 import { Platform } from 'react-native';
 
-const MACHINE_IP = '192.168.13.1';
+const MACHINE_IP = '10.182.43.96';
 
 let API_URL;
 
 if (Platform.OS === 'web') {
   API_URL = process.env.WOMBLY_API_URL || 'http://localhost:5000';
 } else {
-  // Android / iOS — use machine LAN IP
+  // Android / iOS - use machine LAN IP
   API_URL = process.env.WOMBLY_API_URL || `http://${MACHINE_IP}:5000`;
 }
 

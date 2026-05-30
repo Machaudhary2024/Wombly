@@ -55,7 +55,7 @@ const Week19To22Screen = ({ navigation }) => {
               <Text style={styles.titerTitle}>Feeling movement</Text>
             </View>
             <Text style={styles.titerText}>
-              Most people feel regular movement by now. Get to know your baby’s usual pattern. If movements slow down a lot or stop, contact your maternity unit the same day—do not wait until your next routine visit.
+              Most people feel regular movement by now. Get to know your baby’s usual pattern. If movements slow down a lot or stop, contact your maternity unit the same day-do not wait until your next routine visit.
             </Text>
           </View>
 
@@ -68,7 +68,7 @@ const Week19To22Screen = ({ navigation }) => {
             <View style={styles.mcaScanCard}>
               <MaterialCommunityIcons name="ultrasound" size={24} color="#2196F3" />
               <Text style={styles.mcaScanText}>
-                Hormones can make gums bleed more easily—keep brushing and see a dentist. <Text style={styles.boldText}>Wear flat, supportive shoes</Text> to reduce the risk of slips as your balance changes.
+                Hormones can make gums bleed more easily-keep brushing and see a dentist. <Text style={styles.boldText}>Wear flat, supportive shoes</Text> to reduce the risk of slips as your balance changes.
               </Text>
             </View>
 

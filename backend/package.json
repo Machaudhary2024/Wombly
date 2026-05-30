@@ -6,7 +6,8 @@
     "start": "node server.js",
     "start-simple": "node server-simple.js",
     "dev": "nodemon server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node tests/chatService.test.js && node tests/safety.test.js",
+    "test:safety": "node tests/safety.test.js"
   },
   "keywords": [],
   "author": "",

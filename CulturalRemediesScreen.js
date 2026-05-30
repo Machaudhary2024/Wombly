@@ -16,7 +16,7 @@ const REMEDIES = [
     title: 'Ajwain (carom seeds)',
     icon: 'leaf-maple',
     color: '#43A047',
-    short: 'Used for digestion and gas—common in Pakistani homes.',
+    short: 'Used for digestion and gas-common in Pakistani homes.',
     tips: [
       'A pinch in warm water or sprinkled on food can ease bloating.',
       'Avoid large amounts; a little goes a long way.',
@@ -52,7 +52,7 @@ const REMEDIES = [
     color: '#8D6E63',
     short: 'Traditionally eaten in the third trimester for strength and energy.',
     tips: [
-      'Dates are rich in fibre, iron, and natural sugars—a few per day can be part of a balanced diet.',
+      'Dates are rich in fibre, iron, and natural sugars-a few per day can be part of a balanced diet.',
       'If you have gestational diabetes, discuss portion size with your doctor.',
     ],
   },
@@ -75,7 +75,7 @@ const REMEDIES = [
     short: 'Taking it easy and letting family help is a big part of desi pregnancy care.',
     tips: [
       'Rest when you\'re tired; don\'t push through exhaustion.',
-      'Accept help with cooking, chores, and errands—it\'s good for you and the baby.',
+      'Accept help with cooking, chores, and errands-it\'s good for you and the baby.',
       'Emotional support from family can ease stress; talk to someone if you feel low.',
     ],
   },
@@ -117,7 +117,7 @@ const CulturalRemediesScreen = ({ navigation }) => {
           Remedies from Pakistani homes during pregnancy
         </Text>
         <Text style={styles.intro}>
-          Many families use gentle, food-based remedies passed down through generations. Here are some common ones—enjoy them in moderation and always check with your doctor, especially if you have any health conditions or complications.
+          Many families use gentle, food-based remedies passed down through generations. Here are some common ones-enjoy them in moderation and always check with your doctor, especially if you have any health conditions or complications.
         </Text>
 
         {REMEDIES.map((r) => (

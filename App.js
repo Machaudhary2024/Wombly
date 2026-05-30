@@ -4,6 +4,7 @@ import { StatusBar } from "expo-status-bar"
 import { NavigationContainer } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { UserProvider } from "./context/UserContext"
+import { LocationProvider } from "./contexts/LocationContext"
 import LoginScreen from "./LoginScreen"
 import SignUpScreen from "./SignUpScreen"
 import ForgotPasswordScreen from "./ForgotPasswordScreen"
@@ -49,6 +50,7 @@ const Stack = createNativeStackNavigator()
 export default function App() {
   return (
     <UserProvider>
+    <LocationProvider>
     <NavigationContainer>
       <View style={styles.root}>
         <StatusBar style="auto" />
@@ -95,6 +97,7 @@ export default function App() {
         <GlobalChatButton />
       </View>
     </NavigationContainer>
+    </LocationProvider>
     </UserProvider>
   )
 }

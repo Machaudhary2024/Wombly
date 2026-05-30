@@ -1,11 +1,12 @@
 // services/chatService.js
 // Orchestrates conversation lifecycle: creation, intake, message send/receive, history.
-// Keeps Express routes thin — all business logic lives here.
+// Keeps Express routes thin - all business logic lives here.
 
 const Conversation = require("../models/Conversation");
 const Message = require("../models/Message");
 const User = require("../models/User");
 const { buildSystemPrompt } = require("./promptRouter");
+const detectionService = require("./safety/detectionService");
 
 // Max messages to send to AI for context (prevents oversized payloads)
 const MAX_CONTEXT_MESSAGES = 40;
@@ -50,7 +51,7 @@ async function listConversations(email, { status = "active", page = 1 } = {}) {
 
 /**
  * Create a new conversation with intake metadata.
- * Intake is mandatory — mode must be provided.
+ * Intake is mandatory - mode must be provided.
  */
 async function createConversation(email, { mode, title, pregnancyWeek, trimester, toddlerAgeMonths } = {}) {
   if (!Conversation.VALID_MODES.includes(mode)) {
@@ -173,7 +174,7 @@ async function getMessages(conversationId, email, { page = 1 } = {}) {
  * @param {string|null} idempotencyKey
  * @returns {Object} { userMsg, assistantMsg, conversation }
  */
-async function sendMessage(groq, conversationId, email, userMessage, idempotencyKey = null) {
+async function sendMessage(groq, conversationId, email, userMessage, idempotencyKey = null, clientContext = {}) {
   const emailLower = email.toLowerCase();
 
   // 1. Validate conversation ownership and intake
@@ -188,7 +189,7 @@ async function sendMessage(groq, conversationId, email, userMessage, idempotency
     throw Object.assign(new Error("User not found"), { statusCode: 404 });
   }
 
-  // 3. Idempotency check — if this message was already saved, return existing
+  // 3. Idempotency check - if this message was already saved, return existing
   if (idempotencyKey) {
     const existing = await Message.findOne({ conversationId, idempotencyKey }).lean();
     if (existing) {
@@ -208,13 +209,15 @@ async function sendMessage(groq, conversationId, email, userMessage, idempotency
     throw Object.assign(new Error("Message must be 1-10000 characters"), { statusCode: 400 });
   }
 
-  // 5. Build prompt context
+  // 5. Build prompt context (with optional location awareness from the client)
   const currentWeek = calculateCurrentWeek(user);
   const systemPrompt = buildSystemPrompt({
     user,
     mode: conversation.mode,
     intake: conversation.intake,
     currentWeek,
+    client_country: clientContext.client_country,
+    client_city: clientContext.client_city,
   });
 
   // 6. Fetch recent messages for conversation context (capped)
@@ -251,8 +254,8 @@ async function sendMessage(groq, conversationId, email, userMessage, idempotency
     reply = response.choices[0].message.content;
   } catch (aiError) {
     console.error("[ChatService] AI provider error:", aiError.message);
-    // Don't delete the user message — it's saved. Mark the error.
-    throw Object.assign(new Error("AI service temporarily unavailable. Your message was saved — please retry."), {
+    // Don't delete the user message - it's saved. Mark the error.
+    throw Object.assign(new Error("AI service temporarily unavailable. Your message was saved - please retry."), {
       statusCode: 503,
       retryable: true,
     });
@@ -281,7 +284,27 @@ async function sendMessage(groq, conversationId, email, userMessage, idempotency
 
   await Conversation.updateOne({ _id: conversationId }, updateFields);
 
-  return { userMsg: userMsg.toObject(), assistantMsg: assistantMsg.toObject(), conversation };
+  // 11. Safety check on the recent user-window - never blocks the reply, only annotates.
+  //     Frontend uses `safety.action_recommended` to decide whether to show the Crisis Sheet.
+  let safety = null;
+  try {
+    const userTurns = recentMessages
+      .filter((m) => m.role === "user")
+      .slice(-4)
+      .map((m) => ({ role: "user", text: m.content, ts: new Date(m.createdAt).toISOString() }));
+    userTurns.push({ role: "user", text: trimmedMessage, ts: new Date().toISOString() });
+
+    safety = detectionService.detect({
+      session_id: conversationId.toString(),
+      turns: userTurns,
+    });
+  } catch (safetyErr) {
+    // Detection must never break chat - log and continue.
+    console.error("[ChatService] safety detection error:", safetyErr.message);
+    safety = null;
+  }
+
+  return { userMsg: userMsg.toObject(), assistantMsg: assistantMsg.toObject(), conversation, safety };
 }
 
 /**

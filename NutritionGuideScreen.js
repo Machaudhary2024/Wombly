@@ -31,7 +31,7 @@ const NutritionGuideScreen = ({ navigation, route }) => {
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <Text style={styles.introLine}>
-          Eat well for you and your baby—pick a topic below.
+          Eat well for you and your baby-pick a topic below.
         </Text>
         {buttons.map((btn) => (
           <TouchableOpacity
