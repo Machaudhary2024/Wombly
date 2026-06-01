@@ -242,7 +242,9 @@ const CravingsScreen = ({ navigation }) => {
           </View>
         </Modal>
       )}
-};
+    </View>
+  )
+}
 
 const styles = StyleSheet.create({
   container: {

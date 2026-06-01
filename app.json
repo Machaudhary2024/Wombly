@@ -14,7 +14,13 @@
       "backgroundColor": "#f0cfe3"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocalNetworkUsageDescription": "This app uses local network to stream videos",
+        "NSBonjourServiceTypes": ["_http._tcp", "_https._tcp"],
+        "NSAllowsArbitraryLoadsInWebContent": true,
+        "UIRequiredDeviceCapabilities": ["video-playback"]
+      }
     },
     "android": {
       "adaptiveIcon": {

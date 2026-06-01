@@ -38,79 +38,42 @@ const YouTubeVideoPlayer = ({ videoId, height = 400 }) => {
   }
 
   // For native mobile platforms, use WebView with direct YouTube embed URL
-  const youtubeEmbedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=0&controls=1&modestbranding=1&rel=0&playsinline=1`;
+  const youtubeEmbedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&modestbranding=1&rel=0&playsinline=1&fs=1`;
   
   const youtubeHTML = `
     <!DOCTYPE html>
-    <html lang="en">
+    <html>
     <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover, maximum-scale=5.0">
-      <title>YouTube Video</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
       <style>
         * {
           margin: 0;
           padding: 0;
-          box-sizing: border-box;
         }
         html, body {
           width: 100%;
           height: 100%;
-          background-color: #000;
-          overflow: hidden;
-        }
-        body {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-        .video-container {
-          width: 100%;
-          height: 100%;
-          position: relative;
-          background-color: #000;
+          background: #000;
         }
         iframe {
-          position: absolute;
-          top: 0;
-          left: 0;
+          display: block;
           width: 100%;
           height: 100%;
           border: none;
-          border-radius: 8px;
-        }
-        .loading {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          color: white;
-          font-size: 16px;
+          background: #000;
         }
       </style>
     </head>
     <body>
-      <div class="video-container">
-        <div class="loading">Loading video...</div>
-        <iframe
-          id="youtube-iframe"
-          src="${youtubeEmbedUrl}"
-          title="YouTube video player"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen
-          allow="autoplay"
-          loading="lazy"
-          webkit-playsinline="webkit-playsinline"
-          playsinline
-        ></iframe>
-      </div>
-      <script>
-        window.onload = function() {
-          document.querySelector('.loading').style.display = 'none';
-        };
-      </script>
+      <iframe
+        src="${youtubeEmbedUrl}"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+        webkitallowfullscreen
+        mozallowfullscreen
+      ></iframe>
     </body>
     </html>
   `;
@@ -123,40 +86,35 @@ const YouTubeVideoPlayer = ({ videoId, height = 400 }) => {
         </View>
       )}
       <WebView
-        cacheEnabled={true}
         source={{ html: youtubeHTML }}
-        scalesPageToFit={false}
-        scrollEnabled={false}
-        scrollEventThrottle={16}
         javaScriptEnabled={true}
         domStorageEnabled={true}
         mediaPlaybackRequiresUserAction={false}
         allowsFullscreenVideo={true}
         allowsInlineMediaPlayback={true}
-        allowFileAccess={true}
-        mixedContentMode="always"
-        useWebKit={true}
+        scalesPageToFit={false}
+        scrollEnabled={false}
         startInLoadingState={true}
         onLoadEnd={() => {
           setLoading(false);
           setWebViewLoaded(true);
         }}
-        onLoad={() => {
-          setWebViewLoaded(true);
-        }}
-        onError={(syntheticEvent) => {
-          const { nativeEvent } = syntheticEvent;
-          console.log('WebView error:', nativeEvent);
+        onError={(e) => {
+          console.log('WebView error:', e.nativeEvent);
           setLoading(false);
         }}
-        onHttpError={(syntheticEvent) => {
-          const { nativeEvent } = syntheticEvent;
-          console.log('WebView HTTP error:', nativeEvent);
-          setLoading(false);
+        onHttpError={(e) => {
+          console.log('WebView HTTP error:', e.nativeEvent);
+        }}
+        onMessage={(event) => {
+          console.log('WebView message:', event.nativeEvent.data);
         }}
         style={{
           width: '100%',
           height: '100%',
+          backgroundColor: '#000',
+        }}
+        containerStyle={{
           backgroundColor: '#000',
         }}
       />
@@ -180,11 +138,12 @@ const styles = StyleSheet.create({
   },
   mobileContainer: {
     width: '100%',
+    height: '100%',
     backgroundColor: '#000000',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 8,
     overflow: 'hidden',
+    position: 'relative',
   },
   errorContainer: {
     width: '100%',
