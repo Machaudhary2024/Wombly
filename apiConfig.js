@@ -5,7 +5,7 @@
 
 import { Platform } from 'react-native';
 
-const MACHINE_IP = '192.168.13.1';
+const MACHINE_IP = '192.168.1.11';
 
 let API_URL;
 

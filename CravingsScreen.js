@@ -5,10 +5,12 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  Linking,
+  Modal,
+  Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import YouTubeVideoPlayer from './components/YouTubeVideoPlayer';
 
 const PAGE_HEADING =
   'Craving chaat at 2 a.m.? You\'re in good company—many Pakistani mums-to-be do!';
@@ -84,14 +86,18 @@ const CRAVING_VIDEOS = [
   { id: 'eFEIYbccZNo', title: 'Pakistani pregnancy diet ideas' },
 ];
 
-function openYouTube(videoId) {
-  if (!videoId || videoId.startsWith('REPLACE_')) return;
-  const url = `https://www.youtube.com/shorts/${videoId}`;
-  Linking.openURL(url).catch(() => {});
-}
-
 const CravingsScreen = ({ navigation }) => {
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
+  const [selectedVideoId, setSelectedVideoId] = useState(null);
+  const [selectedVideoTitle, setSelectedVideoTitle] = useState('');
+  const [showPlayer, setShowPlayer] = useState(false);
+
+  const handlePlayVideo = (videoId, title) => {
+    if (!videoId || videoId.startsWith('REPLACE_')) return;
+    setSelectedVideoId(videoId);
+    setSelectedVideoTitle(title);
+    setShowPlayer(true);
+  };
 
   return (
     <View style={styles.container}>
@@ -170,7 +176,7 @@ const CravingsScreen = ({ navigation }) => {
             <Text style={styles.sectionTitle}>Videos</Text>
           </View>
           <Text style={styles.videoIntro}>
-            Tap a card to open a video on YouTube. 
+            Tap a card to watch a video. 
           </Text>
           {CRAVING_VIDEOS.map((v, i) => {
             const canOpen = v.id && !v.id.startsWith('REPLACE_');
@@ -178,7 +184,7 @@ const CravingsScreen = ({ navigation }) => {
               <TouchableOpacity
                 key={i}
                 style={[styles.videoCard, !canOpen && styles.videoCardPlaceholder]}
-                onPress={() => openYouTube(v.id)}
+                onPress={() => handlePlayVideo(v.id, v.title)}
                 activeOpacity={0.85}
                 disabled={!canOpen}
               >
@@ -187,7 +193,7 @@ const CravingsScreen = ({ navigation }) => {
                 </View>
                 <Text style={styles.videoTitle}>{v.title}</Text>
                 <Text style={styles.videoSub}>
-                  {canOpen ? 'Tap to open on YouTube' : 'Add video ID in CravingsScreen.js'}
+                  {canOpen ? 'Tap to play' : 'Add video ID in CravingsScreen.js'}
                 </Text>
               </TouchableOpacity>
             );
@@ -196,8 +202,46 @@ const CravingsScreen = ({ navigation }) => {
 
         <View style={styles.bottomSpacer} />
       </ScrollView>
-    </View>
-  );
+
+      {/* Video Player Modal */}
+      {showPlayer && selectedVideoId && (
+        <Modal
+          visible={showPlayer}
+          transparent={false}
+          animationType="slide"
+          onRequestClose={() => {
+            setShowPlayer(false);
+            setSelectedVideoId(null);
+            setSelectedVideoTitle('');
+          }}
+        >
+          <View style={styles.playerModalContainer}>
+            <TouchableOpacity
+              style={styles.playerCloseTop}
+              onPress={() => {
+                setShowPlayer(false);
+                setSelectedVideoId(null);
+                setSelectedVideoTitle('');
+              }}
+              activeOpacity={0.7}
+            >
+              <MaterialCommunityIcons name="close-circle" size={40} color="#FFFFFF" />
+            </TouchableOpacity>
+
+            <YouTubeVideoPlayer
+              key={selectedVideoId}
+              videoId={selectedVideoId}
+              height={Platform.OS === 'web' ? 400 : 300}
+            />
+
+            {Platform.OS !== 'web' && (
+              <View style={styles.mobilePlayerInfo}>
+                <Text style={styles.mobilePlayerInfoText}>Tap the video to enter fullscreen mode</Text>
+              </View>
+            )}
+          </View>
+        </Modal>
+      )}
 };
 
 const styles = StyleSheet.create({
@@ -356,6 +400,30 @@ const styles = StyleSheet.create({
     opacity: 0.85,
   },
   bottomSpacer: { height: 24 },
+  playerModalContainer: {
+    flex: 1,
+    backgroundColor: '#000',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: Platform.OS === 'web' ? 0 : 50,
+  },
+  playerCloseTop: {
+    position: 'absolute',
+    top: Platform.OS === 'web' ? 20 : 60,
+    right: 20,
+    zIndex: 1000,
+    padding: 8,
+  },
+  mobilePlayerInfo: {
+    padding: 16,
+    backgroundColor: '#1a1a1a',
+    alignItems: 'center',
+  },
+  mobilePlayerInfoText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    textAlign: 'center',
+  },
 });
 
 export default CravingsScreen;

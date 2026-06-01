@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  Linking,
+  Modal,
+  Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import YouTubeVideoPlayer from './components/YouTubeVideoPlayer';
 
 const REMEDIES = [
   {
@@ -86,13 +88,17 @@ const CULTURAL_VIDEOS = [
   { id: 'OPv161ft2BI', title: 'Traditional foods during pregnancy' },
 ];
 
-function openYouTube(videoId) {
-  if (!videoId || videoId.startsWith('REPLACE_')) return;
-  const url = `https://www.youtube.com/watch?v=${videoId}`;
-  Linking.openURL(url).catch(() => {});
-}
-
 const CulturalRemediesScreen = ({ navigation }) => {
+  const [selectedVideoId, setSelectedVideoId] = useState(null);
+  const [selectedVideoTitle, setSelectedVideoTitle] = useState('');
+  const [showPlayer, setShowPlayer] = useState(false);
+
+  const handlePlayVideo = (videoId, title) => {
+    if (!videoId || videoId.startsWith('REPLACE_')) return;
+    setSelectedVideoId(videoId);
+    setSelectedVideoTitle(title);
+    setShowPlayer(true);
+  };
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -156,7 +162,7 @@ const CulturalRemediesScreen = ({ navigation }) => {
               <TouchableOpacity
                 key={i}
                 style={[styles.videoCard, !canOpen && styles.videoCardPlaceholder]}
-                onPress={() => openYouTube(v.id)}
+                onPress={() => handlePlayVideo(v.id, v.title)}
                 activeOpacity={0.85}
                 disabled={!canOpen}
               >
@@ -169,7 +175,7 @@ const CulturalRemediesScreen = ({ navigation }) => {
                 </View>
                 <Text style={styles.videoTitle}>{v.title}</Text>
                 <Text style={styles.videoSub}>
-                  {canOpen ? 'Tap to open on YouTube' : 'error'}
+                  {canOpen ? 'Tap to play' : 'error'}
                 </Text>
               </TouchableOpacity>
             );
@@ -178,9 +184,46 @@ const CulturalRemediesScreen = ({ navigation }) => {
 
         <View style={styles.bottomSpacer} />
       </ScrollView>
-    </View>
-  );
-};
+
+      {/* Video Player Modal */}
+      {showPlayer && selectedVideoId && (
+        <Modal
+          visible={showPlayer}
+          transparent={false}
+          animationType="slide"
+          onRequestClose={() => {
+            setShowPlayer(false);
+            setSelectedVideoId(null);
+            setSelectedVideoTitle('');
+          }}
+        >
+          <View style={styles.playerModalContainer}>
+            <TouchableOpacity
+              style={styles.playerCloseTop}
+              onPress={() => {
+                setShowPlayer(false);
+                setSelectedVideoId(null);
+                setSelectedVideoTitle('');
+              }}
+              activeOpacity={0.7}
+            >
+              <MaterialCommunityIcons name="close-circle" size={40} color="#FFFFFF" />
+            </TouchableOpacity>
+
+            <YouTubeVideoPlayer
+              key={selectedVideoId}
+              videoId={selectedVideoId}
+              height={Platform.OS === 'web' ? 400 : 300}
+            />
+
+            {Platform.OS !== 'web' && (
+              <View style={styles.mobilePlayerInfo}>
+                <Text style={styles.mobilePlayerInfoText}>Tap the video to enter fullscreen mode</Text>
+              </View>
+            )}
+          </View>
+        </Modal>
+      )}
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F8F8F8' },
@@ -322,6 +365,30 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   bottomSpacer: { height: 24 },
+  playerModalContainer: {
+    flex: 1,
+    backgroundColor: '#000',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: Platform.OS === 'web' ? 0 : 50,
+  },
+  playerCloseTop: {
+    position: 'absolute',
+    top: Platform.OS === 'web' ? 20 : 60,
+    right: 20,
+    zIndex: 1000,
+    padding: 8,
+  },
+  mobilePlayerInfo: {
+    padding: 16,
+    backgroundColor: '#1a1a1a',
+    alignItems: 'center',
+  },
+  mobilePlayerInfoText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    textAlign: 'center',
+  },
 });
 
 export default CulturalRemediesScreen;

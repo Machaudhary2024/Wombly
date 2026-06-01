@@ -6,11 +6,13 @@ import {
   StyleSheet,
   ScrollView,
   Dimensions,
-  Linking,
+  Modal,
+  Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { API_BASE_URL } from './apiConfig';
+import YouTubeVideoPlayer from './components/YouTubeVideoPlayer';
 
 const { width } = Dimensions.get('window');
 const isTablet = width > 600;
@@ -18,12 +20,16 @@ const isTablet = width > 600;
 const FirstAidDetailScreen = ({ navigation, route }) => {
   const { categoryId, categoryTitle, categorySteps, tutorialLinks: passedTutorialLinks } = route.params;
   const [tutorialLinks, setTutorialLinks] = useState(passedTutorialLinks || []);
+  const [selectedVideoId, setSelectedVideoId] = useState(null);
+  const [selectedVideoTitle, setSelectedVideoTitle] = useState('');
+  const [showPlayer, setShowPlayer] = useState(false);
 
-  function openYouTube(videoId) {
+  const handlePlayVideo = (videoId, title) => {
     if (!videoId || videoId.startsWith('REPLACE_')) return;
-    const url = `https://www.youtube.com/watch?v=${videoId}`;
-    Linking.openURL(url).catch(() => {});
-  }
+    setSelectedVideoId(videoId);
+    setSelectedVideoTitle(title);
+    setShowPlayer(true);
+  };
 
   return (
     <View style={styles.container}>
@@ -59,7 +65,7 @@ const FirstAidDetailScreen = ({ navigation, route }) => {
                 <TouchableOpacity
                   key={i}
                   style={[styles.videoCard, !canOpen && styles.videoCardPlaceholder]}
-                  onPress={() => openYouTube(v.videoId)}
+                  onPress={() => handlePlayVideo(v.videoId, v.title)}
                   activeOpacity={0.85}
                   disabled={!canOpen}
                 >
@@ -72,7 +78,7 @@ const FirstAidDetailScreen = ({ navigation, route }) => {
                   </View>
                   <Text style={styles.videoTitle}>{v.title}</Text>
                   <Text style={styles.videoSub}>
-                    {canOpen ? 'Tap to open on YouTube' : 'error'}
+                    {canOpen ? 'Tap to play' : 'error'}
                   </Text>
                 </TouchableOpacity>
               );
@@ -142,6 +148,46 @@ const FirstAidDetailScreen = ({ navigation, route }) => {
 
         <View style={styles.bottomSpacer} />
       </ScrollView>
+
+      {/* Video Player Modal */}
+      {showPlayer && selectedVideoId && (
+        <Modal
+          visible={showPlayer}
+          transparent={false}
+          animationType="slide"
+          onRequestClose={() => {
+            setShowPlayer(false);
+            setSelectedVideoId(null);
+            setSelectedVideoTitle('');
+          }}
+        >
+          <View style={styles.playerModalContainer}>
+            <TouchableOpacity
+              style={styles.playerCloseTop}
+              onPress={() => {
+                setShowPlayer(false);
+                setSelectedVideoId(null);
+                setSelectedVideoTitle('');
+              }}
+              activeOpacity={0.7}
+            >
+              <MaterialCommunityIcons name="close-circle" size={40} color="#FFFFFF" />
+            </TouchableOpacity>
+
+            <YouTubeVideoPlayer
+              key={selectedVideoId}
+              videoId={selectedVideoId}
+              height={Platform.OS === 'web' ? 400 : 300}
+            />
+
+            {Platform.OS !== 'web' && (
+              <View style={styles.mobilePlayerInfo}>
+                <Text style={styles.mobilePlayerInfoText}>Tap the video to enter fullscreen mode</Text>
+              </View>
+            )}
+          </View>
+        </Modal>
+      )}
     </View>
   );
 };
@@ -150,6 +196,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
+  },
+  playerModalContainer: {
+    flex: 1,
+    backgroundColor: '#000',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: Platform.OS === 'web' ? 0 : 50,
+  },
+  playerCloseTop: {
+    position: 'absolute',
+    top: Platform.OS === 'web' ? 20 : 60,
+    right: 20,
+    zIndex: 1000,
+    padding: 8,
+  },
+  mobilePlayerInfo: {
+    padding: 16,
+    backgroundColor: '#1a1a1a',
+    alignItems: 'center',
+  },
+  mobilePlayerInfoText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    textAlign: 'center',
   },
   header: {
     paddingTop: 50,
