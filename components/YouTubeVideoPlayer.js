@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Platform, ActivityIndicator } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, StyleSheet, Platform, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { WebView } from 'react-native-webview';
+import YoutubePlayer from 'react-native-youtube-iframe';
 
 const YouTubeVideoPlayer = ({ videoId, height = 400 }) => {
   const [loading, setLoading] = useState(true);
-  const [webViewLoaded, setWebViewLoaded] = useState(false);
+  const playerRef = useRef(null);
 
   if (!videoId) {
     return (
@@ -37,47 +38,7 @@ const YouTubeVideoPlayer = ({ videoId, height = 400 }) => {
     );
   }
 
-  // For native mobile platforms, use WebView with direct YouTube embed URL
-  const youtubeEmbedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&modestbranding=1&rel=0&playsinline=1&fs=1`;
-  
-  const youtubeHTML = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-      <style>
-        * {
-          margin: 0;
-          padding: 0;
-        }
-        html, body {
-          width: 100%;
-          height: 100%;
-          background: #000;
-        }
-        iframe {
-          display: block;
-          width: 100%;
-          height: 100%;
-          border: none;
-          background: #000;
-        }
-      </style>
-    </head>
-    <body>
-      <iframe
-        src="${youtubeEmbedUrl}"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowfullscreen
-        webkitallowfullscreen
-        mozallowfullscreen
-      ></iframe>
-    </body>
-    </html>
-  `;
-
+  // For native mobile, use react-native-youtube-iframe (much more reliable)
   return (
     <View style={[styles.mobileContainer, { height }]}>
       {loading && (
@@ -85,37 +46,28 @@ const YouTubeVideoPlayer = ({ videoId, height = 400 }) => {
           <ActivityIndicator size="large" color="#fff" />
         </View>
       )}
-      <WebView
-        source={{ html: youtubeHTML }}
-        javaScriptEnabled={true}
-        domStorageEnabled={true}
-        mediaPlaybackRequiresUserAction={false}
-        allowsFullscreenVideo={true}
-        allowsInlineMediaPlayback={true}
-        scalesPageToFit={false}
-        scrollEnabled={false}
-        startInLoadingState={true}
-        onLoadEnd={() => {
-          setLoading(false);
-          setWebViewLoaded(true);
-        }}
-        onError={(e) => {
-          console.log('WebView error:', e.nativeEvent);
+      <YoutubePlayer
+        ref={playerRef}
+        videoId={videoId}
+        height={height}
+        play={true}
+        onReady={() => setLoading(false)}
+        onError={(error) => {
+          console.log('YouTube player error:', error);
           setLoading(false);
         }}
-        onHttpError={(e) => {
-          console.log('WebView HTTP error:', e.nativeEvent);
+        onChangeState={(state) => {
+          if (state === 'playing') {
+            setLoading(false);
+          }
         }}
-        onMessage={(event) => {
-          console.log('WebView message:', event.nativeEvent.data);
-        }}
-        style={{
-          width: '100%',
-          height: '100%',
-          backgroundColor: '#000',
-        }}
-        containerStyle={{
-          backgroundColor: '#000',
+        webViewProps={{
+          javaScriptEnabled: true,
+          domStorageEnabled: true,
+          mediaPlaybackRequiresUserAction: false,
+          allowsFullscreenVideo: true,
+          allowsInlineMediaPlayback: true,
+          scrollEnabled: false,
         }}
       />
     </View>
