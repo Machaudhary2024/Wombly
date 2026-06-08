@@ -25,7 +25,7 @@ const safetyEventSchema = new mongoose.Schema(
     schemaVersion: { type: String, default: "1.0" },
     hashedSessionId: { type: String, required: true, index: true },
     hashedUserId: { type: String, default: null },
-    ts: { type: Date, default: Date.now, index: true },
+    ts: { type: Date, default: Date.now },
     severity: { type: String, enum: VALID_SEVERITIES, required: true },
     category: { type: String, enum: VALID_CATEGORIES, required: true },
     confidence: { type: Number, min: 0, max: 1, default: 0 },
