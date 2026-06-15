@@ -2,18 +2,20 @@
   "name": "backend",
   "version": "1.0.0",
   "main": "server.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
   "scripts": {
     "start": "node server.js",
     "start-simple": "node server-simple.js",
     "dev": "nodemon server.js",
     "test": "node tests/chatService.test.js && node tests/safety.test.js",
-    "test:safety": "node tests/safety.test.js"
+    "test:safety": "node tests/safety.test.js",
+    "seed:knowledge": "node scripts/seedKnowledge.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
+    "@xenova/transformers": "^2.17.2",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",

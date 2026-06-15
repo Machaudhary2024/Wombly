@@ -7,6 +7,7 @@ const Message = require("../models/Message");
 const User = require("../models/User");
 const { buildSystemPrompt } = require("./promptRouter");
 const detectionService = require("./safety/detectionService");
+const { searchKnowledgeBase, formatContext } = require("./ragService");
 
 // Max messages to send to AI for context (prevents oversized payloads)
 const MAX_CONTEXT_MESSAGES = 40;
@@ -211,6 +212,19 @@ async function sendMessage(groq, conversationId, email, userMessage, idempotency
 
   // 5. Build prompt context (with optional location awareness from the client)
   const currentWeek = calculateCurrentWeek(user);
+
+  // RAG: search knowledge base in parallel with fetching message history
+  const [ragResults, recentMessages] = await Promise.all([
+    searchKnowledgeBase(trimmedMessage, { mode: conversation.mode, topK: 4 }),
+    Message.find({ conversationId })
+      .sort({ createdAt: -1 })
+      .limit(MAX_CONTEXT_MESSAGES)
+      .lean(),
+  ]);
+  recentMessages.reverse(); // chronological order
+
+  const ragContext = formatContext(ragResults);
+
   const systemPrompt = buildSystemPrompt({
     user,
     mode: conversation.mode,
@@ -218,15 +232,10 @@ async function sendMessage(groq, conversationId, email, userMessage, idempotency
     currentWeek,
     client_country: clientContext.client_country,
     client_city: clientContext.client_city,
+    ragContext,
   });
 
-  // 6. Fetch recent messages for conversation context (capped)
-  const recentMessages = await Message.find({ conversationId })
-    .sort({ createdAt: -1 })
-    .limit(MAX_CONTEXT_MESSAGES)
-    .lean();
-  recentMessages.reverse(); // chronological order
-
+  // 6. Compose messages for AI
   const aiMessages = [
     { role: "system", content: systemPrompt },
     ...recentMessages.map((m) => ({ role: m.role, content: m.content })),

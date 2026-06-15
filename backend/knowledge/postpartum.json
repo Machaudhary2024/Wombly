@@ -1,0 +1,50 @@
+[
+  {
+    "content": "What to expect in the first week after birth (postpartum): Vaginal bleeding (lochia) starts heavy and red, gradually lightening to pink then yellow-white over 4–6 weeks. Afterpains (uterine cramping) are common, especially while breastfeeding — take prescribed pain relief. Perineal soreness after vaginal birth: use an ice pack, a peri bottle (squeeze water when urinating), and sit on a cushion. You may feel emotional and overwhelmed — this is normal. Swelling, breast engorgement, night sweats, and hair loss can all occur in the first weeks.",
+    "category": "postpartum",
+    "tags": ["postpartum", "first week", "lochia", "bleeding", "afterpains", "recovery", "perineum", "engorgement"],
+    "source": "postpartum"
+  },
+  {
+    "content": "C-section (Caesarean) recovery: C-section is major abdominal surgery. Hospital stay is typically 2–4 days. Incision care: keep the wound dry and clean; watch for signs of infection (redness, swelling, discharge, fever, or increasing pain). Pain management: take prescribed medication regularly — staying ahead of pain helps recovery. Do not lift anything heavier than your baby for 6 weeks. Avoid driving for 4–6 weeks. Walking from day 1 is encouraged (short distances). Full recovery takes 6–8 weeks. Scar tissue may cause tightness — gentle scar massage after 6 weeks (once fully healed) can help.",
+    "category": "postpartum",
+    "tags": ["C-section", "caesarean", "recovery", "incision", "wound care", "lifting restriction", "surgery", "scar"],
+    "source": "postpartum"
+  },
+  {
+    "content": "Vaginal birth recovery: The perineum (area between vagina and anus) may be sore, swollen, or have stitches from a tear or episiotomy. Recovery tips: ice packs in the first 24 hours, warm sitz baths after 24 hours, keep the area clean and dry, change pads frequently. Stitches dissolve on their own in 2–6 weeks. Pain should gradually decrease — see your doctor if pain worsens after the first few days. Pelvic floor exercises (Kegel exercises) can be started gently as soon as comfortable, even in hospital.",
+    "category": "postpartum",
+    "tags": ["vaginal birth", "perineum", "stitches", "episiotomy", "tear", "sitz bath", "kegel", "pelvic floor", "recovery"],
+    "source": "postpartum"
+  },
+  {
+    "content": "Baby blues vs postpartum depression: Baby blues: Very common (up to 80% of mothers). Onset within 3–5 days after birth. Symptoms: tearfulness, mood swings, irritability, anxiety, difficulty sleeping. Resolves on its own within 2 weeks. Postpartum depression (PPD): Affects 10–15% of mothers. Onset anytime in the first year, most common in weeks 1–4. Symptoms: persistent sadness or emptiness, inability to bond with baby, withdrawing from family, severe anxiety, feeling like a bad mother, loss of interest in everything, thoughts of harming self or baby. PPD requires professional treatment — it does not go away on its own. Please seek help: talk to your doctor, Umang helpline (Pakistan): 0311-7786264.",
+    "category": "postpartum",
+    "tags": ["postpartum depression", "PPD", "baby blues", "mental health", "mood", "anxiety", "bonding", "emotional health", "Umang helpline"],
+    "source": "postpartum"
+  },
+  {
+    "content": "Postpartum nutrition: Your body needs good nutrition to heal, produce milk (if breastfeeding), and recover energy. Priorities: Protein — meat, daal, eggs, dahi for tissue repair. Iron — anaemia is very common after delivery, especially after blood loss; eat iron-rich foods and continue iron supplements if prescribed. Calcium — vital if breastfeeding (baby draws from your stores). Fluids — drink at least 2–3 litres/day if breastfeeding. Traditional Pakistani postpartum foods that are genuinely beneficial: halwa made with whole wheat and nuts (energy + iron), doodh with dates (calcium, iron, natural sugar), daal (protein, iron), bone broth (minerals). Avoid if breastfeeding: excessive caffeine, alcohol, and very spicy foods if they seem to upset the baby.",
+    "category": "postpartum",
+    "tags": ["postpartum nutrition", "breastfeeding diet", "recovery foods", "iron", "anaemia", "halwa", "daal", "dates", "Pakistani food", "nutrition after birth"],
+    "source": "postpartum"
+  },
+  {
+    "content": "Returning to exercise after birth: After vaginal birth: gentle walking from day 1 in hospital, Kegel exercises from day 1, and light activity as tolerated. Wait 6 weeks (or until your postnatal check-up) before returning to high-impact exercise. After C-section: walking from day 1, no core exercises (sit-ups, crunches, planks) for at least 8–12 weeks. No running or gym before 3 months. Watch for signs that you are overdoing it: increased lochia (bleeding), pelvic heaviness, or leaking urine — these signal you need to slow down. Consider seeing a women's health physiotherapist who can assess your pelvic floor.",
+    "category": "postpartum",
+    "tags": ["postpartum exercise", "returning to exercise", "Kegel", "pelvic floor", "C-section recovery", "postnatal fitness", "6 weeks"],
+    "source": "postpartum"
+  },
+  {
+    "content": "Postpartum complications — warning signs: Go to the hospital immediately if you experience: heavy bleeding (soaking more than 1 pad per hour for 2+ hours), fever above 38°C/100.4°F, increased pain or swelling at incision or perineal site, foul-smelling vaginal discharge, one leg swollen and painful (DVT — blood clot), difficulty breathing, chest pain, severe headache with vision changes (may indicate postpartum preeclampsia), thoughts of harming yourself or your baby.",
+    "category": "postpartum",
+    "tags": ["postpartum complications", "warning signs", "bleeding", "fever", "infection", "DVT", "blood clot", "preeclampsia", "emergency"],
+    "source": "postpartum"
+  },
+  {
+    "content": "Breastfeeding challenges and solutions: Sore nipples — usually caused by a poor latch; correct the latch (baby should cover most of the areola). Apply lanolin cream or expressed breast milk to nipples after feeds. Engorgement — breasts overfull and hard, usually in first week; feed frequently, offer both breasts, apply warm compress before feeding and cold pack after. Low milk supply — most cases are perceived, not real; signs of adequate intake are 6+ wet nappies/day and steady weight gain. Increase supply by feeding more frequently, ensuring good latch, staying well hydrated, and resting. Mastitis (breast infection) — one breast red, hot, painful, with flu-like symptoms; continue breastfeeding (it's safe), apply warm compress, rest, take prescribed antibiotics if needed.",
+    "category": "postpartum",
+    "tags": ["breastfeeding", "sore nipples", "latch", "engorgement", "milk supply", "mastitis", "breast infection", "low supply", "breastfeeding problems"],
+    "source": "postpartum"
+  }
+]

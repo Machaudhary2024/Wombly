@@ -1,0 +1,92 @@
+[
+  {
+    "content": "Newborn care (0–3 months): Feed on demand — newborns need 8–12 breastfeeds or 8–10 formula feeds per day. Wet nappies (at least 6 per day) and yellow seedy stools are good signs of adequate milk intake. Umbilical cord stump care: keep it dry and clean; it falls off in 1–3 weeks. Sponge-bathe only until the cord falls off. Newborns sleep 14–17 hours a day in short bursts. Always place baby on their back to sleep (reduces SIDS risk). Support the head at all times as neck muscles are not yet developed.",
+    "category": "toddler",
+    "tags": ["newborn", "0-3 months", "breastfeeding", "feeding", "cord care", "sleep", "SIDS", "back to sleep", "nappy", "wet nappy"],
+    "source": "toddler_care"
+  },
+  {
+    "content": "3–6 months milestones: Baby begins to smile socially, recognise faces, and respond to sounds. Starts to hold their head up steadily and push up on arms during tummy time. May roll from tummy to back around 4 months, and back to tummy around 5–6 months. Babbling begins ('ba', 'ga' sounds). Sleep typically consolidates to 2–3 naps per day. Teething may begin (drooling, chewing on hands). Continue exclusive breastfeeding or formula — no solid foods yet before 6 months. Offer plenty of floor time and tummy time for development.",
+    "category": "toddler",
+    "tags": ["3-6 months", "milestones", "rolling", "tummy time", "smiling", "babbling", "teething", "sleep", "breastfeeding", "development"],
+    "source": "toddler_care"
+  },
+  {
+    "content": "6–9 months — introducing solids and sitting: Start solid foods at 6 months alongside continued breastfeeding or formula. Begin with single-ingredient purees: vegetable purees (gajar/carrot, matar/peas, lauki/bottle gourd), fruit purees (apple, banana, mango), and iron-rich foods (mashed daal, minced meat). Introduce one new food every 3–5 days to watch for allergic reactions (rash, vomiting, diarrhoea, swelling). Baby begins sitting with support around 6 months, and unsupported by 7–8 months. Stranger anxiety begins.",
+    "category": "toddler",
+    "tags": ["6-9 months", "solid foods", "weaning", "purees", "daal", "allergens", "sitting", "stranger anxiety", "introducing food", "iron"],
+    "source": "toddler_care"
+  },
+  {
+    "content": "9–12 months — crawling, pincer grasp, first words: Baby crawls, pulls to stand, and may cruise along furniture. Pincer grasp (using thumb and finger) develops — introduce soft finger foods (small pieces of ripe banana, soft-cooked vegetables, small pasta). First words ('mama', 'dada', 'ba') emerge around 10–12 months. Imitation intensifies — baby copies actions and sounds. Introduce a sippy cup with water from 6 months; can introduce cow's milk in small amounts with food from 9–10 months (but breast milk/formula remains the primary drink).",
+    "category": "toddler",
+    "tags": ["9-12 months", "crawling", "standing", "finger foods", "first words", "pincer grasp", "language", "sippy cup", "development"],
+    "source": "toddler_care"
+  },
+  {
+    "content": "12–18 months — walking and toddler nutrition: Most children walk independently by 12–15 months. Vocabulary grows to 5–20 words by 18 months. Toddlers become increasingly independent and may show strong food preferences. Meals: 3 meals + 2 snacks per day. Good toddler foods: khichdi (rice and lentils cooked soft), soft roti with daal, mashed aloo (potato), soft fruits, full-fat dahi (yoghurt), eggs, soft-cooked vegetables. Whole cow's milk can fully replace formula from 12 months. Aim for 2–3 cups of milk daily. Avoid honey before 12 months (botulism risk).",
+    "category": "toddler",
+    "tags": ["12-18 months", "walking", "toddler diet", "nutrition", "khichdi", "daal", "milk", "honey", "words", "independence"],
+    "source": "toddler_care"
+  },
+  {
+    "content": "18–24 months — language explosion and tantrums: Vocabulary grows rapidly from 20 words to 50+ words, with two-word phrases starting ('mama come', 'more milk'). Tantrums peak in this period as toddlers have desires but cannot fully communicate. Strategies: stay calm, acknowledge feelings ('I know you're upset'), offer limited choices, maintain consistent routines. Sleep needs: 11–14 hours total with 1 afternoon nap. Continue offering a variety of foods — a toddler may need to see a new food 10–15 times before accepting it (normal pickiness).",
+    "category": "toddler",
+    "tags": ["18-24 months", "language", "tantrums", "behaviour", "sleep", "picky eating", "two-word phrases", "routine", "toddler development"],
+    "source": "toddler_care"
+  },
+  {
+    "content": "2–3 years — potty training and social play: Potty training readiness signs: child shows interest in the toilet, stays dry for 2+ hours, can pull pants up/down, and understands the concept. Most children are ready between 18 months and 3 years. Parallel play (playing next to but not with other children) transitions to cooperative play. Speech: 2-year-olds typically use 2–3 word sentences; 3-year-olds use 4+ word sentences and are understood by strangers. Preschool readiness checklist: follows 2-step instructions, plays with others, tolerates brief separation from parents.",
+    "category": "toddler",
+    "tags": ["2-3 years", "potty training", "social play", "speech", "language", "cooperative play", "preschool", "readiness", "toilet training"],
+    "source": "toddler_care"
+  },
+  {
+    "content": "Breastfeeding guidance: Breast milk is the ideal food for babies and provides immunity, balanced nutrition, and bonding. WHO recommends exclusive breastfeeding for 6 months, then continuing alongside solids for up to 2 years or beyond. Correct latch: the baby's mouth should cover most of the areola (not just the nipple). Signs of good feeding: audible swallowing, baby satisfied after feeds, at least 6 wet nappies/day, gaining weight. Common challenges: sore nipples (check latch), engorgement (feed frequently, apply warm compresses), low supply (feed more often, ensure good latch, stay hydrated and well-nourished).",
+    "category": "toddler",
+    "tags": ["breastfeeding", "latch", "milk supply", "engorgement", "sore nipples", "exclusive breastfeeding", "WHO", "breast milk", "immunity"],
+    "source": "toddler_care"
+  },
+  {
+    "content": "Formula feeding guide: Use iron-fortified infant formula if not breastfeeding or supplementing. Always follow the instructions on the tin — adding too much or too little powder is dangerous. Use cooled boiled water to prepare formula. Do not re-use unfinished bottles (bacteria multiply within 1 hour at room temperature). Sterilise bottles and teats by boiling for 5 minutes or using a steam steriliser. Feed demand-based — on average a newborn takes 60–90ml per feed, increasing to 150–200ml by 3 months. Never prop the bottle (aspiration risk) — always hold the baby.",
+    "category": "toddler",
+    "tags": ["formula feeding", "bottle feeding", "sterilise", "boiled water", "infant formula", "iron-fortified", "bottle", "preparation"],
+    "source": "toddler_care"
+  },
+  {
+    "content": "Baby and toddler sleep schedules: Newborn: 14–17 hours/day in 2–4 hour chunks. 3–6 months: 14–16 hours, 3–4 naps. 6–12 months: 12–15 hours, 2 naps. 12–18 months: 11–14 hours, 1–2 naps. 2–3 years: 11–14 hours, 1 nap. Safe sleep: back to sleep, firm flat mattress, no loose bedding/pillows/toys, no bed-sharing (raises SIDS risk). To establish sleep routine: consistent bedtime (7–8 pm), calming pre-sleep routine (bath, gentle massage, story/lullaby), same sleep environment each night.",
+    "category": "toddler",
+    "tags": ["sleep schedule", "naps", "bedtime", "sleep routine", "SIDS", "safe sleep", "back to sleep", "newborn sleep", "toddler sleep"],
+    "source": "toddler_care"
+  },
+  {
+    "content": "Common toddler illnesses and when to see a doctor: Fever: temperature above 38°C (100.4°F) in babies under 3 months → go to hospital immediately. Older babies/toddlers: monitor, offer fluids, use paracetamol (infant Calpol) as directed; see a doctor if fever lasts more than 2–3 days, is above 40°C, or child is very unwell. Diarrhoea: prevent dehydration with ORS (Oral Rehydration Salt solution); see a doctor if blood in stool, not improving in 2 days, or baby is not producing tears when crying. Cold: usually resolves in 7–10 days; use saline drops, steam for congestion. Seek help for breathing difficulty at any age.",
+    "category": "toddler",
+    "tags": ["fever", "diarrhoea", "cold", "cough", "illness", "when to see doctor", "ORS", "paracetamol", "Calpol", "emergency", "dehydration"],
+    "source": "toddler_care"
+  },
+  {
+    "content": "Toddler nutrition — balanced meals and healthy snacks: Offer variety from all food groups. Pakistani toddler-friendly meals: khichdi (rice and moong daal — easy to digest, nutritious), soft roti with daal, anda (egg) in any form, soft-cooked sabzi (vegetables), dahi (yoghurt), fruit pieces, paratha with minimal oil. Healthy snacks: fruit pieces, dahi, boiled egg, soft cheese, homemade bread with nut butter (if no allergy). Avoid: chips, biscuits, sweets, juice boxes, and fizzy drinks — these displace nutritious foods. Limit salt and sugar in home-cooked food. Full-fat foods are appropriate for toddlers — they need fat for brain development.",
+    "category": "toddler",
+    "tags": ["toddler nutrition", "meals", "snacks", "balanced diet", "khichdi", "daal", "anda", "dahi", "fruit", "Pakistan", "healthy eating"],
+    "source": "toddler_care"
+  },
+  {
+    "content": "Child development red flags — when to seek evaluation: By 2 months: not responding to sounds, not watching faces, not smiling. By 4 months: not holding head steady, not babbling. By 9 months: not babbling, not responding to name. By 12 months: no words, not pointing or waving bye-bye, not walking with support. By 18 months: less than 6 words, not walking independently. By 24 months: not using 2-word phrases, losing previously acquired skills. By 36 months: strangers cannot understand most speech. Loss of any previously acquired skill at any age warrants immediate evaluation.",
+    "category": "toddler",
+    "tags": ["development", "red flags", "milestones", "language delay", "autism", "speech delay", "evaluation", "warning signs", "paediatrician"],
+    "source": "toddler_care"
+  },
+  {
+    "content": "Keeping toddlers safe at home: Stair gates at top and bottom of stairs from when baby starts crawling. Cover electrical sockets. Lock cleaning products, medicines, and chemicals out of reach. Secure heavy furniture to walls (toddlers climb everything — tip-over deaths are common). Never leave toddlers alone near water — drowning can happen in 5cm of water. Keep small objects away — toddler can choke on anything smaller than a 50-rupee coin. In the kitchen: use back burners, turn pot handles inward. Window guards where windows are above ground level.",
+    "category": "toddler",
+    "tags": ["safety", "childproofing", "choking", "drowning", "stair gate", "electrical socket", "home safety", "medicines", "poison"],
+    "source": "toddler_care"
+  },
+  {
+    "content": "Vaccination schedule in Pakistan (EPI — Expanded Programme on Immunisation): Birth: BCG (TB) + Hepatitis B. 6 weeks: Pentavalent (DTP + Hep B + Hib), Polio (OPV), Pneumococcal (PCV). 10 weeks: repeat Pentavalent + OPV + PCV. 14 weeks: repeat Pentavalent + OPV + PCV + IPV. 9 months: Measles, Vitamin A. 15 months: MMR (Measles, Mumps, Rubella). Additional: Typhoid vaccine (EFI) now included in many urban areas. Keep the vaccination card safe — it is required for school entry. Polio drops are given on National Immunisation Days — never refuse them.",
+    "category": "toddler",
+    "tags": ["vaccination", "immunisation", "EPI", "Pakistan", "BCG", "DTP", "polio", "MMR", "Hepatitis B", "schedule", "vaccines"],
+    "source": "toddler_care"
+  }
+]

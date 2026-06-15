@@ -1,0 +1,80 @@
+[
+  {
+    "content": "MYTH: You need to eat for two and double your calories. FACT: You only need about 300–500 extra calories per day in the second and third trimesters — roughly the equivalent of a glass of milk and a banana. In the first trimester, extra calorie needs are minimal. Quality matters far more than quantity. Eating for two leads to excessive weight gain, which raises the risk of gestational diabetes, C-section, and complications.",
+    "category": "myths",
+    "tags": ["eating for two", "calories", "weight gain", "diet myth", "pregnancy myth"],
+    "source": "myths_facts"
+  },
+  {
+    "content": "MYTH: You should not exercise during pregnancy. FACT: Moderate exercise is recommended for most healthy pregnant women. 150 minutes per week of moderate activity (walking, swimming, prenatal yoga) improves mood, reduces back pain, controls weight gain, can shorten labour, and reduces gestational diabetes risk. Only specific high-risk conditions (e.g. placenta praevia, preterm labour risk) require activity restrictions, and those should be confirmed by your doctor.",
+    "category": "myths",
+    "tags": ["exercise myth", "physical activity", "bed rest", "prenatal exercise", "safe exercise"],
+    "source": "myths_facts"
+  },
+  {
+    "content": "MYTH: Consuming large amounts of ghee or butter in the final month will make the baby 'slippery' and ease childbirth. FACT: This is a common Pakistani cultural belief but is biologically incorrect. Ease of delivery is determined by the baby's position, pelvic size, cervical dilation, and uterine contractions — not by ghee intake. Excess ghee adds unnecessary saturated fat and calories, raising gestational weight gain. A balanced diet and staying physically active are what support a healthy pregnancy and labour.",
+    "category": "myths",
+    "tags": ["ghee myth", "butter", "delivery myth", "Pakistani myth", "cultural belief", "childbirth", "delivery ease"],
+    "source": "myths_facts"
+  },
+  {
+    "content": "MYTH: A pregnant woman should stay in bed and rest as much as possible throughout pregnancy. FACT: Unless specifically prescribed by a doctor for a medical reason (like preterm labour risk, placenta praevia, or severe hypertension), prolonged bed rest during pregnancy is harmful. It increases the risk of blood clots (deep vein thrombosis), muscle weakening, depression, and poor weight control. Gentle daily movement is recommended for most pregnancies.",
+    "category": "myths",
+    "tags": ["bed rest myth", "rest", "activity", "blood clots", "DVT", "exercise"],
+    "source": "myths_facts"
+  },
+  {
+    "content": "MYTH: Eating fair-coloured foods (milk, coconut, almonds) makes the baby fairer-skinned. FACT: A baby's skin tone is determined entirely by genetics — specifically, the combination of melanin genes inherited from both parents. No food can alter this. This belief is widespread in South Asia (Pakistan, India, Bangladesh) but has no scientific basis. Mothers sometimes restrict their diet based on this myth, which can lead to nutritional deficiencies. All nutritious foods should be included regardless of colour.",
+    "category": "myths",
+    "tags": ["skin colour myth", "gora baby", "fair skin", "coconut myth", "Pakistani myth", "genetics", "South Asian myth"],
+    "source": "myths_facts"
+  },
+  {
+    "content": "MYTH: Morning sickness only happens in the morning. FACT: 'Morning sickness' is a misleading name. Nausea and vomiting can happen at any time of day or night. Many women experience it all day, especially in the first trimester. Triggers include certain smells, an empty stomach, or particular foods. It is caused by rising hCG and oestrogen levels and is not an indicator of pregnancy health.",
+    "category": "myths",
+    "tags": ["morning sickness myth", "nausea", "vomiting", "first trimester", "all-day sickness"],
+    "source": "myths_facts"
+  },
+  {
+    "content": "MYTH: You must completely get rid of your cat during pregnancy. FACT: The concern about cats relates to toxoplasmosis, a parasite found in cat faeces. The risk is from changing the litter box — not from the cat itself. To stay safe: have another person change the litter box, or wear gloves and wash hands thoroughly if you must do it yourself. Keep your cat indoors (indoor cats have very low toxoplasmosis risk). You do not need to give your cat away.",
+    "category": "myths",
+    "tags": ["cat myth", "toxoplasmosis", "litter box", "pets", "toxoplasma"],
+    "source": "myths_facts"
+  },
+  {
+    "content": "MYTH: Spicy food causes miscarriage. FACT: Spicy food does not cause miscarriage. It may trigger heartburn, indigestion, or worsen nausea in some pregnant women, but it does not threaten the pregnancy. Most causes of miscarriage are chromosomal abnormalities in the embryo, not anything the mother ate or did. This myth causes unnecessary guilt and food restriction.",
+    "category": "myths",
+    "tags": ["spicy food myth", "miscarriage", "heartburn", "food myth", "Pakistani myth", "biryani"],
+    "source": "myths_facts"
+  },
+  {
+    "content": "MYTH: The shape of a pregnant belly or specific cravings can predict whether the baby is a boy or girl. FACT: Belly shape is determined by factors like the position of the baby, the amount of amniotic fluid, the mother's muscle tone, and her body shape — not the baby's sex. Cravings are influenced by nutritional needs, hormones, and smell sensitivity changes — not by the baby's gender. The only reliable methods for determining sex are ultrasound, NIPT (blood test), or amniocentesis.",
+    "category": "myths",
+    "tags": ["baby gender myth", "belly shape", "cravings", "boy or girl", "old wives tale", "gender prediction"],
+    "source": "myths_facts"
+  },
+  {
+    "content": "MYTH: You cannot dye your hair or use cosmetics during pregnancy. FACT: Most evidence suggests that using hair dye after the first trimester, in a well-ventilated area, poses very low risk. Chemical absorption through the scalp is minimal. Highlights (where dye does not touch the scalp) are even lower risk. Skin-care products: avoid those containing high-dose retinoids (retinol, tretinoin) and salicylic acid in large amounts. Most cosmetics and perfumes are considered safe. If concerned, discuss with your doctor.",
+    "category": "myths",
+    "tags": ["hair dye myth", "cosmetics", "beauty", "retinol", "skin care", "makeup", "hair colour"],
+    "source": "myths_facts"
+  },
+  {
+    "content": "MYTH: Sleeping on your back will harm or kill the baby. FACT: Sleeping on your left side after week 16 is recommended because it optimises blood flow to the uterus and kidneys. However, accidentally rolling onto your back does not immediately harm the baby. If circulation is restricted, you will naturally feel uncomfortable and wake up. Do not cause yourself anxiety over sleep position — use pillows for support and try to start the night on your side.",
+    "category": "myths",
+    "tags": ["sleep position myth", "back sleeping", "left side", "pregnancy sleep", "blood flow"],
+    "source": "myths_facts"
+  },
+  {
+    "content": "MYTH: Drinking lots of coconut water will make the baby's skin glow. FACT: Coconut water is a healthy, hydrating drink that contains electrolytes and some vitamins — it is a good choice in pregnancy. However, it does not affect the baby's skin glow or complexion, which is genetically determined. Coconut water is beneficial for its hydration and electrolyte content, especially in hot climates like Pakistan, but it has no special skin-enhancing effect on the baby.",
+    "category": "myths",
+    "tags": ["coconut water myth", "baby skin", "glow myth", "Pakistani myth", "hydration"],
+    "source": "myths_facts"
+  },
+  {
+    "content": "MYTH: Heartburn during pregnancy means your baby will have a lot of hair. FACT: Heartburn is caused by pregnancy hormones (progesterone) relaxing the lower oesophageal sphincter, allowing stomach acid to reflux, and by the growing uterus pressing on the stomach. The amount of baby hair has nothing to do with heartburn. While one study did find a slight correlation (not causation) between heartburn severity and neonatal hair, the relationship is not clinically meaningful. Heartburn is a mechanical and hormonal issue.",
+    "category": "myths",
+    "tags": ["heartburn myth", "baby hair", "old wives tale", "pregnancy myth"],
+    "source": "myths_facts"
+  }
+]

@@ -123,9 +123,10 @@ Your responsibilities:
  * @param {number|null} params.currentWeek - Calculated current pregnancy week
  * @param {string} [params.client_country] - ISO-3166 alpha-2 from the client
  * @param {string} [params.client_city]    - optional city name
+ * @param {string} [params.ragContext]     - RAG-retrieved knowledge chunks (pre-formatted)
  * @returns {string} System prompt
  */
-function buildSystemPrompt({ user, mode, intake, currentWeek, client_country, client_city }) {
+function buildSystemPrompt({ user, mode, intake, currentWeek, client_country, client_city, ragContext }) {
   let base;
   switch (mode) {
     case "pregnancy": base = PREGNANCY_TEMPLATE(user, currentWeek, intake); break;
@@ -135,8 +136,16 @@ function buildSystemPrompt({ user, mode, intake, currentWeek, client_country, cl
       console.error(`[PromptRouter] Unknown mode "${mode}", falling back to pregnancy`);
       base = PREGNANCY_TEMPLATE(user, currentWeek, intake);
   }
+
+  const parts = [base];
+
   const locContext = buildLocationContext({ client_country, client_city });
-  return locContext ? `${base}\n\n${locContext}` : base;
+  if (locContext) parts.push(locContext);
+
+  // RAG context: inject verified knowledge chunks retrieved for this specific query
+  if (ragContext) parts.push(ragContext);
+
+  return parts.join('\n\n');
 }
 
 module.exports = { buildSystemPrompt, SAFETY_PREAMBLE };
