@@ -85,7 +85,7 @@ const Week23To27Screen = ({ navigation }) => {
               <View style={styles.nicuContent}>
                 <Text style={styles.nicuTitle}>Hospital tour (optional)</Text>
                 <Text style={styles.nicuText}>
-                  Some hospitals offer birth suite tours or classes. Seeing where you might give birth can feel less scary. Neonatal units sometimes allow visits if your pregnancy is higher risk—ask your team.
+                  Some hospitals offer birth suite tours or classes. Seeing where you might give birth can feel less scary. Neonatal units sometimes allow visits if your pregnancy is higher risk-ask your team.
                 </Text>
               </View>
             </View>

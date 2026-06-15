@@ -1,5 +1,5 @@
 // context/UserContext.js
-// Global user context — set once at login, readable from any component.
+// Global user context - set once at login, readable from any component.
 // Eliminates the need to pass userEmail/userName through every navigation route.
 
 import React, { createContext, useContext, useState } from 'react';

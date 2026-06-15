@@ -1,0 +1,38 @@
+[
+  {
+    "content": "Infant choking (under 12 months): If the baby cannot cough, cry, or breathe: Hold the baby face-down along your forearm, head lower than chest. Give 5 firm back blows between the shoulder blades with the heel of your hand. Turn baby face-up, support head. Give 5 chest thrusts with 2 fingers on the lower half of the breastbone. Alternate back blows and chest thrusts until the object dislodges or the baby loses consciousness. If unconscious, start infant CPR and call emergency services (1122 in Pakistan). Never do abdominal thrusts on an infant.",
+    "category": "first_aid",
+    "tags": ["choking infant", "back blows", "chest thrusts", "airway", "emergency", "baby choking", "under 12 months"],
+    "source": "first_aid"
+  },
+  {
+    "content": "Toddler/child choking (over 12 months): If the child cannot cough, cry, or speak: Kneel or stand behind the child. Give 5 firm back blows between shoulder blades with heel of hand. Lean them forward for back blows. If unsuccessful: give 5 abdominal thrusts (Heimlich manoeuvre) — make a fist, place above navel, give quick inward-upward thrusts. Alternate 5 back blows and 5 abdominal thrusts. If the child loses consciousness, start CPR and call 1122. Do not perform blind finger sweeps in the mouth.",
+    "category": "first_aid",
+    "tags": ["choking toddler", "Heimlich", "abdominal thrust", "back blows", "child choking", "airway", "emergency"],
+    "source": "first_aid"
+  },
+  {
+    "content": "Infant CPR (under 12 months): Check for response — tap foot and shout. Call for help or send someone to call 1122. Open airway by tilting head back gently (neutral position for infants — not over-tilted). Give 2 gentle rescue breaths, covering both the nose and mouth. Chest compressions: use 2 fingers on the centre of the chest just below nipple line. Press down 4cm at a rate of 100–120 per minute. 30 compressions to 2 breaths. Continue until emergency services arrive or the baby recovers. If alone with the baby, do 2 minutes of CPR before stopping to call 1122.",
+    "category": "first_aid",
+    "tags": ["CPR infant", "baby CPR", "rescue breathing", "chest compressions", "cardiac arrest", "emergency", "1122"],
+    "source": "first_aid"
+  },
+  {
+    "content": "Fever management in babies and toddlers: Normal temperature: 36.5°C–37.5°C. Fever: above 38°C. Emergency — go to hospital immediately for: any fever in a baby under 3 months old, fever above 40°C, fever with a rash (especially a rash that does not fade when pressed — meningitis sign), difficulty breathing, seizure (fits), unable to wake up, stiff neck, or prolonged crying. For mild fever in older babies/toddlers: give infant paracetamol (Calpol) per weight and age instructions, keep room cool, offer fluids frequently, dress lightly. Ibuprofen (Nurofen) can be used from 3 months.",
+    "category": "first_aid",
+    "tags": ["fever", "temperature", "Calpol", "paracetamol", "ibuprofen", "baby fever", "febrile seizure", "when to go to hospital", "emergency"],
+    "source": "first_aid"
+  },
+  {
+    "content": "Burns first aid for children: Cool the burn under cool (not cold or icy) running water for a minimum of 20 minutes. Do not apply toothpaste, ghee, butter, egg white, or any home remedy — these cause infection. Cover with a clean non-fluffy cloth or cling film after cooling. Do not burst blisters. Seek hospital care for: burns larger than a 50-rupee note, burns on the face, hands, feet, or genitals, any burn that is white/brown/black (deep burn), or any burn in a child under 2 years. Give pain relief (paracetamol/Calpol) while going to hospital.",
+    "category": "first_aid",
+    "tags": ["burns", "scalds", "first aid burns", "cool water", "ghee burn", "toothpaste myth", "emergency", "blisters"],
+    "source": "first_aid"
+  },
+  {
+    "content": "Allergic reactions in children: Mild allergic reaction: hives (raised itchy welts on skin), mild redness, runny nose, watery eyes. Give an oral antihistamine (e.g. cetirizine or chlorphenamine — children's dose) and monitor closely. Severe allergic reaction (anaphylaxis) — call 1122 immediately: difficulty breathing or wheezing, swelling of face, lips, tongue, or throat, severe vomiting, pale or blue skin, sudden collapse or loss of consciousness. If the child has been prescribed an EpiPen (adrenaline auto-injector), use it immediately and then call 1122. Lay the child flat with legs raised unless they have breathing difficulty (then sit them up).",
+    "category": "first_aid",
+    "tags": ["allergy", "anaphylaxis", "hives", "EpiPen", "adrenaline", "antihistamine", "allergic reaction", "swelling", "emergency"],
+    "source": "first_aid"
+  }
+]

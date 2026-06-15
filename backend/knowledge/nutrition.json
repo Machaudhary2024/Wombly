@@ -1,0 +1,74 @@
+[
+  {
+    "content": "Essential nutrients in pregnancy: Folic acid (400–800 mcg/day) — prevents neural tube defects; take from conception through week 12 at least. Iron (27 mg/day) — supports the increased blood volume; anaemia is extremely common in Pakistani women. Calcium (1000 mg/day) — builds the baby's bones and teeth; if intake is low the baby draws calcium from your bones. Vitamin D (600 IU/day) — supports calcium absorption; many Pakistani women are deficient. Iodine — critical for brain development. Omega-3 DHA — brain and eye development; found in fish, walnuts, and flaxseeds.",
+    "category": "nutrition",
+    "tags": ["folic acid", "iron", "calcium", "vitamin D", "omega-3", "DHA", "iodine", "nutrients", "supplements", "anaemia"],
+    "source": "nutrition"
+  },
+  {
+    "content": "Foods to eat more during pregnancy: Protein — meat (chicken, beef, mutton), eggs, daal (lentils), beans, nuts, tofu. Whole grains — brown rice, whole wheat roti (chapati), oats. Dairy — doodh (milk), dahi (yoghurt), paneer, cheese — for calcium. Leafy greens — palak (spinach), methi (fenugreek leaves), saag — for iron and folate. Fruits — especially citrus (vitamin C helps iron absorption), mangoes (vitamin A and C), pomegranates (iron). Colourful vegetables — carrots, beets, bell peppers. Healthy fats — olive oil, nuts (badam/almonds), avocado.",
+    "category": "nutrition",
+    "tags": ["protein", "dairy", "whole grains", "leafy greens", "fruits", "vegetables", "daal", "milk", "dahi", "roti", "Pakistani foods", "healthy foods"],
+    "source": "nutrition"
+  },
+  {
+    "content": "Foods to absolutely avoid during pregnancy: Alcohol — there is no safe amount; causes foetal alcohol syndrome. Raw or undercooked meat and eggs — risk of Salmonella and Listeria. Raw fish and shellfish (sushi, raw oysters) — mercury and bacteria risk. Unpasteurised dairy and soft cheeses — Listeria risk. High-mercury fish — shark, swordfish, king mackerel, tilefish; limit tuna to 2 servings per week. Raw sprouts — harbour bacteria. Excess liver (pâté or liver every week) — too much vitamin A can harm the foetus.",
+    "category": "nutrition",
+    "tags": ["foods to avoid", "alcohol", "raw fish", "sushi", "raw meat", "unpasteurised", "mercury", "Listeria", "Salmonella", "food safety", "what not to eat"],
+    "source": "nutrition"
+  },
+  {
+    "content": "Foods to limit during pregnancy: Caffeine — keep below 200 mg/day (about 1 regular cup of coffee, 2 cups of chai/tea, or one can of cola). Too much caffeine is linked to low birth weight. Processed and packaged foods — high sodium causes fluid retention and raises blood pressure. Sugary drinks — increase gestational diabetes risk. Deep-fried and junk food — excess weight gain and heartburn. Liver and liver products — too much vitamin A.",
+    "category": "nutrition",
+    "tags": ["caffeine", "coffee", "chai", "tea", "limit", "processed food", "sugary drinks", "junk food", "salt", "sodium"],
+    "source": "nutrition"
+  },
+  {
+    "content": "First trimester nutrition (weeks 1–12): Focus on folic acid from day one. If morning sickness makes eating difficult: eat small amounts every 2 hours rather than large meals, choose bland foods (dry toast, crackers, plain rice, boiled potatoes), avoid cooking smells by eating foods that are cold or room temperature, try ginger (adrak) — ginger tea, ginger ale, or ginger chews are proven to reduce nausea. Stay hydrated even if you vomit — small sips of water or coconut water frequently. Avoid an empty stomach as it worsens nausea.",
+    "category": "nutrition",
+    "tags": ["first trimester", "morning sickness", "nausea", "ginger", "bland food", "small meals", "folic acid", "hydration", "vomiting"],
+    "source": "nutrition"
+  },
+  {
+    "content": "Second trimester nutrition (weeks 13–27): Appetite usually returns and this is the time to focus on quality nutrition. Iron needs increase significantly — eat iron-rich foods (meat, daal, palak/spinach) with vitamin C to improve absorption (e.g. daal with tomatoes, spinach with lemon juice). Calcium is critical as the baby's skeleton mineralises — aim for 3–4 servings of dairy daily. Protein needs rise to about 75–100g/day. Omega-3 from fish (2 servings/week of low-mercury fish like salmon or rohu/rahu), walnuts, and flaxseeds.",
+    "category": "nutrition",
+    "tags": ["second trimester", "iron", "calcium", "protein", "omega-3", "dairy", "palak", "daal", "vitamin C", "nutrition"],
+    "source": "nutrition"
+  },
+  {
+    "content": "Third trimester nutrition (weeks 28–40): Calorie needs increase by about 400–500 calories/day compared to pre-pregnancy (not double — just an extra meal's worth). Focus on protein for the baby's rapid muscle and brain growth. Magnesium (nuts, seeds, dark chocolate, leafy greens) helps with leg cramps and sleep. Fibre is critical as constipation worsens in late pregnancy — eat whole grain roti, vegetables, daal, and drink plenty of water. Eat small frequent meals as the growing uterus compresses the stomach, causing early fullness and heartburn.",
+    "category": "nutrition",
+    "tags": ["third trimester", "calories", "protein", "magnesium", "constipation", "fibre", "heartburn", "small meals", "weight gain"],
+    "source": "nutrition"
+  },
+  {
+    "content": "Iron-rich foods and anaemia prevention: Iron deficiency anaemia affects up to 50% of pregnant Pakistani women. Symptoms: fatigue, dizziness, shortness of breath, pale skin, rapid heartbeat. Best iron sources: red meat (gosht/beef/mutton), chicken, fish, eggs, daal (especially masoor and moong), chickpeas (chanay), palak (spinach), methi, fortified cereals. Pair with vitamin C (citrus fruits, tomatoes, amla) to boost absorption. Avoid tea and coffee with meals — tannins block iron absorption. Your doctor may prescribe iron supplements.",
+    "category": "nutrition",
+    "tags": ["anaemia", "iron deficiency", "iron-rich foods", "daal", "spinach", "palak", "meat", "fatigue", "supplements", "Pakistan", "vitamin C"],
+    "source": "nutrition"
+  },
+  {
+    "content": "Hydration during pregnancy: Drink 8–10 glasses (2–2.5 litres) of water per day. Proper hydration prevents urinary tract infections (UTIs, very common in pregnancy), reduces constipation, prevents preterm contractions triggered by dehydration, and maintains amniotic fluid levels. Signs of dehydration: dark yellow urine, headache, dizziness, reduced urine output. Safe drinks: water, milk, fresh fruit juices (without added sugar), coconut water, lightly sweetened herbal tea. Avoid: energy drinks, alcohol, excessive sugary drinks.",
+    "category": "nutrition",
+    "tags": ["hydration", "water", "drinks", "dehydration", "UTI", "amniotic fluid", "coconut water", "juice"],
+    "source": "nutrition"
+  },
+  {
+    "content": "Managing heartburn through diet: Heartburn (acid reflux) is very common in pregnancy due to hormones relaxing the lower oesophageal sphincter and the baby pressing on the stomach. Dietary tips: eat small meals 5–6 times a day instead of 3 large ones, avoid spicy foods, oily/fried foods (pakoras, samosas, biryani), tomato-based sauces, citrus, chocolate, coffee, and peppermint. Eat slowly. Stay upright for at least an hour after meals. Sleep with your head elevated. Safe antacids like calcium carbonate (Tums) are generally considered safe but ask your doctor first.",
+    "category": "nutrition",
+    "tags": ["heartburn", "acid reflux", "indigestion", "spicy food", "fried food", "antacids", "meal size", "small meals"],
+    "source": "nutrition"
+  },
+  {
+    "content": "Gestational diabetes diet: If diagnosed with gestational diabetes, reduce foods that spike blood sugar: white rice, white bread, maida (refined flour), sugary drinks, sweets (mithai), fruit juices, and potatoes in large amounts. Choose: whole wheat roti, brown rice, basmati rice in small portions, oats, lentils, legumes, and plenty of non-starchy vegetables. Eat 3 moderate meals + 2–3 small snacks a day. Do not skip meals. Check blood sugar as instructed. Walk for 15–20 minutes after meals. Seek a dietitian referral through your doctor.",
+    "category": "nutrition",
+    "tags": ["gestational diabetes", "blood sugar", "diet", "white rice", "maida", "sweets", "mithai", "whole wheat", "low glycaemic"],
+    "source": "nutrition"
+  },
+  {
+    "content": "Prenatal vitamins and supplements: Most Pakistani women cannot meet all nutrient needs through diet alone. A prenatal multivitamin is recommended for almost everyone. Key supplements: Folic acid (start before conception if possible, continue through first trimester), Iron (especially if haemoglobin is low), Vitamin D (many women in Pakistan are deficient due to sun avoidance and covered clothing), Calcium (if dairy intake is low), Omega-3/DHA (if fish intake is low). Do not take very high-dose vitamin A or vitamin E without medical advice. Always tell your doctor every supplement you take.",
+    "category": "nutrition",
+    "tags": ["prenatal vitamins", "supplements", "folic acid", "vitamin D", "iron", "calcium", "DHA", "omega-3", "Pakistan", "deficiency"],
+    "source": "nutrition"
+  }
+]

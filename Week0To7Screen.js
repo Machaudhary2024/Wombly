@@ -117,7 +117,7 @@ const Week0To7Screen = ({ navigation }) => {
                 <Text style={styles.boldText}>Common early signs</Text> include a missed period, nausea, sore breasts, tiredness, and needing to pass urine more often. Not everyone has all of these.
               </Text>
               <Text style={styles.warningSubtext}>
-                Many pregnancies end in miscarriage in the first trimester; it is common and not your fault. If you have bleeding or cramping, contact your clinic or an urgent care service for advice. If you are Rh negative, your team may recommend an injection after some bleeds—ask them what applies to you.
+                Many pregnancies end in miscarriage in the first trimester; it is common and not your fault. If you have bleeding or cramping, contact your clinic or an urgent care service for advice. If you are Rh negative, your team may recommend an injection after some bleeds-ask them what applies to you.
               </Text>
             </View>
           </View>

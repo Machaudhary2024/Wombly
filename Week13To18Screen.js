@@ -55,7 +55,7 @@ const Week13To18Screen = ({ navigation }) => {
               <Text style={styles.titerTitle}>Healthy weight gain</Text>
             </View>
             <Text style={styles.titerText}>
-              Steady, gradual weight gain is normal. Your team will guide you—gaining some weight supports your baby, but very fast gain can be worth discussing. Gentle daily activity is usually fine if your doctor agrees.
+              Steady, gradual weight gain is normal. Your team will guide you-gaining some weight supports your baby, but very fast gain can be worth discussing. Gentle daily activity is usually fine if your doctor agrees.
             </Text>
           </View>
 
@@ -95,7 +95,7 @@ const Week13To18Screen = ({ navigation }) => {
                   You might start to feel light flutters (<Text style={styles.boldText}>quickening</Text>) toward the end of this range, especially if this is not your first baby.
                 </Text>
                 <Text style={styles.mcaInfoSubtext}>
-                  If you feel nothing yet, that can still be normal—every pregnancy is different.
+                  If you feel nothing yet, that can still be normal-every pregnancy is different.
                 </Text>
               </View>
             </View>
@@ -138,7 +138,7 @@ const Week13To18Screen = ({ navigation }) => {
                   <View style={styles.cffDNAItem}>
                     <MaterialCommunityIcons name="alert-circle" size={20} color="#FF9800" />
                     <Text style={styles.cffDNAText}>
-                      Do not take laxatives or herbal remedies without checking—they are not all safe in pregnancy.
+                      Do not take laxatives or herbal remedies without checking-they are not all safe in pregnancy.
                     </Text>
                   </View>
                 </View>
@@ -160,7 +160,7 @@ const Week13To18Screen = ({ navigation }) => {
             <View style={styles.warningContent}>
               <Text style={styles.warningTitle}>Blood pressure and headaches</Text>
               <Text style={styles.warningText}>
-                High blood pressure in pregnancy needs attention. Seek urgent advice for severe headache, vision changes, upper tummy pain, or sudden swelling of face, hands, or feet—these can be signs of pre-eclampsia, which is usually checked for at visits.
+                High blood pressure in pregnancy needs attention. Seek urgent advice for severe headache, vision changes, upper tummy pain, or sudden swelling of face, hands, or feet-these can be signs of pre-eclampsia, which is usually checked for at visits.
               </Text>
               
               <View style={styles.misconceptionsBox}>
@@ -168,7 +168,7 @@ const Week13To18Screen = ({ navigation }) => {
                 <View style={styles.misconceptionItem}>
                   <MaterialCommunityIcons name="close-circle" size={20} color="#F44336" />
                   <Text style={styles.misconceptionText}>
-                    Myth: “If I feel fine, I can skip a visit.” Care is partly about tests you cannot feel—keep scheduled appointments.
+                    Myth: “If I feel fine, I can skip a visit.” Care is partly about tests you cannot feel-keep scheduled appointments.
                   </Text>
                 </View>
                 <View style={styles.misconceptionItem}>
@@ -186,7 +186,7 @@ const Week13To18Screen = ({ navigation }) => {
                 <View style={styles.misconceptionItem}>
                   <MaterialCommunityIcons name="close-circle" size={20} color="#F44336" />
                   <Text style={styles.misconceptionText}>
-                    Trust your team over general advice online—including this screen—when they disagree.
+                    Trust your team over general advice online-including this screen-when they disagree.
                   </Text>
                 </View>
               </View>
@@ -246,7 +246,7 @@ const Week13To18Screen = ({ navigation }) => {
             <MaterialCommunityIcons name="medical-bag" size={40} color="#4CAF50" />
             <Text style={styles.visualTitle}>Growing bump</Text>
             <Text style={styles.visualText}>
-              Your uterus rises above the pelvis—maternity clothes may fit better now
+              Your uterus rises above the pelvis-maternity clothes may fit better now
             </Text>
           </View>
         </View>

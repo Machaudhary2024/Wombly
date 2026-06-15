@@ -37,7 +37,7 @@ const Week34To38Screen = ({ navigation }) => {
           </View>
           <Text style={styles.heroTitle}>Final weeks</Text>
           <Text style={styles.heroSubtitle}>
-            Weeks 34–38: your baby is nearly full term. “Full term” is often counted from 37 weeks; many babies arrive between 37 and 42 weeks. You may feel very ready—or very tired. Both are normal.
+            Weeks 34–38: your baby is nearly full term. “Full term” is often counted from 37 weeks; many babies arrive between 37 and 42 weeks. You may feel very ready-or very tired. Both are normal.
           </Text>
         </View>
 
@@ -67,7 +67,7 @@ const Week34To38Screen = ({ navigation }) => {
             <View style={styles.mcaScanCard}>
               <MaterialCommunityIcons name="ultrasound" size={24} color="#2196F3" />
               <Text style={styles.mcaScanText}>
-                Waters breaking (a trickle or gush), regular contractions, or bleeding like a period mean you should contact your maternity unit. A show (mucus plug) can happen days before labour—ask if you are unsure.
+                Waters breaking (a trickle or gush), regular contractions, or bleeding like a period mean you should contact your maternity unit. A show (mucus plug) can happen days before labour-ask if you are unsure.
               </Text>
             </View>
           </View>
@@ -146,7 +146,7 @@ const Week34To38Screen = ({ navigation }) => {
               <View style={styles.mcaReliabilityBox}>
                 <MaterialCommunityIcons name="alert-circle" size={24} color="#F44336" />
                 <Text style={styles.mcaReliabilityText}>
-                  If you pass your due date, your team may offer extra monitoring. <Text style={styles.boldText}>Stillbirth risk rises slightly after 42 weeks</Text>, so induction is often discussed—ask what your hospital advises.
+                  If you pass your due date, your team may offer extra monitoring. <Text style={styles.boldText}>Stillbirth risk rises slightly after 42 weeks</Text>, so induction is often discussed-ask what your hospital advises.
                 </Text>
               </View>
 
@@ -155,7 +155,7 @@ const Week34To38Screen = ({ navigation }) => {
                 <View style={styles.recommendationContent}>
                   <Text style={styles.recommendationTitle}>Pain relief in labour</Text>
                   <Text style={styles.recommendationText}>
-                    Options often include breathing techniques, water, gas and air, injections in the back (<Text style={styles.boldText}>epidural</Text>), or other medicines. There is no “best” choice for everyone—decide with your team as labour unfolds.
+                    Options often include breathing techniques, water, gas and air, injections in the back (<Text style={styles.boldText}>epidural</Text>), or other medicines. There is no “best” choice for everyone-decide with your team as labour unfolds.
                   </Text>
                 </View>
               </View>
@@ -176,7 +176,7 @@ const Week34To38Screen = ({ navigation }) => {
             <View style={styles.successContent}>
               <Text style={styles.successTitle}>Almost there</Text>
               <Text style={styles.successText}>
-                A baby born from 37 weeks onward is usually well grown for life outside. You have come a long way—many parents feel proud and relieved reaching this stage.
+                A baby born from 37 weeks onward is usually well grown for life outside. You have come a long way-many parents feel proud and relieved reaching this stage.
               </Text>
             </View>
           </View>
@@ -187,7 +187,7 @@ const Week34To38Screen = ({ navigation }) => {
             <MaterialCommunityIcons name="heart" size={40} color="#4CAF50" />
             <Text style={styles.visualTitle}>Engaging</Text>
             <Text style={styles.visualText}>
-              Your baby may “drop” lower into the pelvis as birth nears—breathing can feel easier
+              Your baby may “drop” lower into the pelvis as birth nears-breathing can feel easier
             </Text>
           </View>
           
@@ -195,7 +195,7 @@ const Week34To38Screen = ({ navigation }) => {
             <MaterialCommunityIcons name="hospital" size={40} color="#673AB7" />
             <Text style={styles.visualTitle}>Ready to meet you</Text>
             <Text style={styles.visualText}>
-              Most babies are roughly 2.5–3.5 kg by full term—your scans and palpation give a rough guide
+              Most babies are roughly 2.5–3.5 kg by full term-your scans and palpation give a rough guide
             </Text>
           </View>
         </View>

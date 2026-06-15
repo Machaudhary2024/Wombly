@@ -34,7 +34,7 @@ const messageSchema = new mongoose.Schema(
       type: Number,
       default: null,
     },
-    // Optional deduplication key — checked in application code, not via unique index
+    // Optional deduplication key - checked in application code, not via unique index
     idempotencyKey: {
       type: String,
       default: null,
@@ -48,7 +48,7 @@ const messageSchema = new mongoose.Schema(
 // Primary query pattern: messages in a conversation, chronological
 messageSchema.index({ conversationId: 1, createdAt: 1 });
 
-// Idempotency lookup (not unique — dedup enforced in application code)
+// Idempotency lookup (not unique - dedup enforced in application code)
 messageSchema.index({ conversationId: 1, idempotencyKey: 1 }, { sparse: true });
 
 // Prevent cross-user reads at query level

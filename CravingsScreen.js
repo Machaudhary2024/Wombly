@@ -13,7 +13,7 @@ import VideoSection from './components/VideoSection';
 import { getScreenVideos } from './data/videos';
 
 const PAGE_HEADING =
-  'Craving chaat at 2 a.m.? You\'re in good company—many Pakistani mums-to-be do!';
+  'Craving chaat at 2 a.m.? You\'re in good company-many Pakistani mums-to-be do!';
 
 const FAQS = [
   {
@@ -26,7 +26,7 @@ const FAQS = [
   },
   {
     q: 'Why do I crave spicy or chatpata food during pregnancy?',
-    a: 'Hormones can dull taste, so you may want stronger flavours. Spicy and chatpata foods are common in Pakistani diets. Enjoy in moderation—if you get heartburn, cut back and eat earlier in the day.',
+    a: 'Hormones can dull taste, so you may want stronger flavours. Spicy and chatpata foods are common in Pakistani diets. Enjoy in moderation-if you get heartburn, cut back and eat earlier in the day.',
   },
   {
     q: 'Is it safe to eat street food (e.g. gol gappay, chaat) when pregnant?',
@@ -46,7 +46,7 @@ const MEAL_IDEAS = [
   },
   {
     title: 'Fruit chaat (homemade)',
-    desc: 'Apple, banana, orange, chaat masala, lemon. Chatpata and fresh—easy to make at home.',
+    desc: 'Apple, banana, orange, chaat masala, lemon. Chatpata and fresh-easy to make at home.',
     icon: 'fruit-citrus',
   },
   {
@@ -56,7 +56,7 @@ const MEAL_IDEAS = [
   },
   {
     title: 'Dates with nuts',
-    desc: '2–3 dates with almonds or akhrot. Energy, fibre, and iron—great for Pakistani mums.',
+    desc: '2–3 dates with almonds or akhrot. Energy, fibre, and iron-great for Pakistani mums.',
     icon: 'fruit-cherries',
   },
   {
@@ -71,12 +71,12 @@ const MEAL_IDEAS = [
   },
   {
     title: 'Lemon water & nimco',
-    desc: 'Nimco in small amounts with lemon water. For salty, crunchy cravings—don\'t overdo salt.',
+    desc: 'Nimco in small amounts with lemon water. For salty, crunchy cravings-don\'t overdo salt.',
     icon: 'cookie',
   },
   {
     title: 'Halwa (suji or gajar)',
-    desc: 'Small portion of suji or gajar ka halwa. Warm, comforting, and familiar—moderation is key.',
+    desc: 'Small portion of suji or gajar ka halwa. Warm, comforting, and familiar-moderation is key.',
     icon: 'rice',
   },
 ];
@@ -140,7 +140,7 @@ const CravingsScreen = ({ navigation }) => {
             <Text style={styles.sectionTitle}>Craving meal ideas (Pakistani-friendly)</Text>
           </View>
           <Text style={styles.mealsIntro}>
-            Safe, satisfying ideas for common cravings—swap street food with homemade when you can.
+            Safe, satisfying ideas for common cravings-swap street food with homemade when you can.
           </Text>
           {MEAL_IDEAS.map((meal, i) => (
             <View key={i} style={styles.mealCard}>

@@ -9,6 +9,7 @@ const Groq = require("groq-sdk")
 const User = require("./models/User")
 const otpService = require("./services/otpService")
 const conversationRoutes = require("./routes/conversations")
+const safetyRoutes = require("./routes/safety")
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -1022,6 +1023,9 @@ app.get("/api/nutrition/dos-donts", (req, res) => {
 
 // Conversation routes
 app.use("/api/conversations", conversationRoutes)
+
+// Safety routes - emergency detection, lookup, places, consent, telemetry
+app.use("/api/safety", safetyRoutes)
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {

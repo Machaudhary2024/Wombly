@@ -18,7 +18,7 @@ const TRIMESTERS = [
         points: [
           'Take a prenatal with 400–800 mcg folic acid daily; start before pregnancy if possible.',
           'Eat folate-rich foods: leafy greens, lentils, chickpeas, fortified bread/cereal.',
-          'Small, frequent meals help if you\'re nauseous—don\'t force large portions.',
+          'Small, frequent meals help if you\'re nauseous-don\'t force large portions.',
         ],
       },
       {
@@ -57,7 +57,7 @@ const TRIMESTERS = [
         points: [
           'Include iron-rich foods: lean meat, chicken, lentils, beans, leafy greens.',
           'Pair with vitamin C (lemon, tomato, citrus) to absorb iron better.',
-          'Tea or coffee with meals can reduce iron absorption—have them between meals.',
+          'Tea or coffee with meals can reduce iron absorption-have them between meals.',
         ],
       },
       {
@@ -67,7 +67,7 @@ const TRIMESTERS = [
         points: [
           'Aim for 3 servings of dairy or fortified alternatives (milk, dahi, paneer).',
           'Dark leafy greens and fortified foods add calcium too.',
-          'Space out calcium and iron—they compete for absorption if taken together.',
+          'Space out calcium and iron-they compete for absorption if taken together.',
         ],
       },
       {
@@ -76,7 +76,7 @@ const TRIMESTERS = [
         focus: 'Steady weight gain and variety keep you and baby nourished.',
         points: [
           'Eat a mix of whole grains, protein, vegetables, and healthy fats.',
-          'About 300 extra calories per day is usually enough—quality over quantity.',
+          'About 300 extra calories per day is usually enough-quality over quantity.',
           'Stay hydrated; include fibre to ease constipation.',
         ],
       },
@@ -102,11 +102,11 @@ const TRIMESTERS = [
       {
         title: 'Comfort & digestion',
         icon: 'stomach',
-        focus: 'Less room in your tummy—eat in a way that feels good.',
+        focus: 'Less room in your tummy-eat in a way that feels good.',
         points: [
           'Small, frequent meals reduce heartburn and fullness.',
           'Avoid lying down right after eating; prop yourself up at night if needed.',
-          'Fibre and fluids help with constipation—keep fruits, veggies, and water up.',
+          'Fibre and fluids help with constipation-keep fruits, veggies, and water up.',
         ],
       },
       {
@@ -116,7 +116,7 @@ const TRIMESTERS = [
         points: [
           'Eat enough calories and protein; no need to "eat for two" in size.',
           'Stay hydrated; it supports milk supply later.',
-          'If you plan to breastfeed, no special diet now—just keep eating well.',
+          'If you plan to breastfeed, no special diet now-just keep eating well.',
         ],
       },
     ],

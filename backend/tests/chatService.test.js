@@ -1,7 +1,7 @@
 /**
  * Unit tests for chatService and promptRouter.
  * Run with: node tests/chatService.test.js
- * No test framework dependency — uses Node.js assert.
+ * No test framework dependency - uses Node.js assert.
  */
 
 const assert = require("assert");
@@ -86,7 +86,7 @@ function testPromptRouter() {
     console.log("  PASS: safety preamble in all modes");
   }
 
-  // Test 6: Prompt injection defense — mode string not inserted raw
+  // Test 6: Prompt injection defense - mode string not inserted raw
   {
     const prompt = buildSystemPrompt({
       user: mockUser,
