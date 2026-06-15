@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -6,30 +6,18 @@ import {
   StyleSheet,
   ScrollView,
   Dimensions,
-  Modal,
   Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { API_BASE_URL } from './apiConfig';
-import YouTubeVideoPlayer from './components/YouTubeVideoPlayer';
+import VideoSection from './components/VideoSection';
 
 const { width } = Dimensions.get('window');
 const isTablet = width > 600;
 
 const FirstAidDetailScreen = ({ navigation, route }) => {
-  const { categoryId, categoryTitle, categorySteps, tutorialLinks: passedTutorialLinks } = route.params;
-  const [tutorialLinks, setTutorialLinks] = useState(passedTutorialLinks || []);
-  const [selectedVideoId, setSelectedVideoId] = useState(null);
-  const [selectedVideoTitle, setSelectedVideoTitle] = useState('');
-  const [showPlayer, setShowPlayer] = useState(false);
-
-  const handlePlayVideo = (videoId, title) => {
-    if (!videoId || videoId.startsWith('REPLACE_')) return;
-    setSelectedVideoId(videoId);
-    setSelectedVideoTitle(title);
-    setShowPlayer(true);
-  };
+  const { categoryTitle, categorySteps, tutorialLinks: passedTutorialLinks } = route.params;
+  const tutorialLinks = passedTutorialLinks || [];
 
   return (
     <View style={styles.container}>
@@ -59,30 +47,7 @@ const FirstAidDetailScreen = ({ navigation, route }) => {
             <Text style={styles.sectionTitle}>Tutorial Videos</Text>
           </View>
           {Array.isArray(tutorialLinks) && tutorialLinks.length > 0 ? (
-            tutorialLinks.map((v, i) => {
-              const canOpen = v.videoId && !v.videoId.startsWith('REPLACE_');
-              return (
-                <TouchableOpacity
-                  key={i}
-                  style={[styles.videoCard, !canOpen && styles.videoCardPlaceholder]}
-                  onPress={() => handlePlayVideo(v.videoId, v.title)}
-                  activeOpacity={0.85}
-                  disabled={!canOpen}
-                >
-                  <View style={styles.videoIconWrap}>
-                    <MaterialCommunityIcons
-                      name="play-circle"
-                      size={48}
-                      color={canOpen ? '#E74C3C' : '#BBB'}
-                    />
-                  </View>
-                  <Text style={styles.videoTitle}>{v.title}</Text>
-                  <Text style={styles.videoSub}>
-                    {canOpen ? 'Tap to play' : 'error'}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })
+            <VideoSection videos={tutorialLinks} heading={null} />
           ) : (
             <View style={styles.noVideosBox}>
               <MaterialCommunityIcons name="alert-circle-outline" size={40} color="#E67E22" />
@@ -149,45 +114,6 @@ const FirstAidDetailScreen = ({ navigation, route }) => {
         <View style={styles.bottomSpacer} />
       </ScrollView>
 
-      {/* Video Player Modal */}
-      {showPlayer && selectedVideoId && (
-        <Modal
-          visible={showPlayer}
-          transparent={false}
-          animationType="slide"
-          onRequestClose={() => {
-            setShowPlayer(false);
-            setSelectedVideoId(null);
-            setSelectedVideoTitle('');
-          }}
-        >
-          <View style={styles.playerModalContainer}>
-            <TouchableOpacity
-              style={styles.playerCloseTop}
-              onPress={() => {
-                setShowPlayer(false);
-                setSelectedVideoId(null);
-                setSelectedVideoTitle('');
-              }}
-              activeOpacity={0.7}
-            >
-              <MaterialCommunityIcons name="close-circle" size={40} color="#FFFFFF" />
-            </TouchableOpacity>
-
-            <YouTubeVideoPlayer
-              key={selectedVideoId}
-              videoId={selectedVideoId}
-              height={Platform.OS === 'web' ? 400 : 300}
-            />
-
-            {Platform.OS !== 'web' && (
-              <View style={styles.mobilePlayerInfo}>
-                <Text style={styles.mobilePlayerInfoText}>Tap the video to enter fullscreen mode</Text>
-              </View>
-            )}
-          </View>
-        </Modal>
-      )}
     </View>
   );
 };

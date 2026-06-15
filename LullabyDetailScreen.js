@@ -1,110 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, FlatList, ActivityIndicator, Modal, Image, Platform } from 'react-native';
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { API_BASE_URL } from './apiConfig';
-import YouTubeVideoPlayer from './components/YouTubeVideoPlayer';
+import VideoSection from './components/VideoSection';
+import { getScreenVideos } from './data/videos';
 
 const LullabyDetailScreen = ({ navigation, route }) => {
   const { lullabyKey, lullabyName } = route.params;
-  const [lullabyVideos, setLullabyVideos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  
-  // Video player state
-  const [selectedVideoId, setSelectedVideoId] = useState(null);
-  const [selectedVideoTitle, setSelectedVideoTitle] = useState('');
-  const [showPlayer, setShowPlayer] = useState(false);
-
-  // Modal state
-  const [showModal, setShowModal] = useState(false);
-  const [modalTitle, setModalTitle] = useState('');
-  const [modalMessage, setModalMessage] = useState('');
-  const [modalType, setModalType] = useState('error');
-
-  const showNotificationModal = (title, message, type = 'error') => {
-    setModalTitle(title);
-    setModalMessage(message);
-    setModalType(type);
-    setShowModal(true);
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-  };
-
-  const API_URL = `${API_BASE_URL}/api/entertainment`;
-
-  // Fetch videos for selected lullaby channel
-  useEffect(() => {
-    const fetchLullabyVideos = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(`${API_URL}/lullabies/${lullabyKey}?maxResults=5`);
-        const result = await response.json();
-        if (result.success && result.data && result.data.length > 0) {
-          // Transform videos to ensure videoId is present
-          const transformedVideos = result.data.map((video) => ({
-            ...video,
-            videoId: video.videoId || video.id,
-          }));
-          setLullabyVideos(transformedVideos);
-        } else if (!result.success) {
-          // API failed, but mock data is being used on backend
-          console.log('API error, mock data should be used from backend');
-        }
-      } catch (error) {
-        console.log('Error fetching lullaby videos:', error);
-        console.log('Showing mock data from backend fallback');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchLullabyVideos();
-  }, [lullabyKey]);
-
-  const handlePlayLullaby = (video) => {
-    if (!video.videoId) {
-      showNotificationModal('Error', 'Video ID not available', 'error');
-      return;
-    }
-    setSelectedVideoId(video.videoId);
-    setSelectedVideoTitle(video.title);
-    setShowPlayer(true);
-  };
-
-  const renderLullabyVideoItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.videoCard}
-      activeOpacity={0.8}
-      onPress={() => handlePlayLullaby(item)}
-    >
-      <LinearGradient
-        colors={['#E8D5FF', '#F3E5F5']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.videoGradient}
-      >
-        <View style={styles.videoContent}>
-          {item.thumbnail && (
-            <Image
-              source={{ uri: item.thumbnail }}
-              style={styles.videoThumbnail}
-              resizeMode="cover"
-            />
-          )}
-          <View style={styles.videoOverlay}>
-            <MaterialCommunityIcons name="play-circle" size={50} color="#FFFFFF" />
-          </View>
-          <View style={styles.videoInfo}>
-            <Text style={styles.videoTitle} numberOfLines={2}>
-              {item.title}
-            </Text>
-          </View>
-        </View>
-      </LinearGradient>
-    </TouchableOpacity>
-  );
+  const videos = getScreenVideos(lullabyKey);
 
   return (
     <View style={styles.container}>
@@ -132,95 +35,8 @@ const LullabyDetailScreen = ({ navigation, route }) => {
         </View>
         <Text style={styles.categorySubtitle}>Tap a video to watch on YouTube</Text>
 
-        {loading ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#9C27B0" />
-            <Text style={styles.loadingText}>Loading videos...</Text>
-          </View>
-        ) : lullabyVideos.length > 0 ? (
-          <FlatList
-            data={lullabyVideos}
-            renderItem={renderLullabyVideoItem}
-            keyExtractor={(item) => `lullaby-detail-${item._id || item.id || item.videoId}`}
-            scrollEnabled={false}
-            numColumns={2}
-            columnWrapperStyle={styles.videoGridContainer}
-          />
-        ) : (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>No videos available for this lullaby channel</Text>
-          </View>
-        )}
+        <VideoSection videos={videos} heading={null} />
       </ScrollView>
-
-      {/* Video Player Modal */}
-      {showPlayer && selectedVideoId && (
-        <Modal
-          visible={showPlayer}
-          transparent={false}
-          animationType="slide"
-          onRequestClose={() => {
-            setShowPlayer(false);
-            setSelectedVideoId(null);
-            setSelectedVideoTitle('');
-          }}
-        >
-          <View style={styles.playerModalContainer}>
-            <TouchableOpacity
-              style={styles.playerCloseTop}
-              onPress={() => {
-                setShowPlayer(false);
-                setSelectedVideoId(null);
-                setSelectedVideoTitle('');
-              }}
-              activeOpacity={0.7}
-            >
-              <MaterialCommunityIcons name="close-circle" size={40} color="#FFFFFF" />
-            </TouchableOpacity>
-
-            {Platform.OS === 'web' ? (
-              <YouTubeVideoPlayer
-                key={selectedVideoId}
-                videoId={selectedVideoId}
-                height={400}
-              />
-            ) : (
-              <YouTubeVideoPlayer
-                key={selectedVideoId}
-                videoId={selectedVideoId}
-                height={300}
-              />
-            )}
-          </View>
-        </Modal>
-      )}
-
-      {/* Success/Error Modal */}
-      <Modal
-        transparent={true}
-        visible={showModal}
-        animationType="fade"
-        onRequestClose={closeModal}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalBox}>
-            <MaterialCommunityIcons
-              name={modalType === 'success' ? 'check-circle' : 'alert-circle'}
-              size={50}
-              color={modalType === 'success' ? '#00B894' : '#F5B7B1'}
-            />
-            <Text style={styles.modalTitle}>{modalTitle}</Text>
-            <Text style={styles.modalMessage}>{modalMessage}</Text>
-            <TouchableOpacity
-              style={[styles.modalButton, styles.modalButtonYes]}
-              onPress={closeModal}
-            >
-              <Text style={styles.modalButtonYesText}>OK</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
     </View>
   );
 };

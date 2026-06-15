@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  Modal,
   Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import YouTubeVideoPlayer from './components/YouTubeVideoPlayer';
+import VideoSection from './components/VideoSection';
+import { getScreenVideos } from './data/videos';
 
 const REMEDIES = [
   {
@@ -83,22 +83,7 @@ const REMEDIES = [
   },
 ];
 
-const CULTURAL_VIDEOS = [
-  { id: 'VL0jHTThHyQ', title: 'Diet Tips for Healthy Pregnancy' },
-  { id: 'OPv161ft2BI', title: 'Traditional foods during pregnancy' },
-];
-
 const CulturalRemediesScreen = ({ navigation }) => {
-  const [selectedVideoId, setSelectedVideoId] = useState(null);
-  const [selectedVideoTitle, setSelectedVideoTitle] = useState('');
-  const [showPlayer, setShowPlayer] = useState(false);
-
-  const handlePlayVideo = (videoId, title) => {
-    if (!videoId || videoId.startsWith('REPLACE_')) return;
-    setSelectedVideoId(videoId);
-    setSelectedVideoTitle(title);
-    setShowPlayer(true);
-  };
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -156,74 +141,12 @@ const CulturalRemediesScreen = ({ navigation }) => {
             <MaterialCommunityIcons name="youtube" size={24} color="#FF0000" />
             <Text style={styles.sectionTitle}>Videos</Text>
           </View>
-          {CULTURAL_VIDEOS.map((v, i) => {
-            const canOpen = v.id && !v.id.startsWith('REPLACE_');
-            return (
-              <TouchableOpacity
-                key={i}
-                style={[styles.videoCard, !canOpen && styles.videoCardPlaceholder]}
-                onPress={() => handlePlayVideo(v.id, v.title)}
-                activeOpacity={0.85}
-                disabled={!canOpen}
-              >
-                <View style={styles.videoIconWrap}>
-                  <MaterialCommunityIcons
-                    name="play-circle"
-                    size={48}
-                    color={canOpen ? '#FF0000' : '#BBB'}
-                  />
-                </View>
-                <Text style={styles.videoTitle}>{v.title}</Text>
-                <Text style={styles.videoSub}>
-                  {canOpen ? 'Tap to play' : 'error'}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
+          <VideoSection videos={getScreenVideos('cultural_remedies')} heading={null} />
         </View>
 
         <View style={styles.bottomSpacer} />
       </ScrollView>
 
-      {/* Video Player Modal */}
-      {showPlayer && selectedVideoId && (
-        <Modal
-          visible={showPlayer}
-          transparent={false}
-          animationType="slide"
-          onRequestClose={() => {
-            setShowPlayer(false);
-            setSelectedVideoId(null);
-            setSelectedVideoTitle('');
-          }}
-        >
-          <View style={styles.playerModalContainer}>
-            <TouchableOpacity
-              style={styles.playerCloseTop}
-              onPress={() => {
-                setShowPlayer(false);
-                setSelectedVideoId(null);
-                setSelectedVideoTitle('');
-              }}
-              activeOpacity={0.7}
-            >
-              <MaterialCommunityIcons name="close-circle" size={40} color="#FFFFFF" />
-            </TouchableOpacity>
-
-            <YouTubeVideoPlayer
-              key={selectedVideoId}
-              videoId={selectedVideoId}
-              height={Platform.OS === 'web' ? 400 : 300}
-            />
-
-            {Platform.OS !== 'web' && (
-              <View style={styles.mobilePlayerInfo}>
-                <Text style={styles.mobilePlayerInfoText}>Tap the video to enter fullscreen mode</Text>
-              </View>
-            )}
-          </View>
-        </Modal>
-      )}
     </View>
   )
 }

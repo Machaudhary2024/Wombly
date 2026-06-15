@@ -17,9 +17,14 @@
       "supportsTablet": true,
       "infoPlist": {
         "NSLocalNetworkUsageDescription": "This app uses local network to stream videos",
-        "NSBonjourServiceTypes": ["_http._tcp", "_https._tcp"],
+        "NSBonjourServiceTypes": [
+          "_http._tcp",
+          "_https._tcp"
+        ],
         "NSAllowsArbitraryLoadsInWebContent": true,
-        "UIRequiredDeviceCapabilities": ["video-playback"]
+        "UIRequiredDeviceCapabilities": [
+          "video-playback"
+        ]
       }
     },
     "android": {
@@ -36,6 +41,10 @@
     "web": {
       "favicon": "./assets/4.png"
     },
-    "scheme": "wombly"
+    "scheme": "wombly",
+    "plugins": [
+      "@react-native-community/datetimepicker",
+      "expo-web-browser"
+    ]
   }
 }

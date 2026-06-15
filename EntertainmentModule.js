@@ -1,136 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, FlatList, ActivityIndicator, Image, Modal, Platform } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, FlatList } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { API_BASE_URL } from './apiConfig';
-import YouTubeVideoPlayer from './components/YouTubeVideoPlayer';
+import { cartoonChannels, lullabyChannels } from './data/videos';
 
 const EntertainmentModule = ({ navigation }) => {
   const [selectedCategory, setSelectedCategory] = useState('Cartoons');
   const [showDropdown, setShowDropdown] = useState(false);
-  const [lullabyChannels, setLullabyChannels] = useState([]);
-  const [cartoons, setCartoons] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  // Video player state
-  const [selectedVideoId, setSelectedVideoId] = useState(null);
-  const [selectedVideoTitle, setSelectedVideoTitle] = useState('');
-  const [showPlayer, setShowPlayer] = useState(false);
-
-  // Modal state
-  const [showModal, setShowModal] = useState(false);
-  const [modalTitle, setModalTitle] = useState('');
-  const [modalMessage, setModalMessage] = useState('');
-  const [modalType, setModalType] = useState('error');
-
-  const showNotificationModal = (title, message, type = 'error') => {
-    setModalTitle(title);
-    setModalMessage(message);
-    setModalType(type);
-    setShowModal(true);
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-  };
-
-
-
-  const API_URL = `${API_BASE_URL}/api/entertainment`;
-
-  // Default lullaby channels for fallback
-  const defaultLullabyChannels = [
-    {
-      key: 'SuperSimpleSongs',
-      name: 'Super Simple Songs',
-      description: 'Educational songs for babies',
-      icon: 'music-box-outline',
-    },
-    {
-      key: 'ZeaZaraKidsTV',
-      name: 'Zea Zara Kids TV',
-      description: 'Creative nursery rhymes',
-      icon: 'music-note-multiple',
-    },
-    {
-      key: 'Kidzone',
-      name: 'Kidzone',
-      description: 'Relaxing children songs',
-      icon: 'music-sleep',
-    },
-    {
-      key: 'BabyTV',
-      name: 'BabyTV',
-      description: 'Gentle lullabies for sleep',
-      icon: 'baby-carriage',
-    },
-    {
-      key: 'TinyMuslimsClub',
-      name: 'Tiny Muslims Club',
-      description: 'Islamic nursery rhymes',
-      icon: 'quran',
-    },
-  ];
-
-  // Fetch lullaby channels from API
-  useEffect(() => {
-    const fetchLullabyChannels = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(`${API_URL}/lullabies/channels`);
-        const result = await response.json();
-        if (result.success && result.data && result.data.length > 0) {
-          setLullabyChannels(result.data);
-        } else {
-          // Use default lullaby channels if API returns empty
-          setLullabyChannels(defaultLullabyChannels);
-        }
-      } catch (error) {
-        console.log('Error fetching lullaby channels:', error);
-        // Use default lullaby channels on error
-        setLullabyChannels(defaultLullabyChannels);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchLullabyChannels();
-  }, []);
-
-  // Fetch cartoon channels info
-  useEffect(() => {
-    const fetchCartoons = async () => {
-      try {
-        const response = await fetch(`${API_URL}/cartoons/channels`);
-        const result = await response.json();
-        if (result.success && result.data) {
-          setCartoons(result.data);
-        }
-      } catch (error) {
-        console.log('Error fetching cartoons:', error);
-      }
-    };
-
-    fetchCartoons();
-  }, []);
-
-
-
-  const handlePlayLullaby = (lullaby) => {
-    if (!lullaby || !lullaby.videoId) {
-      showNotificationModal('Error', 'Video ID not available. Please try another lullaby.', 'error');
-      return;
-    }
-    // Ensure videoId is a string and valid
-    const validVideoId = String(lullaby.videoId).trim();
-    if (!validVideoId) {
-      showNotificationModal('Error', 'Invalid video ID', 'error');
-      return;
-    }
-    setSelectedVideoId(validVideoId);
-    setSelectedVideoTitle(lullaby.title || 'Untitled Lullaby');
-    setShowPlayer(true);
-  };
 
   const handleCartoonPress = (cartoonKey, cartoonName) => {
     navigation.navigate('CartoonDetail', {
@@ -145,24 +21,6 @@ const EntertainmentModule = ({ navigation }) => {
       lullabyName,
     });
   };
-
-  const handlePlayCartoon = (video) => {
-    if (!video || !video.videoId) {
-      showNotificationModal('Error', 'Video ID not available. Please try another video.', 'error');
-      return;
-    }
-    // Ensure videoId is a string and valid
-    const validVideoId = String(video.videoId).trim();
-    if (!validVideoId) {
-      showNotificationModal('Error', 'Invalid video ID', 'error');
-      return;
-    }
-    setSelectedVideoId(validVideoId);
-    setSelectedVideoTitle(video.title || 'Untitled Video');
-    setShowPlayer(true);
-  };
-
-
 
   const categories = [
     { id: 1, name: 'Lullabies', icon: 'moon-waning-crescent', color: '#E8D5FF' },
@@ -200,39 +58,6 @@ const EntertainmentModule = ({ navigation }) => {
 
   const renderLullabyItem = ({ item }) => (
     renderChannelBox({ item, type: 'lullaby' })
-  );
-
-  const renderCartoonVideoItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.videoCard}
-      activeOpacity={0.8}
-      onPress={() => handlePlayCartoon(item)}
-    >
-      <LinearGradient
-        colors={['#FFE5F1', '#F3E5F5']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.videoGradient}
-      >
-        <View style={styles.videoContent}>
-          {item.thumbnail && (
-            <Image
-              source={{ uri: item.thumbnail }}
-              style={styles.videoThumbnail}
-              resizeMode="cover"
-            />
-          )}
-          <View style={styles.videoOverlay}>
-            <MaterialCommunityIcons name="play-circle" size={50} color="#FFFFFF" />
-          </View>
-          <View style={styles.videoInfo}>
-            <Text style={styles.videoTitle} numberOfLines={2}>
-              {item.title}
-            </Text>
-          </View>
-        </View>
-      </LinearGradient>
-    </TouchableOpacity>
   );
 
   return (
@@ -314,25 +139,14 @@ const EntertainmentModule = ({ navigation }) => {
               <Text style={styles.categoryTitle}>Soothing Lullabies</Text>
             </View>
             <Text style={styles.categorySubtitle}>Help your little one fall asleep peacefully</Text>
-            {loading ? (
-              <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#9C27B0" />
-                <Text style={styles.loadingText}>Loading lullaby channels...</Text>
-              </View>
-            ) : lullabyChannels.length > 0 ? (
-              <FlatList
-                data={lullabyChannels}
-                renderItem={renderLullabyItem}
-                keyExtractor={(item) => `lullaby-${item.key}`}
-                scrollEnabled={false}
-                numColumns={2}
-                columnWrapperStyle={styles.gridContainer}
-              />
-            ) : (
-              <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>No lullaby channels available</Text>
-              </View>
-            )}
+            <FlatList
+              data={lullabyChannels}
+              renderItem={renderLullabyItem}
+              keyExtractor={(item) => `lullaby-${item.key}`}
+              scrollEnabled={false}
+              numColumns={2}
+              columnWrapperStyle={styles.gridContainer}
+            />
           </View>
         )}
 
@@ -343,92 +157,18 @@ const EntertainmentModule = ({ navigation }) => {
               <Text style={styles.categoryTitle}>Fun Cartoons</Text>
             </View>
             <Text style={styles.categorySubtitle}>Educational and entertaining shows for toddlers</Text>
-
-            {cartoons.length > 0 ? (
-              <FlatList
-                data={cartoons}
-                renderItem={renderCartoonItem}
-                keyExtractor={(item) => `cartoon-${item.key}`}
-                scrollEnabled={false}
-                numColumns={2}
-                columnWrapperStyle={styles.gridContainer}
-              />
-            ) : (
-              <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>No cartoons available</Text>
-              </View>
-            )}
+            <FlatList
+              data={cartoonChannels}
+              renderItem={renderCartoonItem}
+              keyExtractor={(item) => `cartoon-${item.key}`}
+              scrollEnabled={false}
+              numColumns={2}
+              columnWrapperStyle={styles.gridContainer}
+            />
           </View>
         )}
 
       </ScrollView>
-
-      {/* Video Player Modal */}
-      {showPlayer && selectedVideoId && (
-        <Modal
-          visible={showPlayer}
-          transparent={false}
-          animationType="slide"
-          onRequestClose={() => {
-            setShowPlayer(false);
-            setSelectedVideoId(null);
-            setSelectedVideoTitle('');
-          }}
-        >
-          <View style={styles.playerModalContainer}>
-            <TouchableOpacity
-              style={styles.playerCloseTop}
-              onPress={() => {
-                setShowPlayer(false);
-                setSelectedVideoId(null);
-                setSelectedVideoTitle('');
-              }}
-              activeOpacity={0.7}
-            >
-              <MaterialCommunityIcons name="close-circle" size={40} color="#FFFFFF" />
-            </TouchableOpacity>
-
-            <YouTubeVideoPlayer
-              key={selectedVideoId}
-              videoId={selectedVideoId}
-              height={Platform.OS === 'web' ? 400 : 300}
-            />
-
-            {Platform.OS !== 'web' && (
-              <View style={styles.mobilePlayerInfo}>
-                <Text style={styles.mobilePlayerInfoText}>Tap the video to enter fullscreen mode</Text>
-              </View>
-            )}
-          </View>
-        </Modal>
-      )}
-
-      {/* Success/Error Modal */}
-      <Modal
-        transparent={true}
-        visible={showModal}
-        animationType="fade"
-        onRequestClose={closeModal}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalBox}>
-            <MaterialCommunityIcons
-              name={modalType === 'success' ? 'check-circle' : 'alert-circle'}
-              size={50}
-              color={modalType === 'success' ? '#00B894' : '#FF6B9D'}
-            />
-            <Text style={styles.modalTitle}>{modalTitle}</Text>
-            <Text style={styles.modalMessage}>{modalMessage}</Text>
-            <TouchableOpacity
-              style={[styles.modalButton, styles.modalButtonYes]}
-              onPress={closeModal}
-            >
-              <Text style={styles.modalButtonYesText}>OK</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
     </View>
   );
 };

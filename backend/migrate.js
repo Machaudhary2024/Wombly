@@ -9,13 +9,11 @@ const ATLAS_DB = process.env.MONGODB_URI;
 
 // Import models
 const User = require('./models/User');
-const Video = require('./models/Video');
 const Conversation = require('./models/Conversation');
 const Message = require('./models/Message');
 
 const models = [
   { name: 'User', model: User },
-  { name: 'Video', model: Video },
   { name: 'Conversation', model: Conversation },
   { name: 'Message', model: Message },
 ];

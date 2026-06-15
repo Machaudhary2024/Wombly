@@ -5,12 +5,12 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  Modal,
   Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import YouTubeVideoPlayer from './components/YouTubeVideoPlayer';
+import VideoSection from './components/VideoSection';
+import { getScreenVideos } from './data/videos';
 
 const PAGE_HEADING =
   'Craving chaat at 2 a.m.? You\'re in good company—many Pakistani mums-to-be do!';
@@ -81,23 +81,8 @@ const MEAL_IDEAS = [
   },
 ];
 
-const CRAVING_VIDEOS = [
-  { id: 'LTlGwenhPlA', title: 'Pregnancy cravings – healthy tips' },
-  { id: 'eFEIYbccZNo', title: 'Pakistani pregnancy diet ideas' },
-];
-
 const CravingsScreen = ({ navigation }) => {
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
-  const [selectedVideoId, setSelectedVideoId] = useState(null);
-  const [selectedVideoTitle, setSelectedVideoTitle] = useState('');
-  const [showPlayer, setShowPlayer] = useState(false);
-
-  const handlePlayVideo = (videoId, title) => {
-    if (!videoId || videoId.startsWith('REPLACE_')) return;
-    setSelectedVideoId(videoId);
-    setSelectedVideoTitle(title);
-    setShowPlayer(true);
-  };
 
   return (
     <View style={styles.container}>
@@ -176,72 +161,14 @@ const CravingsScreen = ({ navigation }) => {
             <Text style={styles.sectionTitle}>Videos</Text>
           </View>
           <Text style={styles.videoIntro}>
-            Tap a card to watch a video. 
+            Tap a card to watch a video.
           </Text>
-          {CRAVING_VIDEOS.map((v, i) => {
-            const canOpen = v.id && !v.id.startsWith('REPLACE_');
-            return (
-              <TouchableOpacity
-                key={i}
-                style={[styles.videoCard, !canOpen && styles.videoCardPlaceholder]}
-                onPress={() => handlePlayVideo(v.id, v.title)}
-                activeOpacity={0.85}
-                disabled={!canOpen}
-              >
-                <View style={styles.videoIconWrap}>
-                  <MaterialCommunityIcons name="play-circle" size={48} color={canOpen ? '#FF0000' : '#BBB'} />
-                </View>
-                <Text style={styles.videoTitle}>{v.title}</Text>
-                <Text style={styles.videoSub}>
-                  {canOpen ? 'Tap to play' : 'Add video ID in CravingsScreen.js'}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
+          <VideoSection videos={getScreenVideos('cravings')} heading={null} />
         </View>
 
         <View style={styles.bottomSpacer} />
       </ScrollView>
 
-      {/* Video Player Modal */}
-      {showPlayer && selectedVideoId && (
-        <Modal
-          visible={showPlayer}
-          transparent={false}
-          animationType="slide"
-          onRequestClose={() => {
-            setShowPlayer(false);
-            setSelectedVideoId(null);
-            setSelectedVideoTitle('');
-          }}
-        >
-          <View style={styles.playerModalContainer}>
-            <TouchableOpacity
-              style={styles.playerCloseTop}
-              onPress={() => {
-                setShowPlayer(false);
-                setSelectedVideoId(null);
-                setSelectedVideoTitle('');
-              }}
-              activeOpacity={0.7}
-            >
-              <MaterialCommunityIcons name="close-circle" size={40} color="#FFFFFF" />
-            </TouchableOpacity>
-
-            <YouTubeVideoPlayer
-              key={selectedVideoId}
-              videoId={selectedVideoId}
-              height={Platform.OS === 'web' ? 400 : 300}
-            />
-
-            {Platform.OS !== 'web' && (
-              <View style={styles.mobilePlayerInfo}>
-                <Text style={styles.mobilePlayerInfoText}>Tap the video to enter fullscreen mode</Text>
-              </View>
-            )}
-          </View>
-        </Modal>
-      )}
     </View>
   )
 }

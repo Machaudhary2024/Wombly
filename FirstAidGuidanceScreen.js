@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { API_BASE_URL } from './apiConfig';
+import { getScreenVideos } from './data/videos';
 
 const { width, height } = Dimensions.get('window');
 const isTablet = width > 600;
@@ -39,54 +39,22 @@ const FirstAidGuidanceScreen = ({ navigation }) => {
     ).start();
   }, [pulseAnim]);
 
-  // Fetch videos from MongoDB for First Aid
+  // Load First Aid tutorial videos from the local registry (data/videos.js)
   useEffect(() => {
-    const fetchAllVideos = async () => {
-      try {
-        const topics = ['CPR & Choking', 'Allergies & Reactions', 'Minor Injuries', 'Burns & Scalds', 'Poisoning', 'Fever & Infection'];
-        const topicMap = {
-          'CPR & Choking': 1,
-          'Allergies & Reactions': 2,
-          'Minor Injuries': 3,
-          'Burns & Scalds': 4,
-          'Poisoning': 5,
-          'Fever & Infection': 6,
-        };
-
-        const newTutorialLinks = {};
-
-        for (const topic of topics) {
-          try {
-            const response = await fetch(
-              `${API_BASE_URL}/api/first-aid-videos/${encodeURIComponent(topic)}`
-            );
-            const result = await response.json();
-
-            if (result.success && result.data && result.data.length > 0) {
-              newTutorialLinks[topicMap[topic]] = result.data
-                .map((video) => ({
-                  title: video.title,
-                  videoId: video.videoId,
-                  thumbnail: video.thumbnail,
-                  id: video._id,
-                }));
-            } else {
-              newTutorialLinks[topicMap[topic]] = [];
-            }
-          } catch (error) {
-            console.error(`Error fetching videos for ${topic}:`, error);
-            newTutorialLinks[topicMap[topic]] = [];
-          }
-        }
-
-        setTutorialLinks(newTutorialLinks);
-      } catch (error) {
-        console.error('Error fetching tutorials:', error);
-        setTutorialLinks({});
-      }
+    const topicMap = {
+      'CPR & Choking': 1,
+      'Allergies & Reactions': 2,
+      'Minor Injuries': 3,
+      'Burns & Scalds': 4,
+      'Poisoning': 5,
+      'Fever & Infection': 6,
     };
 
-    fetchAllVideos();
+    const newTutorialLinks = {};
+    Object.keys(topicMap).forEach((topic) => {
+      newTutorialLinks[topicMap[topic]] = getScreenVideos(topic);
+    });
+    setTutorialLinks(newTutorialLinks);
   }, []);
 
   const categories = [
